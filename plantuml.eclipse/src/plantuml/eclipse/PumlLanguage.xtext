@@ -9,7 +9,10 @@ UmlDiagram:
 	umlDiagrams+=SequenceUml* 
 	|
 	'COMPONENT'
-	umlDiagrams+=ComponentUml*);
+	umlDiagrams+=ComponentUml*)
+	|
+	'CLASS'
+	umDiagrams+=ClassUml*;
 
 UmlElementsContainer:
 	{UmlElementsContainer}
@@ -23,6 +26,7 @@ UmlUse:
 	{UmlUse};
 
 
+
 SequenceUml:
 	{SequenceUml}
 	'@startuml'
@@ -34,10 +38,93 @@ ComponentUml:
 	'@startuml'
 	umlElements+=(ComponentElement)*
 	'@enduml';
+	
+ClassUml:
+	{ClassUml}
+	'@startuml'
+	umlElements+=(ClassElement)*
+	'@enduml';
+	
+// ===============================================================================================
+// ============== CLASS DIAGRAMM =================================================================
+// ===============================================================================================
+
+ClassElement:
+	Class
+	| Connection
+;
+
+Class:
+	{Class}
+	'class' name=ID ('{'
+	(classContents+=ClassContent)*
+	'}')?
+;
+
+ClassContent:
+	Attribute | Method
+;
+
+Attribute:
+	{Attribute}
+	(visibility=VISIBILITY name=ID (":" type=ID)?)
+	| (type=ID name=ID)
+;
+
+Method:
+	{Method}
+	(visibility=VISIBILITY)? (type=ID)? name=ID '()'
+;
+
+ClassConnection:
+	{ClassConnection}
+;
+
+Connection returns ClassConnection:
+	classLeft=[Class] Arrow classRight=[Class] (':' ID*)?
+;
+
+Arrow:
+	('-'|'.' ColorTag? ARROWENDRIGHT)|
+	(ARROWENDLEFT ColorTag? '-'|'.')
+;
+
+ColorTag:
+	'[#' (COLOR | HEXCODE) ']'
+;
+
+terminal VISIBILITY:
+	'#'|'-'|'~'|'+'
+;
+
+terminal CLASSIFIER:
+	('{abstract}'|'{static}')
+;
+
+terminal COLOR:
+	('red') | ('orange')
+;
+
+terminal HEXCODE:
+	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')
+	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')
+;
+
+terminal ARROWENDLEFT:
+	('<|' | '*' | 'o' | '<')? '-'|'.'
+;
+
+terminal ARROWENDRIGHT:
+	'-'|'.' ('|>' | '*' | 'o' | '>')?
+;
+
+// ===============================================================================================
+// ===============================================================================================
 
 QualifiedName:
 	{QualifiedName}
 	ID;
+
 
 ComponentElement:
 	Component

@@ -22,5 +22,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: plantuml.eclipse.ui.quickfix,
  plantuml.eclipse.ui.contentassist,
  plantuml.eclipse.ui.contentassist.antlr,
- plantuml.eclipse.ui.internal
+ plantuml.eclipse.ui.internal,
+ plantuml.eclipse.ui.contentassist.antlr.internal
 Bundle-Activator: plantuml.eclipse.ui.internal.PumlActivator

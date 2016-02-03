@@ -4,6 +4,11 @@
 package plantuml.eclipse.ui.labeling
 
 import com.google.inject.Inject
+import plantuml.eclipse.puml.ClassUml
+import plantuml.eclipse.puml.Class
+import plantuml.eclipse.puml.Attribute
+import plantuml.eclipse.puml.Method
+import org.eclipse.xtext.ui.IImageHelper
 
 /**
  * Provides labels for a EObjects.
@@ -13,17 +18,62 @@ import com.google.inject.Inject
 class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider {
 
 	@Inject
+    private IImageHelper imageHelper;
+
+	@Inject
 	new(org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
 
-	// Labels and icons can be computed like this:
+	def text(Class someClass) {
+		someClass.getName();
+	}
 	
-//	def text(Greeting ele) {
-//		'A greeting to ' + ele.name
-//	}
-//
-//	def image(Greeting ele) {
-//		'Greeting.gif'
-//	}
+	def text(ClassUml classUml) {
+		"Class Diagram";
+	}
+	
+	def image(ClassUml classUml){
+		imageHelper.getImage("java_model_obj.png");
+	}
+	
+	def text(Attribute attribute){
+		attribute.getName() + " with Type '" + attribute.type + "' and Visibility '" + attribute.visibility + "'";
+	}
+	
+	def text(Method method){
+		method.getName() + " with Type '" + method.type + "' and Visibility '" + method.visibility + "'";
+	}
+	
+	def image(Attribute attribute){
+		if(attribute.visibility == '#'){
+			imageHelper.getImage("field_protected_obj.png");
+		}else if(attribute.visibility == '-'){
+			imageHelper.getImage("field_private_obj.png");
+		}else if(attribute.visibility == '+'){
+			imageHelper.getImage("field_public_obj.png");
+		}else{
+			imageHelper.getImage("field_default_obj.png");
+		}
+	}
+	
+	def image(Method method){
+		if(method.visibility == '#'){
+			imageHelper.getImage("methpro_obj.png");
+		}else if(method.visibility == '-'){
+			imageHelper.getImage("methpri_obj.png");
+		}
+		else if(method.visibility == '+'){
+			imageHelper.getImage("methpub_obj.png");
+		}else{
+			imageHelper.getImage("methdef_obj.png");
+		}
+	}
+	
+	def image(Class someClass){
+		imageHelper.getImage("class_obj.png");
+	}
+
+	
+	
 }

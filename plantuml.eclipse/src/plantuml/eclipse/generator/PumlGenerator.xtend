@@ -15,10 +15,6 @@ import org.eclipse.xtext.generator.IFileSystemAccess
 class PumlGenerator implements IGenerator {
 	
 	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
-//		fsa.generateFile('greetings.txt', 'People to greet: ' + 
-//			resource.allContents
-//				.filter(typeof(Greeting))
-//				.map[name]
-//				.join(', '))
+
 	}
 }

@@ -13,6 +13,9 @@ import plantuml.eclipse.puml.UmlDiagram
 import plantuml.eclipse.puml.UmlElementsContainer
 import plantuml.eclipse.puml.UmlUse
 import plantuml.eclipse.puml.SequenceUml
+import plantuml.eclipse.puml.ClassConnection
+import plantuml.eclipse.puml.Class
+import plantuml.eclipse.puml.Attribute
 
 /**
  * Customization of the default outline structure.
@@ -21,65 +24,34 @@ import plantuml.eclipse.puml.SequenceUml
  */
 class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-	Integer UmlUseCounter = 0;
-	VirtualOutlineNode messagesGroup = null;
-	VirtualOutlineNode participantGroup = null;
+	/*Integer UmlUseCounter = 0;
+	//VirtualOutlineNode messagesGroup = null;
+	//VirtualOutlineNode participantGroup = null;
+	//VirtualOutlineNode classGroup = null;
+	//VirtualOutlineNode AttributesGroup = null;
+	//VirtualOutlineNode classConnectionGroup = null;
 
 	def _createChildren(DocumentRootNode parentNode, UmlDiagram domainModel) {
 		UmlUseCounter = 0;
+		//classGroup = new VirtualOutlineNode(parentNode, null, "Classes", false);
+		//AttributesGroup = new VirtualOutlineNode(parentNode, null, "Class Attributes", false);
+		//classConnectionGroup = new VirtualOutlineNode(parentNode, null, "Class Connections", false);
+		// Loop through Elements of Domain Model
 		for (EObject element : domainModel.umlDiagrams) {
-
-			//			for(UmlElement ele : element.umlElements) {
-			//				if(ele instanceof UseRight) {
-			if (element instanceof SequenceUml) {
-				createNode(parentNode, element);
-
-			} else {
-				createNode(parentNode, element);
-			}
-
-		//				}
-		//			}
+			// Could check for Instance -> element instanceof SequenceUml
+			createNode(parentNode, element);
 		}
-
 	}
 
-	//
-	//	override _createChildren(IOutlineNode parentNode, EObject modelElement) {
-	//		for (EObject childElement : modelElement.eContents()) {
-	//
-	//			//			if(childElement instanceof UseRight) {
-	//			//				createNode(parentNode, childElement);
-	//			//			}
-	//			createNode(parentNode, childElement);
-	//		}
-	//	}
 	override _createNode(IOutlineNode parentNode, EObject modelElement) {
-		if (null == messagesGroup) {
-			messagesGroup = new VirtualOutlineNode(parentNode, null, "Messages", false);
-		}
-		if (null == participantGroup) {
-			participantGroup = new VirtualOutlineNode(parentNode, null, "Participants", false);
-		}
-		if (modelElement instanceof UmlUse) {
-			UmlUseCounter++;
-			super._createNode(messagesGroup, modelElement);
-		} else if (modelElement instanceof UmlElementsContainer) {
-			for (EObject ele : (modelElement as UmlElementsContainer).umlElements) {
-				this._createNode(parentNode, ele);
-			}
-			if (modelElement instanceof Alternative) {
-				for (EObject ele : (modelElement as Alternative).elseBlocks) {
-					this._createNode(parentNode, ele);
-				}
-			}
-
-		} else if (modelElement instanceof Participant) {
-			super._createNode(participantGroup, modelElement);
-		}
+		
 	}
 
 	def _text(UmlUse element) {
 		return UmlUseCounter.toString() + ": " + element.text;
 	}
+	
+	def _text(Class element){
+		return "Name: " + element.name;
+	}*/
 }
