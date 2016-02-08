@@ -24,18 +24,12 @@ import plantuml.eclipse.puml.Attribute
  */
 class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-	/*Integer UmlUseCounter = 0;
-	//VirtualOutlineNode messagesGroup = null;
-	//VirtualOutlineNode participantGroup = null;
-	//VirtualOutlineNode classGroup = null;
-	//VirtualOutlineNode AttributesGroup = null;
-	//VirtualOutlineNode classConnectionGroup = null;
+	/*
+	Integer UmlUseCounter = 0;
 
 	def _createChildren(DocumentRootNode parentNode, UmlDiagram domainModel) {
 		UmlUseCounter = 0;
-		//classGroup = new VirtualOutlineNode(parentNode, null, "Classes", false);
-		//AttributesGroup = new VirtualOutlineNode(parentNode, null, "Class Attributes", false);
-		//classConnectionGroup = new VirtualOutlineNode(parentNode, null, "Class Connections", false);
+
 		// Loop through Elements of Domain Model
 		for (EObject element : domainModel.umlDiagrams) {
 			// Could check for Instance -> element instanceof SequenceUml
@@ -43,8 +37,9 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 		}
 	}
 
+	
 	override _createNode(IOutlineNode parentNode, EObject modelElement) {
-		
+		super._createNode(parentNode, modelElement);
 	}
 
 	def _text(UmlUse element) {

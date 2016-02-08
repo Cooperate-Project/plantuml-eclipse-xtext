@@ -52,6 +52,8 @@ ClassUml:
 ClassElement:
 	Class
 	| Connection
+	| ConnectionLeft
+	| ConnectionRight
 ;
 
 Class:
@@ -67,37 +69,78 @@ ClassContent:
 
 Attribute:
 	{Attribute}
-	(visibility=VISIBILITY name=ID (":" type=ID)?)
+	( (classifier=Classifier)? (visibility=Visibility)? name=ID (":" type=ID)?
+	)
 	| (type=ID name=ID)
 ;
 
 Method:
 	{Method}
-	(visibility=VISIBILITY)? (type=ID)? name=ID '()'
+	 (classifier=Classifier)? (visibility=Visibility)?(type=ID)? name=ID '()'
 ;
 
 ClassConnection:
 	{ClassConnection}
 ;
 
-Connection returns ClassConnection:
-	classLeft=[Class] Arrow classRight=[Class] (':' ID*)?
+/*
+ * TODO: Funktioniert ohne ColorTags nicht
+ */
+ConnectionLeft returns ClassConnection:
+	{ConnectionLeft}
+	(classTo=[Class|ID])
+	(
+		('<|-' ColorTag? '-')
+		| ('*-' ColorTag? '-')
+		| ('o-' ColorTag? '-')
+		| ('<|.' ColorTag? '.')
+		| ('*.' ColorTag? '.')
+		| ('o.' ColorTag? '.')
+	)
+	ClassFrom=[Class|ID] 
+	(':' text+=(ID)*)?
 ;
 
-Arrow:
-	('-'|'.' ColorTag? ARROWENDRIGHT)|
-	(ARROWENDLEFT ColorTag? '-'|'.')
+Connection returns ClassConnection:
+	{ConnectionLeft}
+	(classOne=[Class|ID])
+	(
+		('-' ColorTag? '-')
+		| ('.' ColorTag? '.')
+	)
+	ClassTwo=[Class|ID] 
+	(':' text+=(ID)*)?
+;
+
+ConnectionRight returns ClassConnection:
+	{ConnectionRight}
+	(ClassFrom=[Class|ID]) 
+		(
+		('-' ColorTag? '-|>')
+		| ('-' ColorTag? '-*')
+		| ('-' ColorTag? '-o')
+		| ('.' ColorTag? '.|>')
+		| ('.' ColorTag? '.*')
+		| ('.' ColorTag? '.o')
+	)
+	(classTo=[Class|ID]) 
+	(':' text+=(ID)*)?
 ;
 
 ColorTag:
 	'[#' (COLOR | HEXCODE) ']'
 ;
 
-terminal VISIBILITY:
+/*
+ * TODO: Mit Enum lösen
+ * TODO: Probleme mit # ohne Abstand
+ */
+Visibility: 
 	'#'|'-'|'~'|'+'
 ;
 
-terminal CLASSIFIER:
+
+Classifier:
 	('{abstract}'|'{static}')
 ;
 
@@ -110,13 +153,6 @@ terminal HEXCODE:
 	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')
 ;
 
-terminal ARROWENDLEFT:
-	('<|' | '*' | 'o' | '<')? '-'|'.'
-;
-
-terminal ARROWENDRIGHT:
-	'-'|'.' ('|>' | '*' | 'o' | '>')?
-;
 
 // ===============================================================================================
 // ===============================================================================================
@@ -277,7 +313,7 @@ terminal NEWLINE:
 	'\r'? '\n';
 
 terminal ID:
-	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | '(' | ')') ('a'..'z' |
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '*' | '//' | '<' | '>' | '\\' | '(' | ')') ('a'..'z' |
 	'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | '(' | ')' | ':' | '.' | ',')*;
 
 	//terminal HTML:

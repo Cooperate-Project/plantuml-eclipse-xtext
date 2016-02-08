@@ -19,6 +19,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 
 	@Inject
     private IImageHelper imageHelper;
+    static int bla;
 
 	@Inject
 	new(org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider delegate) {
@@ -38,11 +39,11 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	}
 	
 	def text(Attribute attribute){
-		attribute.getName() + " with Type '" + attribute.type + "' and Visibility '" + attribute.visibility + "'";
+		attribute.getName() + " - Type:" + attribute.type + " Visibility:" + attribute.visibility + " Classifier:" + attribute.classifier;
 	}
 	
 	def text(Method method){
-		method.getName() + " with Type '" + method.type + "' and Visibility '" + method.visibility + "'";
+		method.getName() + " - Type:" + method.type + "' Visibility:" + method.visibility + " Classifier:" + method.classifier;
 	}
 	
 	def image(Attribute attribute){
