@@ -3,19 +3,16 @@
 */
 package plantuml.eclipse.ui.outline
 
-import org.eclipse.emf.ecore.EObject
-import org.eclipse.xtext.ui.editor.outline.IOutlineNode
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
 import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
-import plantuml.eclipse.puml.Alternative
-import plantuml.eclipse.puml.Participant
-import plantuml.eclipse.puml.UmlDiagram
-import plantuml.eclipse.puml.UmlElementsContainer
-import plantuml.eclipse.puml.UmlUse
-import plantuml.eclipse.puml.SequenceUml
-import plantuml.eclipse.puml.ClassConnection
+import org.eclipse.emf.ecore.EObject
 import plantuml.eclipse.puml.Class
-import plantuml.eclipse.puml.Attribute
+import plantuml.eclipse.puml.UmlDiagram
+import org.eclipse.xtext.ui.editor.outline.impl.AbstractOutlineNode
+import plantuml.eclipse.puml.ClassUml
+import plantuml.eclipse.puml.Connection
+import com.google.inject.Inject
+import org.eclipse.xtext.ui.IImageHelper
 
 /**
  * Customization of the default outline structure.
@@ -24,20 +21,36 @@ import plantuml.eclipse.puml.Attribute
  */
 class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-	/*
-	Integer UmlUseCounter = 0;
+	@Inject
+    private IImageHelper imageHelper;
 
-	def _createChildren(DocumentRootNode parentNode, UmlDiagram domainModel) {
-		UmlUseCounter = 0;
-
-		// Loop through Elements of Domain Model
-		for (EObject element : domainModel.umlDiagrams) {
-			// Could check for Instance -> element instanceof SequenceUml
-			createNode(parentNode, element);
+	AbstractOutlineNode classesParent;
+	AbstractOutlineNode connectionsParent;
+	
+	def _createChildren(DocumentRootNode parentNode, UmlDiagram root){
+		for(EObject umlDiagram : root.umlDiagrams){
+			// Contents of PlantUML Class Diagram
+			if(umlDiagram instanceof ClassUml){
+				// Create Root Nodes for Elements
+				classesParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("class_obj.png"), "Classes", false){}
+				connectionsParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("reference.png"), "Connections", false){}
+				// Loop through Class Elements
+				for(EObject umlClassElement : umlDiagram.umlElements){
+					if(umlClassElement instanceof Class){
+						createNode(classesParent, umlClassElement);
+					}
+					if(umlClassElement instanceof Connection){
+						createNode(connectionsParent, umlClassElement);
+					}
+				}
+			}
 		}
 	}
 
-	
+
+
+
+	/*
 	override _createNode(IOutlineNode parentNode, EObject modelElement) {
 		super._createNode(parentNode, modelElement);
 	}
@@ -48,5 +61,6 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	
 	def _text(Class element){
 		return "Name: " + element.name;
-	}*/
+	}
+	*/
 }

@@ -11,6 +11,9 @@ import plantuml.eclipse.puml.Method
 import org.eclipse.xtext.ui.IImageHelper
 import plantuml.eclipse.puml.Visibility
 import plantuml.eclipse.puml.Classifier
+import plantuml.eclipse.puml.Connection
+import plantuml.eclipse.puml.ConnectionLeft
+import plantuml.eclipse.puml.ConnectionRight
 
 /**
  * Provides labels for a EObjects.
@@ -39,6 +42,15 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	def text(ClassUml classUml) {
 		"Class Diagram";
 	}
+	
+	/*
+	 * Returns the label text for connections.
+	 */
+	 def text(Connection connection){
+		label = new StringBuffer();
+		label.append(connection.classFrom.name + " -> " + connection.classTo.name);
+		return label.toString();
+	 }
 
 	/*
 	 * Returns the label text for classes.

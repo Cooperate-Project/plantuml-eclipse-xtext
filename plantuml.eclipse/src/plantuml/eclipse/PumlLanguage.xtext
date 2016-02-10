@@ -12,7 +12,7 @@ UmlDiagram:
 	umlDiagrams+=ComponentUml*)
 	|
 	'CLASS'
-	umDiagrams+=ClassUml*;
+	umlDiagrams+=ClassUml*;
 
 UmlElementsContainer:
 	{UmlElementsContainer}
@@ -101,12 +101,12 @@ ConnectionLeft returns ClassConnection:
 
 Connection returns ClassConnection:
 	{Connection}
-	(classOne=[Class])
+	(classFrom=[Class])
 	(
 		('-' ColorTag? '-'?)		// !ColorTag
 		| ('.' ColorTag? '.'?)		// !ColorTag
 	)
-	ClassTwo=[Class] 
+	ClassTo=[Class] 
 	(':' text+=(ID)*)?
 ;
 
