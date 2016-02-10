@@ -49,9 +49,7 @@ ClassUml:
 
 ClassElement:
 	Class
-	| Connection
-	| ConnectionLeft
-	| ConnectionRight
+	| Association
 ;
 
 Class:
@@ -80,50 +78,79 @@ Method:
  * Verbindungen funktionieren aktuell nur mit definierten Klassen
  * Direkte Angabe über String nicht möglich
  */
-ClassConnection:
-	{ClassConnection}
-;
 
-ConnectionLeft returns ClassConnection:
-	{ConnectionLeft}
-	(classTo=[Class])
-	(
-		('<|-' ColorTag? '-'?)
-		| ('*-' ColorTag? '-'?)		// !ColorTag mit *--
-		| ('o-' ColorTag? '-'?)		// !ColorTag mit o--, mit ColorTag akzeptiert, aber Keywordproblem o-
-		| ('<|.' ColorTag? '.'?)
-		| ('*.' ColorTag? '.'?) 	// !ColorTag mit *..
-		| ('o.' ColorTag? '.'?)		// !ColorTag mit o.., mit ColorTag akzeptiert, aber Keywordproblem für o.
-	)
-	ClassFrom=[Class] 
+Association:
+	{Association}
+	(classFrom=[Class]
+	associationType=Bidirectional
+	classTo=[Class])
+	|
+	(classTo=[Class]
+	associationType=(UnidirectionalLeft|InheritanceRight|AggregationLeft|CompositionLeft)
+	classFrom=[Class])
+	|
+	(classFrom=[Class]
+	associationType=(UnidirectionalRight|InheritanceLeft|AggregationRight|CompositionRight)
+	classTo=[Class])
 	(':' text+=(ID)*)?
 ;
 
-Connection returns ClassConnection:
-	{Connection}
-	(classFrom=[Class])
-	(
-		('-' ColorTag? '-'?)		// !ColorTag
-		| ('.' ColorTag? '.'?)		// !ColorTag
-	)
-	ClassTo=[Class] 
-	(':' text+=(ID)*)?
+// ===============================================================
+/*
+ * Bidirectional Association: -- ..
+ * Unidirectional Association: <-- <.. --> ..>
+ * Aggregation: --o ..o o-- o..
+ * Composition: --* ..* *.. *--
+ * 
+ */
+
+Bidirectional:
+	('-' ColorTag? '-'?)		// !ColorTag
+	| ('.' ColorTag? '.'?)
 ;
 
-ConnectionRight returns ClassConnection:
-	{ConnectionRight}
-	(ClassFrom=[Class]) 
-		(
-		((('-' ColorTag)|'-')? '-|>')	// !ColorTag
-		| ((('-' ColorTag)|'-')? '-*')	// !ColorTag
-		| ((('-' ColorTag)|'-')? '-o')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem -o
-		| ((('.' ColorTag)|'.')? '.|>')	// !ColorTag
-		| ((('.' ColorTag)|'.')? '.*') 	// !ColorTag
-		| ((('.' ColorTag)|'.')? '.o')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem für .o
-	)
-	(classTo=[Class]) 
-	(':' text+=(ID)*)?
+UnidirectionalLeft:
+	('<-' ColorTag? '-'?)
+	| ('<.' ColorTag? '.'?)
 ;
+
+UnidirectionalRight:
+	((('-' ColorTag)|'-')? '->')
+	| ((('.' ColorTag)|'-')? '.>')
+;
+
+InheritanceLeft:
+	('<|-' ColorTag? '-'?)
+	| ('<|.' ColorTag? '.'?)
+;
+
+InheritanceRight:
+	((('-' ColorTag)|'-')? '-|>')
+	| ((('.' ColorTag)|'-')? '.|>')
+;
+
+AggregationLeft:
+	('o-' ColorTag? '-'?)		// !ColorTag mit o--, mit ColorTag akzeptiert, aber Keywordproblem o-
+	| ('o.' ColorTag? '.'?)		// !ColorTag mit o.., mit ColorTag akzeptiert, aber Keywordproblem für o.
+;
+
+AggregationRight:
+	((('-' ColorTag)|'-')? '-o')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem -o
+	| ((('.' ColorTag)|'.')? '.o')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem für .o
+;
+
+CompositionLeft:
+	('*-' ColorTag? '-'?)		// !ColorTag mit o--, mit ColorTag akzeptiert, aber Keywordproblem o-
+	| ('*.' ColorTag? '.'?)		// !ColorTag mit o.., mit ColorTag akzeptiert, aber Keywordproblem für o.
+;
+
+CompositionRight:
+	((('-' ColorTag)|'-')? '-*')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem -o
+	| ((('.' ColorTag)|'.')? '.*')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem für .o
+;
+
+
+// ===============================================================
 
 ColorTag:
 	'[#' (COLOR | HEXCODE) ']'

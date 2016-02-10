@@ -10,9 +10,9 @@ import plantuml.eclipse.puml.Class
 import plantuml.eclipse.puml.UmlDiagram
 import org.eclipse.xtext.ui.editor.outline.impl.AbstractOutlineNode
 import plantuml.eclipse.puml.ClassUml
-import plantuml.eclipse.puml.Connection
 import com.google.inject.Inject
 import org.eclipse.xtext.ui.IImageHelper
+import plantuml.eclipse.puml.Association
 
 /**
  * Customization of the default outline structure.
@@ -39,7 +39,7 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 					if(umlClassElement instanceof Class){
 						createNode(classesParent, umlClassElement);
 					}
-					if(umlClassElement instanceof Connection){
+					if(umlClassElement instanceof Association){
 						createNode(connectionsParent, umlClassElement);
 					}
 				}
