@@ -10,6 +10,7 @@ import plantuml.eclipse.puml.Attribute
 import plantuml.eclipse.puml.Method
 import org.eclipse.xtext.ui.IImageHelper
 import plantuml.eclipse.puml.Visibility
+import plantuml.eclipse.puml.Classifier
 
 /**
  * Provides labels for a EObjects.
@@ -45,8 +46,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	def text(Class someClass) {
 		label = new StringBuffer();
 		label.append(someClass.getName());
-		if(someClass.classifier != null){
-			label.append(" (" + someClass.classifier + ")");
+		if(someClass.classifier != Classifier.UNSPECIFIED){
+			if(someClass.classifier == Classifier.ABSTRACT){
+				label.append(" {abstract}");
+			}
+			if(someClass.classifier == Classifier.STATIC){
+				label.append(" {static}");
+			}
 		}
 		return label.toString();
 	}
@@ -60,8 +66,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 		if(attribute.type != null){
 			label.append(" : " + attribute.type);
 		}
-		if(attribute.classifier != null){
-			label.append(" (" + attribute.classifier + ")");
+		if(attribute.classifier != Classifier.UNSPECIFIED){
+			if(attribute.classifier == Classifier.ABSTRACT){
+				label.append(" {abstract}");
+			}
+			if(attribute.classifier == Classifier.STATIC){
+				label.append(" {static}");
+			}
 		}
 		return label.toString();
 	}
@@ -75,8 +86,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 		if(method.type != null){
 			label.append(" : " + method.type);
 		}
-		if(method.classifier != null){
-			label.append(" (" + method.classifier + ")");
+		if(method.classifier != Classifier.UNSPECIFIED){
+			if(method.classifier == Classifier.ABSTRACT){
+				label.append(" {abstract}");
+			}
+			if(method.classifier == Classifier.STATIC){
+				label.append(" {static}");
+			}
 		}
 		return label.toString();
 	}
@@ -102,7 +118,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 			imageHelper.getImage("field_private_obj.png");
 		}else if(attribute.visibility == Visibility.PUBLIC){
 			imageHelper.getImage("field_public_obj.png");
-		}else{
+		}else if(attribute.visibility == Visibility.DEFAULT){
 			imageHelper.getImage("field_default_obj.png");
 		}
 	}
@@ -117,7 +133,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 			imageHelper.getImage("methpri_obj.png");
 		}else if(method.visibility == Visibility.PUBLIC){
 			imageHelper.getImage("methpub_obj.png");
-		}else{
+		}else if(method.visibility == Visibility.DEFAULT){
 			imageHelper.getImage("methdef_obj.png");
 		}
 	}

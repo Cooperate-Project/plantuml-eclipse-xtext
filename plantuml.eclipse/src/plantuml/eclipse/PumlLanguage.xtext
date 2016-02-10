@@ -1,4 +1,4 @@
-grammar plantuml.eclipse.Puml hidden(WS, NEWLINE, SL_COMMENT)
+grammar plantuml.eclipse.Puml hidden(WS, NEWLINE, SL_COMMENT, ML_COMMENT)
 
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate puml "http://www.eclipse.plantuml/Puml"
@@ -56,7 +56,7 @@ ClassElement:
 
 Class:
 	{Class}
-	classifier=Classifier? 'class' name=ID ('{'
+	classifier='abstract'? 'class' name=ID ('{'
 	(classContents+=ClassContent)*
 	'}')?
 ;
@@ -67,61 +67,61 @@ ClassContent:
 
 Attribute:
 	{Attribute}
-	( ("{" classifier=Classifier "}")? (visibility=Visibility)? name=ID (":" type=ID)?
-	)
-	| (type=ID name=ID)
+	("{" classifier=Classifier "}")? (visibility=Visibility)? name=ID (":" type=ID)?
+;
+
+Method:
+	{Method}
+	 ("{" classifier=Classifier "}")? (visibility=Visibility)? name=METHID
+	 (":" type=ID)?
 ;
 
 /*
- * TODO: Wird nie als Pfad ausgewählt
+ * Verbindungen funktionieren aktuell nur mit definierten Klassen
+ * Direkte Angabe über String nicht möglich
  */
-Method:
-	{Method}
-	 ("{" classifier=Classifier "}")? (visibility=Visibility)? (type=ID)? name=ID '()'
-;
-
 ClassConnection:
 	{ClassConnection}
 ;
 
 ConnectionLeft returns ClassConnection:
 	{ConnectionLeft}
-	(classTo=[Class|ID])
+	(classTo=[Class])
 	(
-		('<|-' ColorTag? '-')
-		| ('*-' ColorTag? '-')	// !ColorTag
-		| ('o-' ColorTag? '-')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem o-
-		| ('<|.' ColorTag? '.')
-		| ('*.' ColorTag? '.') 	// !ColorTag
-		| ('o.' ColorTag? '.')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem für o.
+		('<|-' ColorTag? '-'?)
+		| ('*-' ColorTag? '-'?)		// !ColorTag mit *--
+		| ('o-' ColorTag? '-'?)		// !ColorTag mit o--, mit ColorTag akzeptiert, aber Keywordproblem o-
+		| ('<|.' ColorTag? '.'?)
+		| ('*.' ColorTag? '.'?) 	// !ColorTag mit *..
+		| ('o.' ColorTag? '.'?)		// !ColorTag mit o.., mit ColorTag akzeptiert, aber Keywordproblem für o.
 	)
-	ClassFrom=[Class|ID] 
+	ClassFrom=[Class] 
 	(':' text+=(ID)*)?
 ;
 
 Connection returns ClassConnection:
 	{Connection}
-	(classOne=[Class|ID])
+	(classOne=[Class])
 	(
-		('-' ColorTag? '-')		// !ColorTag
-		| ('.' ColorTag? '.')	// !ColorTag
+		('-' ColorTag? '-'?)		// !ColorTag
+		| ('.' ColorTag? '.'?)		// !ColorTag
 	)
-	ClassTwo=[Class|ID] 
+	ClassTwo=[Class] 
 	(':' text+=(ID)*)?
 ;
 
 ConnectionRight returns ClassConnection:
 	{ConnectionRight}
-	(ClassFrom=[Class|ID]) 
+	(ClassFrom=[Class]) 
 		(
-		('-' ColorTag? '-|>')
-		| ('-' ColorTag? '-*')	// !ColorTag
-		| ('-' ColorTag? '-o')	// // !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem -o
-		| ('.' ColorTag? '.|>')
-		| ('.' ColorTag? '.*') 	// !ColorTag
-		| ('.' ColorTag? '.o')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem für .o
+		((('-' ColorTag)|'-')? '-|>')	// !ColorTag
+		| ((('-' ColorTag)|'-')? '-*')	// !ColorTag
+		| ((('-' ColorTag)|'-')? '-o')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem -o
+		| ((('.' ColorTag)|'.')? '.|>')	// !ColorTag
+		| ((('.' ColorTag)|'.')? '.*') 	// !ColorTag
+		| ((('.' ColorTag)|'.')? '.o')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem für .o
 	)
-	(classTo=[Class|ID]) 
+	(classTo=[Class]) 
 	(':' text+=(ID)*)?
 ;
 
@@ -136,8 +136,10 @@ enum Visibility:
 	| PUBLIC='+'
 ;
 
-Classifier:
-	('abstract'|'static')
+enum Classifier:
+	UNSPECIFIED
+	| ABSTRACT='abstract'
+	| STATIC='static'
 ;
 
 terminal COLOR:
@@ -147,6 +149,21 @@ terminal COLOR:
 terminal HEXCODE:
 	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')
 	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')
+;
+
+terminal METHID:
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '*' | '//' | '<' | '>' | '\\') 
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | ':' | '.' | ',')*
+	"("
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | ':' | '.' | ',')*
+	")"
+;
+
+/*
+ * Funktioniert noch nicht
+ */
+terminal ML_COMMENT:
+	"//'" ('\r'? '\n')* "'//" 
 ;
 
 
@@ -309,8 +326,8 @@ terminal NEWLINE:
 	'\r'? '\n';
 
 terminal ID:
-	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '*' | '//' | '<' | '>' | '\\' | '(' | ')') ('a'..'z' |
-	'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | '(' | ')' | ':' | '.' | ',')*;
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '*' | '//' | '<' | '>' | '\\' | '(' | ')')
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | '(' | ')' | ':' | '.' | ',')*;
 
 	//terminal HTML:
 //	('a'..'z'|'A'..'Z'|'_'|'0'..'9'|'\"\"'|'-'|'~'|'*'|'//') ('a'..'z'|'A'..'Z'|'_'|'0'..'9'|'\"\"'|'-'|'~'|'*'|'//')*
