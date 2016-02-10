@@ -9,6 +9,7 @@ import plantuml.eclipse.puml.Class
 import plantuml.eclipse.puml.Attribute
 import plantuml.eclipse.puml.Method
 import org.eclipse.xtext.ui.IImageHelper
+import plantuml.eclipse.puml.Visibility
 
 /**
  * Provides labels for a EObjects.
@@ -19,58 +20,111 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 
 	@Inject
     private IImageHelper imageHelper;
-    static int bla;
+    private StringBuffer label;
+    
 
 	@Inject
 	new(org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
-
-	def text(Class someClass) {
-		someClass.getName();
-	}
 	
+	// ==================================================================================
+	// ========================== TEXTS FOR LABELS ======================================
+	// ==================================================================================
+
+	/*
+	 * Returns the label text for the PlantUML-Class-Group
+	 */
 	def text(ClassUml classUml) {
 		"Class Diagram";
 	}
+
+	/*
+	 * Returns the label text for classes.
+	 */
+	def text(Class someClass) {
+		label = new StringBuffer();
+		label.append(someClass.getName());
+		if(someClass.classifier != null){
+			label.append(" (" + someClass.classifier + ")");
+		}
+		return label.toString();
+	}
+		
+	/*
+	 * Returns the label text for attributes.
+	 */
+	def text(Attribute attribute){
+		label = new StringBuffer();
+		label.append(attribute.getName());
+		if(attribute.type != null){
+			label.append(" : " + attribute.type);
+		}
+		if(attribute.classifier != null){
+			label.append(" (" + attribute.classifier + ")");
+		}
+		return label.toString();
+	}
 	
+	/*
+	 * Returns the label text for methods.
+	 */
+	def text(Method method){
+		label = new StringBuffer();
+		label.append(method.getName());
+		if(method.type != null){
+			label.append(" : " + method.type);
+		}
+		if(method.classifier != null){
+			label.append(" (" + method.classifier + ")");
+		}
+		return label.toString();
+	}
+	
+	// ==================================================================================
+	// ======================= IMAGE ICONS FOR LABELS ===================================
+	// ==================================================================================
+	
+	/*
+	 * Returns the image for the PlantUML-Class-Group.
+	 */
 	def image(ClassUml classUml){
 		imageHelper.getImage("java_model_obj.png");
 	}
 	
-	def text(Attribute attribute){
-		attribute.getName() + " - Type:" + attribute.type + " Visibility:" + attribute.visibility + " Classifier:" + attribute.classifier;
-	}
-	
-	def text(Method method){
-		method.getName() + " - Type:" + method.type + "' Visibility:" + method.visibility + " Classifier:" + method.classifier;
-	}
-	
+	/*
+	 * Returns the images for attributes.
+	 */
 	def image(Attribute attribute){
-		if(attribute.visibility == '#'){
+		if(attribute.visibility == Visibility.PROTECTED){
 			imageHelper.getImage("field_protected_obj.png");
-		}else if(attribute.visibility == '-'){
+		}else if(attribute.visibility == Visibility.PRIVATE){
 			imageHelper.getImage("field_private_obj.png");
-		}else if(attribute.visibility == '+'){
+		}else if(attribute.visibility == Visibility.PUBLIC){
 			imageHelper.getImage("field_public_obj.png");
 		}else{
 			imageHelper.getImage("field_default_obj.png");
 		}
 	}
 	
+	/*
+	 * Returns the images for methods.
+	 */
 	def image(Method method){
-		if(method.visibility == '#'){
+		if(method.visibility == Visibility.PROTECTED){
 			imageHelper.getImage("methpro_obj.png");
-		}else if(method.visibility == '-'){
+		}else if(method.visibility == Visibility.PRIVATE){
 			imageHelper.getImage("methpri_obj.png");
-		}
-		else if(method.visibility == '+'){
+		}else if(method.visibility == Visibility.PUBLIC){
 			imageHelper.getImage("methpub_obj.png");
 		}else{
 			imageHelper.getImage("methdef_obj.png");
 		}
 	}
 	
+	/*
+	 * Returns the images for classes.
+	 */
 	def image(Class someClass){
 		imageHelper.getImage("class_obj.png");
 	}

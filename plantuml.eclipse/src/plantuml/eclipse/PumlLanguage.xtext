@@ -56,7 +56,7 @@ ClassElement:
 
 Class:
 	{Class}
-	'class' name=ID ('{'
+	classifier=Classifier? 'class' name=ID ('{'
 	(classContents+=ClassContent)*
 	'}')?
 ;
@@ -67,44 +67,44 @@ ClassContent:
 
 Attribute:
 	{Attribute}
-	( (classifier=Classifier)? (visibility=Visibility)? name=ID (":" type=ID)?
+	( ("{" classifier=Classifier "}")? (visibility=Visibility)? name=ID (":" type=ID)?
 	)
 	| (type=ID name=ID)
 ;
 
+/*
+ * TODO: Wird nie als Pfad ausgewählt
+ */
 Method:
 	{Method}
-	 (classifier=Classifier)? (visibility=Visibility)?(type=ID)? name=ID '()'
+	 ("{" classifier=Classifier "}")? (visibility=Visibility)? (type=ID)? name=ID '()'
 ;
 
 ClassConnection:
 	{ClassConnection}
 ;
 
-/*
- * TODO: Funktioniert ohne ColorTags nicht
- */
 ConnectionLeft returns ClassConnection:
 	{ConnectionLeft}
 	(classTo=[Class|ID])
 	(
 		('<|-' ColorTag? '-')
-		| ('*-' ColorTag? '-')
-		| ('o-' ColorTag? '-')
+		| ('*-' ColorTag? '-')	// !ColorTag
+		| ('o-' ColorTag? '-')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem o-
 		| ('<|.' ColorTag? '.')
-		| ('*.' ColorTag? '.')
-		| ('o.' ColorTag? '.')
+		| ('*.' ColorTag? '.') 	// !ColorTag
+		| ('o.' ColorTag? '.')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem für o.
 	)
 	ClassFrom=[Class|ID] 
 	(':' text+=(ID)*)?
 ;
 
 Connection returns ClassConnection:
-	{ConnectionLeft}
+	{Connection}
 	(classOne=[Class|ID])
 	(
-		('-' ColorTag? '-')
-		| ('.' ColorTag? '.')
+		('-' ColorTag? '-')		// !ColorTag
+		| ('.' ColorTag? '.')	// !ColorTag
 	)
 	ClassTwo=[Class|ID] 
 	(':' text+=(ID)*)?
@@ -115,11 +115,11 @@ ConnectionRight returns ClassConnection:
 	(ClassFrom=[Class|ID]) 
 		(
 		('-' ColorTag? '-|>')
-		| ('-' ColorTag? '-*')
-		| ('-' ColorTag? '-o')
+		| ('-' ColorTag? '-*')	// !ColorTag
+		| ('-' ColorTag? '-o')	// // !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem -o
 		| ('.' ColorTag? '.|>')
-		| ('.' ColorTag? '.*')
-		| ('.' ColorTag? '.o')
+		| ('.' ColorTag? '.*') 	// !ColorTag
+		| ('.' ColorTag? '.o')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem für .o
 	)
 	(classTo=[Class|ID]) 
 	(':' text+=(ID)*)?
@@ -129,17 +129,15 @@ ColorTag:
 	'[#' (COLOR | HEXCODE) ']'
 ;
 
-/*
- * TODO: Mit Enum lösen
- * TODO: Probleme mit # ohne Abstand
- */
-Visibility: 
-	'#'|'-'|'~'|'+'
+enum Visibility: 
+	PROTECTED='#'
+	| PRIVATE='-'
+	| DEFAULT='~'
+	| PUBLIC='+'
 ;
 
-
 Classifier:
-	('{abstract}'|'{static}')
+	('abstract'|'static')
 ;
 
 terminal COLOR:

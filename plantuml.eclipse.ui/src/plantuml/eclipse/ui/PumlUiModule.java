@@ -4,8 +4,10 @@
 package plantuml.eclipse.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
+import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 
+import plantuml.eclipse.ui.highlighting.PumlSemanticHighlightingCalculator;
 import plantuml.eclipse.ui.highlighting.PumlHighlightingConfiguration;
 
 /**
@@ -16,8 +18,11 @@ public class PumlUiModule extends plantuml.eclipse.ui.AbstractPumlUiModule {
 		super(plugin);
 	}
 	
-	public Class<? extends IHighlightingConfiguration> 
-    bindIHighlightingConfiguration() {
-     return PumlHighlightingConfiguration.class;
+	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
+		return PumlHighlightingConfiguration.class;
 	}
+	
+    public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
+    	return PumlSemanticHighlightingCalculator.class;
+    }
 }
