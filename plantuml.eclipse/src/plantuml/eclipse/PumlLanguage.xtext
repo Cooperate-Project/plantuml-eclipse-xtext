@@ -44,7 +44,7 @@ ClassUml:
 	'@enduml';
 	
 // ===============================================================================================
-// ============== CLASS DIAGRAMM =================================================================
+// ============== CLASS DIAGRAM ==================================================================
 // ===============================================================================================
 
 ClassElement:
@@ -52,11 +52,14 @@ ClassElement:
 	| Association
 ;
 
+/*
+ * Duplicate nicht erlaubt.
+ */
 Class:
 	{Class}
-	classifier='abstract'? 'class' name=ID ('{'
-	(classContents+=ClassContent)*
-	'}')?
+	(classifier='abstract')? 'class' name=ID
+	(color=ColorTag)?
+	('{' (classContents+=ClassContent)* '}')?
 ;
 
 ClassContent:
@@ -68,6 +71,9 @@ Attribute:
 	("{" classifier=Classifier "}")? (visibility=Visibility)? name=ID (":" type=ID)?
 ;
 
+/*
+ * Mit Pre und Postprocessor
+ */
 Method:
 	{Method}
 	 ("{" classifier=Classifier "}")? (visibility=Visibility)? name=METHID
@@ -105,55 +111,64 @@ Association:
  */
 
 Bidirectional:
-	('-' ColorTag? '-'?)		// !ColorTag
-	| ('.' ColorTag? '.'?)
+	{Bidrectional}
+	('-' ("[" color=ColorTag "]")? '-'?)
+	| ('.' ("[" color=ColorTag "]")? '.'?)
 ;
 
 UnidirectionalLeft:
-	('<-' ColorTag? '-'?)
-	| ('<.' ColorTag? '.'?)
+	{UnidirectionalLeft}
+	('<-' ("[" color=ColorTag "]")? '-'?)
+	| ('<.' ("[" color=ColorTag "]")? '.'?)
 ;
 
 UnidirectionalRight:
-	((('-' ColorTag)|'-')? '->')
-	| ((('.' ColorTag)|'-')? '.>')
+	{UnidirectionalRight}
+	((('-[' color=ColorTag "]")|'-')? '->')
+	| ((('.[' color=ColorTag "]")|'.')? '.>')
 ;
 
 InheritanceLeft:
-	('<|-' ColorTag? '-'?)
-	| ('<|.' ColorTag? '.'?)
+	{InheritanceLeft}
+	('<|-' ("[" color=ColorTag "]")? '-'?)
+	| ('<|.' ("[" color=ColorTag "]")? '.'?)
 ;
 
 InheritanceRight:
-	((('-' ColorTag)|'-')? '-|>')
-	| ((('.' ColorTag)|'-')? '.|>')
+	{InheritanceRight}
+	((('-[' color=ColorTag "]")|'-')? '-|>')
+	| ((('.[' color=ColorTag "]")|'.')? '.|>')
 ;
 
 AggregationLeft:
-	('o-' ColorTag? '-'?)		// !ColorTag mit o--, mit ColorTag akzeptiert, aber Keywordproblem o-
-	| ('o.' ColorTag? '.'?)		// !ColorTag mit o.., mit ColorTag akzeptiert, aber Keywordproblem für o.
+	{AggregationLeft}
+	('o-' ("[" color=ColorTag "]")? '-'?)
+	| ('o.' ("[" color=ColorTag "]")? '.'?)
 ;
 
 AggregationRight:
-	((('-' ColorTag)|'-')? '-o')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem -o
-	| ((('.' ColorTag)|'.')? '.o')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem für .o
+	{AggregationRight}
+	((('-[' color=ColorTag "]")|'-')? '-o')
+	| ((('.[' color=ColorTag "]")|'.')? '.o')
 ;
 
 CompositionLeft:
-	('*-' ColorTag? '-'?)		// !ColorTag mit o--, mit ColorTag akzeptiert, aber Keywordproblem o-
-	| ('*.' ColorTag? '.'?)		// !ColorTag mit o.., mit ColorTag akzeptiert, aber Keywordproblem für o.
+	{CompositionLeft}
+	('*-' ("[" color=ColorTag "]")? '-'?)
+	| ('*.' ("[" color=ColorTag "]")? '.'?)
 ;
 
 CompositionRight:
-	((('-' ColorTag)|'-')? '-*')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem -o
-	| ((('.' ColorTag)|'.')? '.*')	// !ColorTag, mit ColorTag akzeptiert, aber Keywordproblem für .o
+	{CompositionRight}
+	((('-[' color=ColorTag "]")|'-')? '-*')
+	| ((('.[' color=ColorTag "]")|'.')? '.*')
 ;
 
 
 // ===============================================================
 
 ColorTag:
-	'[#' (COLOR | HEXCODE) ']'
+	(COLOR | HEXCODE)
 ;
 
 enum Visibility: 
@@ -170,10 +185,12 @@ enum Classifier:
 ;
 
 terminal COLOR:
+	"#"
 	('red') | ('orange')
 ;
 
 terminal HEXCODE:
+	"#"
 	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')
 	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')
 ;

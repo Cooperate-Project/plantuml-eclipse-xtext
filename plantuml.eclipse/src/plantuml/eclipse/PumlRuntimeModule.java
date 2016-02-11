@@ -3,9 +3,15 @@
  */
 package plantuml.eclipse;
 
+import org.eclipse.xtext.validation.INamesAreUniqueValidationHelper;
+
+import plantuml.eclipse.validation.PumlNamesAreUniqueValidationHelper;
+
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 public class PumlRuntimeModule extends plantuml.eclipse.AbstractPumlRuntimeModule {
-
+	public Class<? extends INamesAreUniqueValidationHelper> bindNamesAreUniqueValidationHelper() {
+		return PumlNamesAreUniqueValidationHelper.class;
+	}
 }

@@ -25,7 +25,7 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
     private IImageHelper imageHelper;
 
 	AbstractOutlineNode classesParent;
-	AbstractOutlineNode connectionsParent;
+	AbstractOutlineNode associationsParent;
 	
 	def _createChildren(DocumentRootNode parentNode, UmlDiagram root){
 		for(EObject umlDiagram : root.umlDiagrams){
@@ -33,14 +33,14 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 			if(umlDiagram instanceof ClassUml){
 				// Create Root Nodes for Elements
 				classesParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("class_obj.png"), "Classes", false){}
-				connectionsParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("reference.png"), "Connections", false){}
+				associationsParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("reference.png"), "Assocations", false){}
 				// Loop through Class Elements
 				for(EObject umlClassElement : umlDiagram.umlElements){
 					if(umlClassElement instanceof Class){
 						createNode(classesParent, umlClassElement);
 					}
 					if(umlClassElement instanceof Association){
-						createNode(connectionsParent, umlClassElement);
+						createNode(associationsParent, umlClassElement);
 					}
 				}
 			}
