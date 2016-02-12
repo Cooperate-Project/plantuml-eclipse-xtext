@@ -52,12 +52,9 @@ ClassElement:
 	| Association
 ;
 
-/*
- * Duplicate nicht erlaubt.
- */
 Class:
 	{Class}
-	(classifier='abstract')? 'class' name=ID
+	(classifier='abstract')? 'class' name=(ID|STRING)
 	(color=ColorTag)?
 	('{' (classContents+=ClassContent)* '}')?
 ;
@@ -80,11 +77,14 @@ Method:
 	 (":" type=ID)?
 ;
 
-/*
- * Verbindungen funktionieren aktuell nur mit definierten Klassen
- * Direkte Angabe über String nicht möglich
+/* -------------------------------------------------------
+ * --------------------- Assoziationen -------------------
+ * Bidirectional Association: -- ..
+ * Unidirectional Association: <-- <.. --> ..>
+ * Aggregation: --o ..o o-- o..
+ * Composition: --* ..* *.. *--
+ * 
  */
-
 Association:
 	{Association}
 	(classFrom=[Class]
@@ -100,15 +100,6 @@ Association:
 	classTo=[Class])
 	(':' text+=(ID)*)?
 ;
-
-// ===============================================================
-/*
- * Bidirectional Association: -- ..
- * Unidirectional Association: <-- <.. --> ..>
- * Aggregation: --o ..o o-- o..
- * Composition: --* ..* *.. *--
- * 
- */
 
 Bidirectional:
 	{Bidrectional}
@@ -163,9 +154,6 @@ CompositionRight:
 	((('-[' color=ColorTag "]")|'-')? '-*')
 	| ((('.[' color=ColorTag "]")|'.')? '.*')
 ;
-
-
-// ===============================================================
 
 ColorTag:
 	(COLOR | HEXCODE)

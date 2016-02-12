@@ -3,8 +3,10 @@
  */
 package plantuml.eclipse;
 
+import org.eclipse.xtext.conversion.impl.AbstractDeclarativeValueConverterService;
 import org.eclipse.xtext.validation.INamesAreUniqueValidationHelper;
 
+import plantuml.eclipse.converter.PumlValueConverter;
 import plantuml.eclipse.validation.PumlNamesAreUniqueValidationHelper;
 
 /**
@@ -14,4 +16,8 @@ public class PumlRuntimeModule extends plantuml.eclipse.AbstractPumlRuntimeModul
 	public Class<? extends INamesAreUniqueValidationHelper> bindNamesAreUniqueValidationHelper() {
 		return PumlNamesAreUniqueValidationHelper.class;
 	}
+	public Class<? extends AbstractDeclarativeValueConverterService> bindAbstractDeclarativeValueConverterService(){
+		return PumlValueConverter.class;
+	}
+	
 }

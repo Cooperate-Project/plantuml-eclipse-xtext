@@ -48,8 +48,6 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 
-
-
 	/*
 	override _createNode(IOutlineNode parentNode, EObject modelElement) {
 		super._createNode(parentNode, modelElement);
@@ -57,10 +55,6 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	def _text(UmlUse element) {
 		return UmlUseCounter.toString() + ": " + element.text;
-	}
-	
-	def _text(Class element){
-		return "Name: " + element.name;
 	}
 	*/
 }
