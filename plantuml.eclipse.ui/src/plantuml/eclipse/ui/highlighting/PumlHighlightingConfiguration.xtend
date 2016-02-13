@@ -16,28 +16,29 @@ public class PumlHighlightingConfiguration implements IHighlightingConfiguration
 	public static final String DATATYPE_ID = "datatype";
 	public static final String CLASS_ID = "class";
 	
-	@Override
-	public void configure(IHighlightingConfigurationAcceptor acceptor) {
+	TextStyle textStyle = new TextStyle();
+	
+	override configure(IHighlightingConfigurationAcceptor acceptor) {
 		acceptor.acceptDefaultHighlighting(KEYWORD_ID, "Keyword", keywordTextStyle());
 		acceptor.acceptDefaultHighlighting(DATATYPE_ID, "DataType", dataTypeTextStyle());
 		acceptor.acceptDefaultHighlighting(CLASS_ID, "Class", classTextStyle());
 	}
 
-	public TextStyle keywordTextStyle(){
-		TextStyle textStyle = new TextStyle();
+	def TextStyle keywordTextStyle(){
+		textStyle = new TextStyle();
 		textStyle.setColor(new RGB(127,0,85));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 	
-	public TextStyle dataTypeTextStyle(){
-		TextStyle textStyle = new TextStyle();
+	def TextStyle dataTypeTextStyle(){
+		textStyle = new TextStyle();
 		textStyle.setStyle(SWT.ITALIC);
 		return textStyle;
 	}
 	
-	public TextStyle classTextStyle(){
-		TextStyle textStyle = new TextStyle();
+	def TextStyle classTextStyle(){
+		textStyle = new TextStyle();
 		textStyle.setColor(new RGB(245,147,0));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;

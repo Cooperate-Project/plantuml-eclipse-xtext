@@ -109,6 +109,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 		label.append(attribute.getName());
 		if(attribute.type != null){
 			label.append(" : " + attribute.type);
+			if(attribute.array){
+				label.append("[");
+				if(attribute.length >= 0){
+					label.append(attribute.length)
+				}
+				label.append("]");
+			}
 		}
 		if(attribute.classifier != Classifier.UNSPECIFIED){
 			if(attribute.classifier == Classifier.ABSTRACT){
@@ -129,6 +136,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 		label.append(method.getName());
 		if(method.type != null){
 			label.append(" : " + method.type);
+			if(method.array){
+				label.append("[");
+				if(method.length >= 0){
+					label.append(method.length)
+				}
+				label.append("]");
+			}
 		}
 		if(method.classifier != Classifier.UNSPECIFIED){
 			if(method.classifier == Classifier.ABSTRACT){

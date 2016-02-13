@@ -52,10 +52,14 @@ ClassElement:
 	| Association
 ;
 
+/**
+ * TODO: implements und extends mit mehreren Klassen
+ */
 Class:
 	{Class}
 	(classifier='abstract')? 'class' name=(ID|STRING)
 	(color=ColorTag)?
+	('implements' interfaces=[Class] | 'extends' superTypes=[Class])?
 	('{' (classContents+=ClassContent)* '}')?
 ;
 
@@ -65,7 +69,7 @@ ClassContent:
 
 Attribute:
 	{Attribute}
-	("{" classifier=Classifier "}")? (visibility=Visibility)? name=ID (":" type=ID)?
+	("{" classifier=Classifier "}")? (visibility=Visibility)? name=ID (":" type=ID (array?='[' (length=Int)? ']')?)?
 ;
 
 /*
@@ -74,7 +78,7 @@ Attribute:
 Method:
 	{Method}
 	 ("{" classifier=Classifier "}")? (visibility=Visibility)? name=METHID
-	 (":" type=ID)?
+	 (":" type=ID (array?='[' (length=Int)? ']')?)?
 ;
 
 /* -------------------------------------------------------
@@ -84,6 +88,7 @@ Method:
  * Aggregation: --o ..o o-- o..
  * Composition: --* ..* *.. *--
  * 
+ * TODO: Keine Loops in extends / implements
  */
 Association:
 	{Association}
@@ -198,6 +203,9 @@ terminal ML_COMMENT:
 	"//'" ('\r'? '\n')* "'//" 
 ;
 
+Int returns ecore::EInt: NUMBER;
+
+terminal NUMBER: '0'..'9'+;
 
 // ===============================================================================================
 // ===============================================================================================
