@@ -6,6 +6,7 @@ package plantuml.eclipse.ui.labeling
 import com.google.inject.Inject
 import plantuml.eclipse.puml.ClassUml
 import plantuml.eclipse.puml.Class
+import plantuml.eclipse.puml.Enum
 import plantuml.eclipse.puml.Attribute
 import plantuml.eclipse.puml.Method
 import org.eclipse.xtext.ui.IImageHelper
@@ -21,6 +22,7 @@ import plantuml.eclipse.puml.CompositionLeft
 import plantuml.eclipse.puml.CompositionRight
 import plantuml.eclipse.puml.InheritanceLeft
 import plantuml.eclipse.puml.InheritanceRight
+import plantuml.eclipse.puml.EnumConstant
 
 /**
  * Provides labels for a EObjects.
@@ -50,14 +52,29 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	// ========================== TEXTS FOR LABELS ======================================
 	// ==================================================================================
 
-	/*
+	/**
 	 * Returns the label text for the PlantUML-Class-Group
 	 */
 	def text(ClassUml classUml) {
 		"Class Diagram"
 	}
 	
-	/*
+	/**
+	 * Returns the label text for Enums.
+	 */
+	def text(Enum someEnum){
+		return someEnum.name
+	}
+	
+	/**
+	 * Returns the label text for enum constants.
+	 */
+	def text(EnumConstant enumConstant){
+		return enumConstant.name
+	}
+	
+	
+	/**
 	 * Returns the label text for connections.
 	 */
 	 def text(Association association){
@@ -89,7 +106,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 		return label.toString()
 	 }
 
-	/*
+	/**
 	 * Returns the label text for classes.
 	 */
 	def text(Class someClass) {
@@ -101,7 +118,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 		return label.toString()
 	}
 		
-	/*
+	/**
 	 * Returns the label text for attributes.
 	 */
 	def text(Attribute attribute){
@@ -111,7 +128,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 			label.append(" : " + attribute.type);
 			if(attribute.array){
 				label.append("[")
-				if(attribute.length >= 0){
+				if(attribute.length > 0){
 					label.append(attribute.length)
 				}
 				label.append("]")
@@ -128,7 +145,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 		return label.toString()
 	}
 	
-	/*
+	/**
 	 * Returns the label text for methods.
 	 */
 	def text(Method method){
@@ -159,14 +176,14 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	// ======================= IMAGE ICONS FOR LABELS ===================================
 	// ==================================================================================
 	
-	/*
+	/**
 	 * Returns the image for the PlantUML-Class-Group.
 	 */
 	def image(ClassUml classUml){
 		imageHelper.getImage("java_model_obj.png")
 	}
 	
-	/*
+	/**
 	 * Returns the images for attributes.
 	 */
 	def image(Attribute attribute){
@@ -181,7 +198,14 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 		}
 	}
 	
-	/*
+	/**
+	 * Returns the image für enum constants.
+	 */
+	 def image(EnumConstant enumConstant){
+	 	imageHelper.getImage("field_public_obj.png")
+	 }
+	
+	/**
 	 * Returns the images for methods.
 	 */
 	def image(Method method){
@@ -196,7 +220,14 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 		}
 	}
 	
-	/*
+	/**
+	 * Returns the image for enums.
+	 */
+	def image(Enum someEnum){
+		imageHelper.getImage("enum_obj.png");
+	}
+	
+	/**
 	 * Returns the images for classes.
 	 */
 	def image(Class someClass){

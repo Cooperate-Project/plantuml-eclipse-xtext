@@ -2,8 +2,8 @@ package plantuml.eclipse.validation
 
 import org.eclipse.xtext.validation.Check
 import plantuml.eclipse.puml.Class
+import plantuml.eclipse.puml.EnumConstant
 import plantuml.eclipse.puml.PumlPackage
-import plantuml.eclipse.puml.Method
 import java.util.HashSet
 
 /**
@@ -29,15 +29,8 @@ class PumlValidator extends AbstractPumlValidator {
 	}
 	
 	/**
-	 * Checks for non-capital letters in first character of class names.
+	 * Helper method for checkNoCycleClassHierarchy.
 	 */
-	@Check
-	def checkForFirstLetterCapitalClass(Class someClass) {
-		if(!Character.isUpperCase(someClass.name.charAt(0))){
-			warning("First capitals of classes should be capital letters", PumlPackage::eINSTANCE.class_Name)
-		}
-	}
-	 
 	def boolean checkSuperTypesForCycle(HashSet<Class> visited, Class someClass) {
 		for(Class current : someClass.superTypes){
 	 		if(visited.contains(current)){
@@ -51,6 +44,29 @@ class PumlValidator extends AbstractPumlValidator {
 	 	}
 	 	return false
 	 }
+	
+	/**
+	 * Checks for non-capital letters in first character of class names.
+	 */
+	@Check
+	def checkForFirstLetterCapitalClass(Class someClass) {
+		if(!Character.isUpperCase(someClass.name.charAt(0))){
+			warning("First capitals of classes should be capital letters", PumlPackage::eINSTANCE.class_Name)
+		}
+	}
+	 
+	/**
+	 * Checks for non-capital letters in enum constant names.
+	 */
+	@Check
+	def checkForFirstLetterCapitalClass(EnumConstant someEnum) {
+		for(var i = 0; i < someEnum.name.length;i++){
+			if(!Character.isUpperCase(someEnum.name.charAt(i))){
+				warning("Enum constants should be upper case", PumlPackage::eINSTANCE.enum_Name)
+				return
+			}
+		}
+	}
 	 
 	 
 	 

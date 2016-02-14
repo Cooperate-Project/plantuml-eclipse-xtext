@@ -7,6 +7,7 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider
 import org.eclipse.xtext.ui.editor.outline.impl.DocumentRootNode
 import org.eclipse.emf.ecore.EObject
 import plantuml.eclipse.puml.Class
+import plantuml.eclipse.puml.Enum
 import plantuml.eclipse.puml.UmlDiagram
 import org.eclipse.xtext.ui.editor.outline.impl.AbstractOutlineNode
 import plantuml.eclipse.puml.ClassUml
@@ -25,19 +26,30 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
     private IImageHelper imageHelper;
 
 	AbstractOutlineNode classesParent;
+	AbstractOutlineNode interfacesParent;
+	AbstractOutlineNode enumsParent;
 	AbstractOutlineNode associationsParent;
 	
-	def _createChildren(DocumentRootNode parentNode, UmlDiagram root){
+	def _createChildren(DocumentRootNode parentNode, UmlDiagram root) {
 		for(EObject umlDiagram : root.umlDiagrams){
 			// Contents of PlantUML Class Diagram
 			if(umlDiagram instanceof ClassUml){
 				// Create Root Nodes for Elements
 				classesParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("class_obj.png"), "Classes", false){}
+				interfacesParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("int_obj.png"), "Interfaces", false){}
+				enumsParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("enum_obj.png"), "Enums", false){}
 				associationsParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("reference.png"), "Assocations", false){}
 				// Loop through Class Elements
 				for(EObject umlClassElement : umlDiagram.umlElements){
 					if(umlClassElement instanceof Class){
-						createNode(classesParent, umlClassElement);
+						if(umlClassElement.interface){
+							createNode(interfacesParent, umlClassElement)
+						}else{
+							createNode(classesParent, umlClassElement);
+						}
+					}
+					if(umlClassElement instanceof Enum){
+						createNode(enumsParent, umlClassElement);
 					}
 					if(umlClassElement instanceof Association){
 						createNode(associationsParent, umlClassElement);

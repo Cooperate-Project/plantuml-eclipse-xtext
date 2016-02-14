@@ -49,6 +49,7 @@ ClassUml:
 
 ClassElement:
 	Class
+	| Enum
 	| Association
 ;
 
@@ -63,14 +64,25 @@ Class:
 	{Class}
 	(classifier='abstract')? ('class' | interface?='interface') name=(ID|STRING)
 	(color=ColorTag)?
-	(('extends' superTypes+=[Class] (',' superTypes+=[Class])?)
+	(('extends' superTypes+=[Class] (',' superTypes+=[Class])*)
 	| ('implements' interfaces+=[Class] (',' interfaces+=[Class])?)
-	| ('extends' superTypes+=[Class] (',' superTypes+=[Class])? 'implements' interfaces+=[Class] (',' interfaces+=[Class])?))?
+	| ('extends' superTypes+=[Class] (',' superTypes+=[Class])* 'implements' interfaces+=[Class] (',' interfaces+=[Class])*))?
 	('{' (classContents+=ClassContent)* '}')?
 ;
 
 ClassContent:
 	Attribute | Method
+;
+
+Enum:
+	{Enum}
+	'enum' name=ID
+	('{' enumConstants+=EnumConstant (',' enumConstants+=EnumConstant)* '}')?
+;
+
+EnumConstant:
+	{EnumConstant}
+	name=ID
 ;
 
 Attribute:
