@@ -30,8 +30,8 @@ import plantuml.eclipse.puml.InheritanceRight
 class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider {
 
 	@Inject
-    private IImageHelper imageHelper;
-    private StringBuffer label;
+    private IImageHelper imageHelper
+    private StringBuffer label
     
     // association representations in outline
     private static final String BIDIRECTIONAL = "--"
@@ -54,105 +54,105 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 * Returns the label text for the PlantUML-Class-Group
 	 */
 	def text(ClassUml classUml) {
-		"Class Diagram";
+		"Class Diagram"
 	}
 	
 	/*
 	 * Returns the label text for connections.
 	 */
 	 def text(Association association){
-		label = new StringBuffer();
+		label = new StringBuffer()
 		label.append(association.classFrom.name + " ");
 		// Which association do we have?
 		if(association.associationType instanceof Bidirectional){
-			label.append(BIDIRECTIONAL);
+			label.append(BIDIRECTIONAL)
 		}else if(association.associationType instanceof UnidirectionalLeft
 			|| association.associationType instanceof UnidirectionalRight){
-			label.append(UNIDIRECTIONAL);
+			label.append(UNIDIRECTIONAL)
 		}else if(association.associationType instanceof AggregationLeft
 			|| association.associationType instanceof AggregationRight){
-			label.append(AGGREGATION);
+			label.append(AGGREGATION)
 		}else if(association.associationType instanceof CompositionLeft
 			|| association.associationType instanceof CompositionRight){
-			label.append(COMPOSITION);
+			label.append(COMPOSITION)
 		}else if(association.associationType instanceof InheritanceLeft
 			|| association.associationType instanceof InheritanceRight){
-			label.append(INHERITANCE);
+			label.append(INHERITANCE)
 		}
 		label.append(" " + association.classTo.name);
 		if(association.text.length != 0){
-			label.append(" : ");
+			label.append(" : ")
 			for(String text : association.text){
-				label.append(text);
+				label.append(text)
 			}
 		}
-		return label.toString();
+		return label.toString()
 	 }
 
 	/*
 	 * Returns the label text for classes.
 	 */
 	def text(Class someClass) {
-		label = new StringBuffer();
-		label.append(someClass.getName());
+		label = new StringBuffer()
+		label.append(someClass.getName())
 		if(someClass.classifier != null){
-			label.append(" {abstract}");
+			label.append(" {abstract}")
 		}
-		return label.toString();
+		return label.toString()
 	}
 		
 	/*
 	 * Returns the label text for attributes.
 	 */
 	def text(Attribute attribute){
-		label = new StringBuffer();
-		label.append(attribute.getName());
+		label = new StringBuffer()
+		label.append(attribute.getName())
 		if(attribute.type != null){
 			label.append(" : " + attribute.type);
 			if(attribute.array){
-				label.append("[");
+				label.append("[")
 				if(attribute.length >= 0){
 					label.append(attribute.length)
 				}
-				label.append("]");
+				label.append("]")
 			}
 		}
 		if(attribute.classifier != Classifier.UNSPECIFIED){
 			if(attribute.classifier == Classifier.ABSTRACT){
-				label.append(" {abstract}");
+				label.append(" {abstract}")
 			}
 			if(attribute.classifier == Classifier.STATIC){
-				label.append(" {static}");
+				label.append(" {static}")
 			}
 		}
-		return label.toString();
+		return label.toString()
 	}
 	
 	/*
 	 * Returns the label text for methods.
 	 */
 	def text(Method method){
-		label = new StringBuffer();
-		label.append(method.getName());
+		label = new StringBuffer()
+		label.append(method.getName())
 		if(method.type != null){
 			label.append(" : " + method.type);
 			if(method.array){
-				label.append("[");
+				label.append("[")
 				if(method.length >= 0){
 					label.append(method.length)
 				}
-				label.append("]");
+				label.append("]")
 			}
 		}
 		if(method.classifier != Classifier.UNSPECIFIED){
 			if(method.classifier == Classifier.ABSTRACT){
-				label.append(" {abstract}");
+				label.append(" {abstract}")
 			}
 			if(method.classifier == Classifier.STATIC){
-				label.append(" {static}");
+				label.append(" {static}")
 			}
 		}
-		return label.toString();
+		return label.toString()
 	}
 	
 	// ==================================================================================
@@ -163,7 +163,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 * Returns the image for the PlantUML-Class-Group.
 	 */
 	def image(ClassUml classUml){
-		imageHelper.getImage("java_model_obj.png");
+		imageHelper.getImage("java_model_obj.png")
 	}
 	
 	/*
@@ -171,13 +171,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	def image(Attribute attribute){
 		if(attribute.visibility == Visibility.PROTECTED){
-			imageHelper.getImage("field_protected_obj.png");
+			imageHelper.getImage("field_protected_obj.png")
 		}else if(attribute.visibility == Visibility.PRIVATE){
-			imageHelper.getImage("field_private_obj.png");
+			imageHelper.getImage("field_private_obj.png")
 		}else if(attribute.visibility == Visibility.PUBLIC){
-			imageHelper.getImage("field_public_obj.png");
+			imageHelper.getImage("field_public_obj.png")
 		}else if(attribute.visibility == Visibility.DEFAULT){
-			imageHelper.getImage("field_default_obj.png");
+			imageHelper.getImage("field_default_obj.png")
 		}
 	}
 	
@@ -186,13 +186,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	def image(Method method){
 		if(method.visibility == Visibility.PROTECTED){
-			imageHelper.getImage("methpro_obj.png");
+			imageHelper.getImage("methpro_obj.png")
 		}else if(method.visibility == Visibility.PRIVATE){
-			imageHelper.getImage("methpri_obj.png");
+			imageHelper.getImage("methpri_obj.png")
 		}else if(method.visibility == Visibility.PUBLIC){
-			imageHelper.getImage("methpub_obj.png");
+			imageHelper.getImage("methpub_obj.png")
 		}else if(method.visibility == Visibility.DEFAULT){
-			imageHelper.getImage("methdef_obj.png");
+			imageHelper.getImage("methdef_obj.png")
 		}
 	}
 	
@@ -200,7 +200,11 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 * Returns the images for classes.
 	 */
 	def image(Class someClass){
-		imageHelper.getImage("class_obj.png");
+		if(someClass.interface){
+			imageHelper.getImage("int_obj.png")
+		}else{
+			imageHelper.getImage("class_obj.png")
+		}
 	}
 
 	

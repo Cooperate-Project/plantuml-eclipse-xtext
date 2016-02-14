@@ -53,13 +53,19 @@ ClassElement:
 ;
 
 /**
- * TODO: implements und extends mit mehreren Klassen
+ * Kombinationen die möglich sind:
+ * class A
+ * class A implements B
+ * class A extends B
+ * class A implements B extends C
  */
 Class:
 	{Class}
-	(classifier='abstract')? 'class' name=(ID|STRING)
+	(classifier='abstract')? ('class' | interface?='interface') name=(ID|STRING)
 	(color=ColorTag)?
-	('implements' interfaces=[Class] | 'extends' superTypes=[Class])?
+	(('extends' superTypes+=[Class] (',' superTypes+=[Class])?)
+	| ('implements' interfaces+=[Class] (',' interfaces+=[Class])?)
+	| ('extends' superTypes+=[Class] (',' superTypes+=[Class])? 'implements' interfaces+=[Class] (',' interfaces+=[Class])?))?
 	('{' (classContents+=ClassContent)* '}')?
 ;
 
@@ -367,7 +373,7 @@ terminal NEWLINE:
 
 terminal ID:
 	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '*' | '//' | '<' | '>' | '\\' | '(' | ')')
-	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | '(' | ')' | ':' | '.' | ',')*;
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | '(' | ')' | ':' | '.')*;
 
 	//terminal HTML:
 //	('a'..'z'|'A'..'Z'|'_'|'0'..'9'|'\"\"'|'-'|'~'|'*'|'//') ('a'..'z'|'A'..'Z'|'_'|'0'..'9'|'\"\"'|'-'|'~'|'*'|'//')*
