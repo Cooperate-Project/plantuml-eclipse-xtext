@@ -3,24 +3,68 @@
 */
 package plantuml.eclipse.ui.quickfix
 
-//import org.eclipse.xtext.ui.editor.quickfix.Fix
-//import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
-//import org.eclipse.xtext.validation.Issue
+import plantuml.eclipse.validation.PumlValidator
+import org.eclipse.xtext.ui.editor.quickfix.Fix
+import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
+import org.eclipse.xtext.validation.Issue
 
 /**
  * Custom quickfixes.
  *
- * see http://www.eclipse.org/Xtext/documentation.html#quickfixes
  */
 class PumlQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
 
-//	@Fix(MyDslValidator::INVALID_NAME)
-//	def capitalizeName(Issue issue, IssueResolutionAcceptor acceptor) {
-//		acceptor.accept(issue, 'Capitalize name', 'Capitalize the name.', 'upcase.png') [
-//			context |
-//			val xtextDocument = context.xtextDocument
-//			val firstLetter = xtextDocument.get(issue.offset, 1)
-//			xtextDocument.replace(issue.offset, 1, firstLetter.toUpperCase)
-//		]
-//	}
+	/**
+	 * Remove super type if a cycle is detected.
+	 */
+	 @Fix(PumlValidator::HIERARCHY_CYCLE)
+	 def removeSuperTypes(Issue issue, IssueResolutionAcceptor acceptor){
+	 	
+	 	acceptor.accept(issue,
+	 		"Remove supertypes from this class",
+	 		"Remove supertypes '" + issue.data.get(0) + "'",
+	 		"rem_co.gif",
+	 		[
+				context |
+				val xtextDocument = context.xtextDocument
+				xtextDocument.replace(issue.offset, issue.length, "")
+	 		]
+	 	)
+	 }
+
+	/**
+	 * Capitalize all chars of an enum constant name.
+	 */
+	@Fix(PumlValidator::INVALID_ENUM_CONSTANT_NAME)
+	def capitalizeEnumConstantName(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue,
+			"Capitalize enum constant name",
+			"Capitalize name of '" + issue.data.get(0) + "'",
+			"enum_obj.png",
+			[
+				context |
+				val xtextDocument = context.xtextDocument
+				val name = xtextDocument.get(issue.offset, issue.length)
+				xtextDocument.replace(issue.offset, issue.length, name.toUpperCase)
+			]
+		)
+	}
+	
+	/**
+	 * Capitalize first letter of a class name.
+	 */
+	@Fix(PumlValidator::INVALID_CLASS_NAME)
+	def capitalizeFirstLetterClassName(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue,
+			"Capitalize class name",
+			"Capitalize name of '" + issue.data.get(0) + "'",
+			"class_obj.png",
+			[
+				context |
+				val xtextDocument = context.xtextDocument
+				val firstLetter = xtextDocument.get(issue.offset, 1)
+				xtextDocument.replace(issue.offset, 1, firstLetter.toFirstUpper)
+			]
+		)
+	}
 }

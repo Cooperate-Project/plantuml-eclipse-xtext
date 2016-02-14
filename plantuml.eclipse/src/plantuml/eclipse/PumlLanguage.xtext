@@ -62,7 +62,7 @@ ClassElement:
  */
 Class:
 	{Class}
-	(classifier='abstract')? ('class' | interface?='interface') name=(ID|STRING)
+	(classifier='abstract')? ('class' | interface?='interface') name=ClassName
 	(color=ColorTag)?
 	(('extends' superTypes+=[Class] (',' superTypes+=[Class])*)
 	| ('implements' interfaces+=[Class] (',' interfaces+=[Class])?)
@@ -72,6 +72,10 @@ Class:
 
 ClassContent:
 	Attribute | Method
+;
+
+ClassName:
+	(ID | STRING)
 ;
 
 Enum:
