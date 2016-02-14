@@ -7,6 +7,14 @@ import plantuml.eclipse.validation.PumlValidator
 import org.eclipse.xtext.ui.editor.quickfix.Fix
 import org.eclipse.xtext.ui.editor.quickfix.IssueResolutionAcceptor
 import org.eclipse.xtext.validation.Issue
+import org.eclipse.ui.internal.Model
+import plantuml.eclipse.puml.UmlDiagram
+import plantuml.eclipse.puml.Class
+import plantuml.eclipse.puml.ClassUml
+import plantuml.eclipse.puml.ClassElement
+import org.eclipse.xtext.EcoreUtil2
+import plantuml.eclipse.puml.PumlFactory
+import org.eclipse.xtext.diagnostics.Diagnostic
 
 /**
  * Custom quickfixes.
@@ -67,4 +75,39 @@ class PumlQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQ
 			]
 		)
 	}
+	
+	/**
+	 * Create missing class for a cross reference.
+	 * TODO: Currently destroys formating of code
+	 */
+	@Fix(Diagnostic::LINKING_DIAGNOSTIC)
+	def createMissingClass(Issue issue, IssueResolutionAcceptor acceptor) {
+		acceptor.accept(issue,
+			"Create missing class",
+			"Create missing class",
+			"class_obj.png",
+			[
+				element, context |
+				val currentClass = EcoreUtil2.getContainerOfType(element, ClassElement)
+				val model = currentClass.eContainer as ClassUml
+				model.umlElements.add(
+					model.umlElements.indexOf(currentClass)+1,
+					PumlFactory::eINSTANCE.createClass() => [
+						name = context.xtextDocument.get(issue.offset, issue.length)
+					]
+				)
+			]
+		)
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

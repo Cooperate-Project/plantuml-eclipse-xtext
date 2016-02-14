@@ -23,6 +23,7 @@ import plantuml.eclipse.puml.CompositionRight
 import plantuml.eclipse.puml.InheritanceLeft
 import plantuml.eclipse.puml.InheritanceRight
 import plantuml.eclipse.puml.EnumConstant
+import org.eclipse.jface.viewers.StyledString
 
 /**
  * Provides labels for a EObjects.
@@ -122,10 +123,11 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 * Returns the label text for attributes.
 	 */
 	def text(Attribute attribute){
-		label = new StringBuffer()
-		label.append(attribute.getName())
+		var styledLabel = new StyledString()
+		styledLabel.append(attribute.getName())
+		label = new StringBuffer();
 		if(attribute.type != null){
-			label.append(" : " + attribute.type);
+			label.append(" : " + attribute.type)
 			if(attribute.array){
 				label.append("[")
 				if(attribute.length > 0){
@@ -142,17 +144,19 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 				label.append(" {static}")
 			}
 		}
-		return label.toString()
+		styledLabel.append(new StyledString(label.toString(), StyledString::DECORATIONS_STYLER))
+		return styledLabel
 	}
 	
 	/**
 	 * Returns the label text for methods.
 	 */
 	def text(Method method){
+		var styledLabel = new StyledString()
+		styledLabel.append(method.getName())
 		label = new StringBuffer()
-		label.append(method.getName())
 		if(method.type != null){
-			label.append(" : " + method.type);
+			label.append(" : " + method.type)
 			if(method.array){
 				label.append("[")
 				if(method.length >= 0){
@@ -169,7 +173,8 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 				label.append(" {static}")
 			}
 		}
-		return label.toString()
+		styledLabel.append(new StyledString(label.toString(), StyledString::DECORATIONS_STYLER))
+		return styledLabel
 	}
 	
 	// ==================================================================================
