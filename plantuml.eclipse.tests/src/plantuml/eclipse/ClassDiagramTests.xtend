@@ -249,9 +249,6 @@ class ClassDiagramTests {
 			@enduml
 		'''.parse
 		val classUml = heros.umlDiagrams.head as ClassUml
-		val classA = classUml.umlElements.get(0) as Class
-		val interfaceI = classUml.umlElements.get(1) as Class
-		val interfaceJ = classUml.umlElements.get(2) as Class
 		val classB = classUml.umlElements.get(3) as Class
 		val classC = classUml.umlElements.get(4) as Class
 		val classD = classUml.umlElements.get(5) as Class

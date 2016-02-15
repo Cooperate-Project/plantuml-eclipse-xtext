@@ -2,10 +2,18 @@ package plantuml.eclipse.ui.highlighting
 
 import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor
 import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator
-import org.eclipse.xtext.nodemodel.INode
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.util.CancelIndicator
 import plantuml.eclipse.puml.Class
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import java.util.Iterator
+import org.eclipse.emf.ecore.EObject
+import plantuml.eclipse.puml.PumlPackage
+import plantuml.eclipse.puml.Attribute
+import plantuml.eclipse.puml.Method
+import plantuml.eclipse.puml.EnumConstant
+import org.eclipse.emf.ecore.EStructuralFeature
+import plantuml.eclipse.puml.Association
 
 /**
  * Uses the IDs from the HighlightingConfigurator and colors the regions of code.
@@ -13,20 +21,44 @@ import plantuml.eclipse.puml.Class
  */
 class PumlSemanticHighlightingCalculator implements ISemanticHighlightingCalculator {
 	
-	INode root;
-
+	Iterator<EObject> contents;
+	EObject element;
+	
 	override provideHighlightingFor(XtextResource resource, IHighlightedPositionAcceptor acceptor, CancelIndicator cancelor) {
-		if(resource != null || resource.getParseResult() == null){
+		if(resource == null || resource.getParseResult() == null){
 			return;
 		}
-		// Loop through all the elements
-		root = resource.getParseResult().getRootNode();
-		for(INode node : root.getAsTreeIterable()){
-			if(node.getGrammarElement() instanceof Class){
-		    	acceptor.addPosition(node.getOffset(), node.getLength(), PumlHighlightingConfiguration.CLASS_ID);
-			}
+		
+		// Loop through contents
+		for(contents = resource.getAllContents(); contents.hasNext(); ) 
+        {
+            element = contents.next();
+            if (element instanceof Class){
+            	highlightNode(element, PumlPackage.Literals.CLASS__NAME, PumlHighlightingConfiguration.CLASS_ID, acceptor)
+            }
+            if (element instanceof Attribute){
+            	highlightNode(element, PumlPackage.Literals.CLASS_CONTENT__NAME, PumlHighlightingConfiguration.ATTRIBUTE_ID, acceptor)
+            	highlightNode(element, PumlPackage.Literals.CLASS_CONTENT__TYPE, PumlHighlightingConfiguration.TYPE_ID, acceptor)
+            }
+            if(element instanceof Method){
+            	highlightNode(element, PumlPackage.Literals.CLASS_CONTENT__NAME, PumlHighlightingConfiguration.METHOD_ID, acceptor)
+            	highlightNode(element, PumlPackage.Literals.CLASS_CONTENT__TYPE, PumlHighlightingConfiguration.TYPE_ID, acceptor)
+            }
+            if(element instanceof EnumConstant){
+            	highlightNode(element, PumlPackage.Literals.ENUM_CONSTANT__NAME, PumlHighlightingConfiguration.CONSTANT_ID, acceptor)
+            }
+            if(element instanceof Association){
+            	highlightNode(element, PumlPackage.Literals.ASSOCIATION__CLASS_FROM, PumlHighlightingConfiguration.CLASS_ID, acceptor)
+            	highlightNode(element, PumlPackage.Literals.ASSOCIATION__CLASS_TO, PumlHighlightingConfiguration.CLASS_ID, acceptor)
+            }
+        }
+    }
+    
+    def highlightNode(EObject element, EStructuralFeature feature, String id, IHighlightedPositionAcceptor acceptor){
+    	// Search for features and highlight them
+    	for (node : NodeModelUtils.findNodesForFeature(element, feature)){
+			acceptor.addPosition(node.getOffset(), node.getLength(), id)
 		}
-	}
-	
+    }	
 	
 }
