@@ -30,7 +30,7 @@ import plantuml.eclipse.puml.SequenceUml
 
 @RunWith(XtextRunner)
 @InjectWith(PumlInjectorProvider)
-class SimpleParsingTest {
+class SequenceDiagramTests {
 
 	@Inject extension ParseHelper<UmlDiagram>
 

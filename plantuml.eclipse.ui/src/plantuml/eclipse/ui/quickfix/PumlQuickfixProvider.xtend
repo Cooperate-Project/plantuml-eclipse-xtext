@@ -23,19 +23,25 @@ import org.eclipse.xtext.diagnostics.Diagnostic
 class PumlQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
 
 	/**
+	 * TODO: Remove correctly for several supertypes.
 	 * Remove super type if a cycle is detected.
 	 */
 	 @Fix(PumlValidator::HIERARCHY_CYCLE)
 	 def removeSuperTypes(Issue issue, IssueResolutionAcceptor acceptor){
 	 	
 	 	acceptor.accept(issue,
-	 		"Remove supertypes from this class",
-	 		"Remove supertypes '" + issue.data.get(0) + "'",
+	 		"Remove supertype from this class",
+	 		"Remove supertype '" + issue.data.get(0) + "'",
 	 		"rem_co.gif",
 	 		[
 				context |
 				val xtextDocument = context.xtextDocument
-				xtextDocument.replace(issue.offset, issue.length, "")
+				val textBeforeSuperType = xtextDocument.get(issue.offset - 8, 7)
+				if(textBeforeSuperType.equals("extends")){
+					xtextDocument.replace(issue.offset -8, issue.length+8, "")
+				}else{
+					xtextDocument.replace(issue.offset -2, issue.length, "")
+				}
 	 		]
 	 	)
 	 }
@@ -78,7 +84,7 @@ class PumlQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQ
 	
 	/**
 	 * Create missing class for a cross reference.
-	 * TODO: Currently destroys formating of code
+	 * TODO: Currently messes up formating of code.
 	 */
 	@Fix(Diagnostic::LINKING_DIAGNOSTIC)
 	def createMissingClass(Issue issue, IssueResolutionAcceptor acceptor) {

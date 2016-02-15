@@ -17,6 +17,7 @@ class PumlValidator extends AbstractPumlValidator {
 	public static val INVALID_CLASS_NAME = "plantuml.eclipse.puml.InvalidClassName"
 
 	/**
+	 * TODO: Mark correctly for several super types.
 	 * Checks for cycles in super type hierarchy.
 	 * Example for Error:
 	 * class A extends B
@@ -38,7 +39,11 @@ class PumlValidator extends AbstractPumlValidator {
 	def boolean checkSuperTypesForCycle(HashSet<Class> visited, Class someClass) {
 		for(Class current : someClass.superTypes){
 	 		if(visited.contains(current)){
-	 			warning("Cycle in hierarchy of class '" + someClass.name + "'", PumlPackage::eINSTANCE.class_SuperTypes, HIERARCHY_CYCLE, someClass.name)
+	 			warning("Cycle in hierarchy of class '" + someClass.name + "'", 
+	 				PumlPackage::eINSTANCE.class_SuperTypes, 
+	 				HIERARCHY_CYCLE, 
+	 				someClass.name
+	 			)
 	 			return true
 	 		}else{
 	 			val newVisited = visited
@@ -55,7 +60,11 @@ class PumlValidator extends AbstractPumlValidator {
 	@Check
 	def checkForFirstLetterCapitalClassName(Class someClass) {
 		if(!Character.isUpperCase(someClass.name.charAt(0)) && someClass.name.matches("[^\"]*")){
-			warning("First capitals of classes should be capital letters", PumlPackage::eINSTANCE.class_Name, INVALID_CLASS_NAME, someClass.name)
+			warning("First capitals of classes should be capital letters", 
+				PumlPackage::eINSTANCE.class_Name, 
+				INVALID_CLASS_NAME, 
+				someClass.name
+			)
 		}
 	}
 	 
@@ -66,7 +75,11 @@ class PumlValidator extends AbstractPumlValidator {
 	def checkForCapitalEnumName(EnumConstant someEnum) {
 		for(var i = 0; i < someEnum.name.length;i++){
 			if(!Character.isUpperCase(someEnum.name.charAt(i))){
-				warning("Enum constants should be upper case", PumlPackage::eINSTANCE.enumConstant_Name, INVALID_ENUM_CONSTANT_NAME, someEnum.name)
+				warning("Enum constants should be upper case", 
+					PumlPackage::eINSTANCE.enumConstant_Name, 
+					INVALID_ENUM_CONSTANT_NAME, 
+					someEnum.name
+				)
 				return
 			}
 		}

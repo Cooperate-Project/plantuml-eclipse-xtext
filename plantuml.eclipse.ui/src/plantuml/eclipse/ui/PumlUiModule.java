@@ -5,9 +5,11 @@ package plantuml.eclipse.ui;
 
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator;
+import org.eclipse.xtext.ui.editor.model.edit.ITextEditComposer;
 import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 
 import plantuml.eclipse.ui.highlighting.PumlSemanticHighlightingCalculator;
+import plantuml.eclipse.ui.quickfix.PumlTextEditComposer;
 import plantuml.eclipse.ui.highlighting.PumlHighlightingConfiguration;
 
 /**
@@ -24,5 +26,9 @@ public class PumlUiModule extends plantuml.eclipse.ui.AbstractPumlUiModule {
 	
     public Class<? extends ISemanticHighlightingCalculator> bindISemanticHighlightingCalculator() {
     	return PumlSemanticHighlightingCalculator.class;
+    }
+    
+    public Class<? extends ITextEditComposer> bindITextEditComposer() {
+        return PumlTextEditComposer.class;
     }
 }
