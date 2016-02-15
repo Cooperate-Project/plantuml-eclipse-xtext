@@ -3,64 +3,42 @@ grammar plantuml.eclipse.Puml hidden(WS, NEWLINE, SL_COMMENT, ML_COMMENT)
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate puml "http://www.eclipse.plantuml/Puml"
 
+/**
+ * Entry point of the model.
+ */
 UmlDiagram:
 	{UmlDiagram}
-	('SEQUENCE'
-	umlDiagrams+=SequenceUml* 
-	|
-	'COMPONENT'
-	umlDiagrams+=ComponentUml*)
-	|
-	'CLASS'
-	umlDiagrams+=ClassUml*;
+	('SEQUENCE' umlDiagrams+=SequenceUml) 
+	| ('COMPONENT' umlDiagrams+=ComponentUml)
+	| ('CLASS' umlDiagrams+=ClassUml)
+;
 
-UmlElementsContainer:
-	{UmlElementsContainer}
-	umlElements+=(UmlElement)*;
-
-NamedElement:
-	{NamedElement}
-	name=ID;
-
-UmlUse:
-	{UmlUse};
+ClassUml:
+	{ClassUml}
+	'@startuml' umlElements+=(ClassElement)* '@enduml';
 
 SequenceUml:
 	{SequenceUml}
-	'@startuml'
-	umlElements+=(UmlElement)*
-	'@enduml';
+	'@startuml' umlElements+=(UmlElement)* '@enduml';
 
 ComponentUml:
 	{ComponentUml}
-	'@startuml'
-	umlElements+=(ComponentElement)*
-	'@enduml';
+	'@startuml' umlElements+=(ComponentElement)* '@enduml';
 	
-ClassUml:
-	{ClassUml}
-	'@startuml'
-	umlElements+=(ClassElement)*
-	'@enduml';
 	
 // ===============================================================================================
 // ============== CLASS DIAGRAM ==================================================================
 // ===============================================================================================
 
+/*
+ * Elements of the class diagram.
+ */
 ClassElement:
 	Class
 	| Enum
-	| Association
-;
+	| Association;
 
-/**
- * Kombinationen die möglich sind:
- * class A
- * class A implements B
- * class A extends B
- * class A implements B extends C
- * class A extends B , C
- */
+// TODO: Can't be cross referenced with string names.
 Class:
 	{Class}
 	(classifier='abstract')? ('class' | interface?='interface') name=ClassName
@@ -68,51 +46,36 @@ Class:
 	(('extends' superTypes+=[Class] (',' superTypes+=[Class])*)
 	| ('implements' interfaces+=[Class] (',' interfaces+=[Class])?)
 	| ('extends' superTypes+=[Class] (',' superTypes+=[Class])* 'implements' interfaces+=[Class] (',' interfaces+=[Class])*))?
-	('{' (classContents+=ClassContent)* '}')?
-;
+	('{' (classContents+=ClassContent)* '}')?;
 
 ClassContent:
-	Attribute | Method
-;
+	Attribute | Method;
 
 ClassName:
-	(ID | STRING)
-;
+	(ID | STRING);
 
 Enum:
 	{Enum}
 	'enum' name=ID
-	('{' enumConstants+=EnumConstant (',' enumConstants+=EnumConstant)* '}')?
-;
+	('{' enumConstants+=EnumConstant (',' enumConstants+=EnumConstant)* '}')?;
 
 EnumConstant:
 	{EnumConstant}
-	name=ID
-;
+	name=ID;
 
+// TODO: Visibilities not working with '#' and no white space.
 Attribute:
 	{Attribute}
-	("{" classifier=Classifier "}")? (visibility=Visibility)? name=ID (":" type=ID (array?='[' (length=Int)? ']')?)?
-;
+	("{" classifier=Classifier "}")? (visibility=Visibility)? name=ID (":" type=ID (array?='[' (length=Int)? ']')?)?;
 
-/*
- * Mit Pre und Postprocessor
- */
+
+// TODO: Solve name problems with pre- und postprocessor and not terminal.
+// TODO: Visibilities not working with '#' and no white space.
 Method:
 	{Method}
 	 ("{" classifier=Classifier "}")? (visibility=Visibility)? name=METHID
-	 (":" type=ID (array?='[' (length=Int)? ']')?)?
-;
+	 (":" type=ID (array?='[' (length=Int)? ']')?)?;
 
-/* -------------------------------------------------------
- * --------------------- Assoziationen -------------------
- * Bidirectional Association: -- ..
- * Unidirectional Association: <-- <.. --> ..>
- * Aggregation: --o ..o o-- o..
- * Composition: --* ..* *.. *--
- * 
- * TODO: Keine Loops in extends / implements
- */
 Association:
 	{Association}
 	(classFrom=[Class]
@@ -126,124 +89,72 @@ Association:
 	(classFrom=[Class]
 	associationType=(UnidirectionalRight|InheritanceLeft|AggregationRight|CompositionRight)
 	classTo=[Class])
-	(':' text+=(ID)*)?
-;
+	(':' text+=(ID)*)?;
 
 Bidirectional:
 	{Bidrectional}
 	('-' ("[" color=ColorTag "]")? '-'?)
-	| ('.' ("[" color=ColorTag "]")? '.'?)
-;
+	| ('.' ("[" color=ColorTag "]")? '.'?);
 
 UnidirectionalLeft:
 	{UnidirectionalLeft}
 	('<-' ("[" color=ColorTag "]")? '-'?)
-	| ('<.' ("[" color=ColorTag "]")? '.'?)
-;
+	| ('<.' ("[" color=ColorTag "]")? '.'?);
 
 UnidirectionalRight:
 	{UnidirectionalRight}
 	((('-[' color=ColorTag "]")|'-')? '->')
-	| ((('.[' color=ColorTag "]")|'.')? '.>')
-;
+	| ((('.[' color=ColorTag "]")|'.')? '.>');
 
 InheritanceLeft:
 	{InheritanceLeft}
 	('<|-' ("[" color=ColorTag "]")? '-'?)
-	| ('<|.' ("[" color=ColorTag "]")? '.'?)
-;
+	| ('<|.' ("[" color=ColorTag "]")? '.'?);
 
 InheritanceRight:
 	{InheritanceRight}
 	((('-[' color=ColorTag "]")|'-')? '-|>')
-	| ((('.[' color=ColorTag "]")|'.')? '.|>')
-;
+	| ((('.[' color=ColorTag "]")|'.')? '.|>');
 
 AggregationLeft:
 	{AggregationLeft}
 	('o-' ("[" color=ColorTag "]")? '-'?)
-	| ('o.' ("[" color=ColorTag "]")? '.'?)
-;
+	| ('o.' ("[" color=ColorTag "]")? '.'?);
 
 AggregationRight:
 	{AggregationRight}
 	((('-[' color=ColorTag "]")|'-')? '-o')
-	| ((('.[' color=ColorTag "]")|'.')? '.o')
-;
+	| ((('.[' color=ColorTag "]")|'.')? '.o');
 
 CompositionLeft:
 	{CompositionLeft}
 	('*-' ("[" color=ColorTag "]")? '-'?)
-	| ('*.' ("[" color=ColorTag "]")? '.'?)
-;
+	| ('*.' ("[" color=ColorTag "]")? '.'?);
 
 CompositionRight:
 	{CompositionRight}
 	((('-[' color=ColorTag "]")|'-')? '-*')
-	| ((('.[' color=ColorTag "]")|'.')? '.*')
-;
+	| ((('.[' color=ColorTag "]")|'.')? '.*');
 
 ColorTag:
-	(COLOR | HEXCODE)
-;
+	(COLOR | HEXCODE);
 
 enum Visibility: 
 	PROTECTED='#'
 	| PRIVATE='-'
 	| DEFAULT='~'
-	| PUBLIC='+'
-;
+	| PUBLIC='+';
 
 enum Classifier:
 	UNSPECIFIED
 	| ABSTRACT='abstract'
-	| STATIC='static'
-;
+	| STATIC='static';
 
-terminal COLOR:
-	"#"
-	('red') | ('orange')
-;
-
-terminal HEXCODE:
-	"#"
-	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')
-	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')
-;
-
-terminal METHID:
-	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '*' | '//' | '<' | '>' | '\\') 
-	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | ':' | '.' | ',')*
-	"("
-	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | ':' | '.' | ',')*
-	")"
-;
-
-/*
- * Funktioniert noch nicht
- */
-terminal ML_COMMENT:
-	"//'" ('\r'? '\n')* "'//" 
-;
-
-Int returns ecore::EInt: NUMBER;
-
-terminal NUMBER: '0'..'9'+;
 
 // ===============================================================================================
+// ============== SEQUENCE DIAGRAM ===============================================================
 // ===============================================================================================
 
-QualifiedName:
-	{QualifiedName}
-	ID;
-
-
-ComponentElement:
-	Component
-	| Interface
-	| Link
-	| Title;
-	
 UmlElement:
 	Participant
 	| UseLeft
@@ -264,16 +175,20 @@ UmlElement:
 	| Space
 	//| QualifiedName
 ;
-	
-Link:
-	linkOne=[NamedElement|ID] ('-' | '<-' | '.' | '<.') (ID | '[' COLOR_TAG ']')* ('-' | '.' | '->' | '.>') linkTwo=[NamedElement|ID] (':'
-	text+=(ID)*)?;
 
-Interface returns NamedElement:
-	{Interface} ('()' | 'INTERFACE') description=STRING ('AS' name=ID)? (color=COLOR_TAG)?;
+Participant:
+	{Participant}
+	// TODO das Problem liegt am Konflikt in den Namen --> Daher hat xtext auch bei der ID den ^ als Konfliktvermeider
+	// google: xtext keyword contextual
+	// https://kthoms.wordpress.com/2012/03/15/xtext-content-assist-escape-identifiers-conflicting-with-keywords/#comments
+	//	'participant ' (name=TEXT | longname=(STRING | TEXT) ' as ' name=TEXT) NEWLINE
+	//	'participant ' {UmlParticipant} name=(TEXT|STRING) ('as ' name=TEXT)? NEWLINE
+	('PARTICIPANT' | 'ACTOR' | 'BOUNDARY' | 'CONTROL' | 'ENTITY' | 'DATABASE') (name=ID | longname=(STRING | ID) 'AS'
+	name=ID);
 
-Component returns NamedElement:
-	{Component} '[' name=ID nameExtension+=(ID)* ']' ('AS' name=ID)? (color=COLOR_TAG)?;
+QualifiedName:
+	{QualifiedName}
+	ID;
 
 Space:
 	{Space}
@@ -344,7 +259,7 @@ Group returns UmlElementsContainer:
 
 Box returns UmlElementsContainer:
 	{Box}
-	'BOX' name=STRING (color=COLOR_TAG)?
+	'BOX' name=STRING (color=HEXCODE)?
 	umlElements+=(UmlElement)*
 	=> 'END BOX';
 
@@ -355,7 +270,7 @@ Skinparam:
 	'}';
 
 SkinElement:
-	name=ID value=(ID | COLOR_TAG);
+	name=ID value=(ID | HEXCODE);
 
 UseLeft returns UmlUse:
 	{UseLeft}
@@ -367,20 +282,75 @@ UseRight returns UmlUse:
 	(userOne=[Participant|ID]) ('o->' | '->o' | 'o->o' | '->' | 'o-->' | '-->o' | 'o-->o' | '-->' | 'x->' | '->x' |
 	'x->x' | 'x-->' | '-->x' | 'x-->x') (userTwo=[Participant|ID] | ']') (':' text+=(ID)*)?;
 
-Participant:
-	{Participant}
-	// TODO das Problem liegt am Konflikt in den Namen --> Daher hat xtext auch bei der ID den ^ als Konfliktvermeider
-	// google: xtext keyword contextual
-	// https://kthoms.wordpress.com/2012/03/15/xtext-content-assist-escape-identifiers-conflicting-with-keywords/#comments
-	//	'participant ' (name=TEXT | longname=(STRING | TEXT) ' as ' name=TEXT) NEWLINE
-	//	'participant ' {UmlParticipant} name=(TEXT|STRING) ('as ' name=TEXT)? NEWLINE
-	('PARTICIPANT' | 'ACTOR' | 'BOUNDARY' | 'CONTROL' | 'ENTITY' | 'DATABASE') (name=ID | longname=(STRING | ID) 'AS'
-	name=ID);
+
+	
+UmlElementsContainer:
+	{UmlElementsContainer}
+	umlElements+=(UmlElement)*;
+
+NamedElement:
+	{NamedElement}
+	name=ID;
+
+UmlUse:
+	{UmlUse};
+
+
+// ===============================================================================================
+// ============== COMPONENT DIAGRAM ==============================================================
+// ===============================================================================================	
+
+ComponentElement:
+	Component
+	| Interface
+	| Link
+	| Title;
+	
+Link:
+	linkOne=[NamedElement|ID] ('-' | '<-' | '.' | '<.') (ID | '[' HEXCODE ']')* ('-' | '.' | '->' | '.>') linkTwo=[NamedElement|ID] (':'
+	text+=(ID)*)?;
+
+Interface returns NamedElement:
+	{Interface} ('()' | 'INTERFACE') description=STRING ('AS' name=ID)? (color=HEXCODE)?;
+
+Component returns NamedElement:
+	{Component} '[' name=ID nameExtension+=(ID)* ']' ('AS' name=ID)? (color=HEXCODE)?;
+
+
+// ===============================================================================================
+// ============== SHARED RULES AND TERMINALS =====================================================
+// ===============================================================================================
+
+terminal COLOR:
+	"#"
+	('red') | ('orange');
+
+terminal HEXCODE:
+	"#"
+	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')
+	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9');
+
+terminal METHID:
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '*' | '//' | '<' | '>' | '\\') 
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | ':' | '.' | ',')*
+	"("
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | ':' | '.' | ',')*
+	")";
+
+/*
+ * Funktioniert noch nicht
+ */
+terminal ML_COMMENT:
+	"//'" ('\r'? '\n')* "'//" ;
+
+Int returns ecore::EInt:
+	NUMBER;
+
+terminal NUMBER:
+	'0'..'9'+;
 
 terminal STRING:
-	'"' ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | '"'))* '"' 
-//	| "'" ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | "'"))* "'"
-;
+	'"' ('\\' . /* 'b'|'t'|'n'|'f'|'r'|'u'|'"'|"'"|'\\' */ | !('\\' | '"'))* '"';
 
 terminal WS:
 	' ' | '\t';
@@ -391,12 +361,6 @@ terminal NEWLINE:
 terminal ID:
 	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '*' | '//' | '<' | '>' | '\\' | '(' | ')')
 	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | '(' | ')' | ':' | '.')*;
-
-	//terminal HTML:
-//	('a'..'z'|'A'..'Z'|'_'|'0'..'9'|'\"\"'|'-'|'~'|'*'|'//') ('a'..'z'|'A'..'Z'|'_'|'0'..'9'|'\"\"'|'-'|'~'|'*'|'//')*
-//;
-terminal COLOR_TAG:
-	'#' ('a'..'z' | 'A'..'Z' | '0'..'9')*;
 
 terminal SL_COMMENT:
 	"'" !('\n' | '\r')* ('\r'? '\n')?;
