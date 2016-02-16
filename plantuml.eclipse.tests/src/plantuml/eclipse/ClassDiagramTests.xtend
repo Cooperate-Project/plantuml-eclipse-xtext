@@ -17,7 +17,6 @@ import plantuml.eclipse.puml.Visibility
 import plantuml.eclipse.puml.Method
 import plantuml.eclipse.puml.Classifier
 import plantuml.eclipse.puml.Association
-import plantuml.eclipse.puml.Bidirectional
 import plantuml.eclipse.puml.EnumConstant
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import plantuml.eclipse.validation.PumlValidator
@@ -225,12 +224,10 @@ class ClassDiagramTests {
 		val secondAsso = classUml.umlElements.get(3) as Association
 		Assert::assertEquals("Alice", classAlice.name);
 		Assert::assertEquals("Bob", classBob.name);
-		Assert::assertEquals("Alice", firstAsso.classFrom.name);
-		Assert::assertEquals("Bob", firstAsso.classTo.name);
-		Assert::assertTrue(firstAsso.associationType instanceof Bidirectional);
-		Assert::assertEquals("Alice", secondAsso.classFrom.name);
-		Assert::assertEquals("Bob", secondAsso.classTo.name);
-		Assert::assertTrue(secondAsso.associationType instanceof Bidirectional);
+		Assert::assertEquals("Alice", firstAsso.classLeft.name);
+		Assert::assertEquals("Bob", firstAsso.classRight.name);
+		Assert::assertEquals("Alice", secondAsso.classLeft.name);
+		Assert::assertEquals("Bob", secondAsso.classRight.name);
 	}
 	
 	@Test

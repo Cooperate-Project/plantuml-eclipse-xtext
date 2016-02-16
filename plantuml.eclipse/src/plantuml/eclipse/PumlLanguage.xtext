@@ -78,66 +78,31 @@ Method:
 
 Association:
 	{Association}
-	(classFrom=[Class]
-	associationType=Bidirectional
-	classTo=[Class])
-	|
-	(classTo=[Class]
-	associationType=(UnidirectionalLeft|InheritanceRight|AggregationLeft|CompositionLeft)
-	classFrom=[Class])
-	|
-	(classFrom=[Class]
-	associationType=(UnidirectionalRight|InheritanceLeft|AggregationRight|CompositionRight)
-	classTo=[Class])
+	(classLeft=[Class|ClassName]
+	associationArrow=AssociationArrow
+	classRight=[Class|ClassName])
 	(':' text+=(ID)*)?;
-	
-Bidirectional:
-	{Bidrectional}
-	('-' ("[" color=ColorTag "]")? '-'?)
-	| ('.' ("[" color=ColorTag "]")? '.'?);
 
-UnidirectionalLeft:
-	{UnidirectionalLeft}
-	('<-' ("[" color=ColorTag "]")? '-'?)
-	| ('<.' ("[" color=ColorTag "]")? '.'?);
-
-UnidirectionalRight:
-	{UnidirectionalRight}
-	((('-[' color=ColorTag "]")|'-')? '->')
-	| ((('.[' color=ColorTag "]")|'.')? '.>');
-
-InheritanceLeft:
-	{InheritanceLeft}
-	('<|-' ("[" color=ColorTag "]")? '-'?)
-	| ('<|.' ("[" color=ColorTag "]")? '.'?);
-
-InheritanceRight:
-	{InheritanceRight}
-	((('-[' color=ColorTag "]")|'-')? '-|>')
-	| ((('.[' color=ColorTag "]")|'.')? '.|>');
-
-AggregationLeft:
-	{AggregationLeft}
-	('o-' ("[" color=ColorTag "]")? '-'?)
-	| ('o.' ("[" color=ColorTag "]")? '.'?);
-
-AggregationRight:
-	{AggregationRight}
-	((('-[' color=ColorTag "]")|'-')? '-o')
-	| ((('.[' color=ColorTag "]")|'.')? '.o');
-
-CompositionLeft:
-	{CompositionLeft}
-	('*-' ("[" color=ColorTag "]")? '-'?)
-	| ('*.' ("[" color=ColorTag "]")? '.'?);
-
-CompositionRight:
-	{CompositionRight}
-	((('-[' color=ColorTag "]")|'-')? '-*')
-	| ((('.[' color=ColorTag "]")|'.')? '.*');
+AssociationArrow:
+	{AssociationArrow}
+	leftType=AssociationTypeLeft? ('-'|'.') ("[" color=ColorTag "]")? ('-'|'.') rightType=AssociationTypeRight?;
 
 ColorTag:
 	color=(COLOR | HEXCODE);
+
+enum AssociationTypeLeft:
+	UNDEFINED
+	| DIRECTIONAL='<'
+	| INHERITANCE='<|'
+	| AGGREGATION='o'
+	| COMPOSITION='*';
+
+enum AssociationTypeRight:
+	UNDEFINED
+	| DIRECTIONAL='>'
+	| INHERITANCE='|>'
+	| AGGREGATION='o'
+	| COMPOSITION='*';
 
 enum Visibility: 
 	PROTECTED='#'

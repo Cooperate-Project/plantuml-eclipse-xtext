@@ -13,17 +13,11 @@ import org.eclipse.xtext.ui.IImageHelper
 import plantuml.eclipse.puml.Visibility
 import plantuml.eclipse.puml.Classifier
 import plantuml.eclipse.puml.Association
-import plantuml.eclipse.puml.Bidirectional
-import plantuml.eclipse.puml.UnidirectionalLeft
-import plantuml.eclipse.puml.UnidirectionalRight
-import plantuml.eclipse.puml.AggregationLeft
-import plantuml.eclipse.puml.AggregationRight
-import plantuml.eclipse.puml.CompositionLeft
-import plantuml.eclipse.puml.CompositionRight
-import plantuml.eclipse.puml.InheritanceLeft
-import plantuml.eclipse.puml.InheritanceRight
 import plantuml.eclipse.puml.EnumConstant
 import org.eclipse.jface.viewers.StyledString
+import plantuml.eclipse.puml.AssociationArrow
+import plantuml.eclipse.puml.AssociationTypeLeft
+import plantuml.eclipse.puml.AssociationTypeRight
 
 /**
  * Provides labels for a EObjects.
@@ -34,15 +28,9 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 
 	@Inject
     private IImageHelper imageHelper
+    
     private StringBuffer label
-    
-    // association representations in outline
-    private static final String BIDIRECTIONAL = "--"
-    private static final String UNIDIRECTIONAL = "-->"
-    private static final String AGGREGATION = "--o"
-    private static final String COMPOSITION = "--*"
-    private static final String INHERITANCE = "--|>"
-    
+    private AssociationArrow arrow  
 
 	@Inject
 	new(org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider delegate) {
@@ -80,24 +68,16 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	 def text(Association association){
 		label = new StringBuffer()
-		label.append(association.classFrom.name + " ");
+		label.append(association.classLeft.name + " ");
 		// Which association do we have?
-		if(association.associationType instanceof Bidirectional){
-			label.append(BIDIRECTIONAL)
-		}else if(association.associationType instanceof UnidirectionalLeft
-			|| association.associationType instanceof UnidirectionalRight){
-			label.append(UNIDIRECTIONAL)
-		}else if(association.associationType instanceof AggregationLeft
-			|| association.associationType instanceof AggregationRight){
-			label.append(AGGREGATION)
-		}else if(association.associationType instanceof CompositionLeft
-			|| association.associationType instanceof CompositionRight){
-			label.append(COMPOSITION)
-		}else if(association.associationType instanceof InheritanceLeft
-			|| association.associationType instanceof InheritanceRight){
-			label.append(INHERITANCE)
+		arrow = association.associationArrow;
+		if(arrow.leftType != AssociationTypeLeft.UNDEFINED){
+			label.append(arrow.leftType)
 		}
-		label.append(" " + association.classTo.name);
+		if(arrow.rightType != AssociationTypeRight.UNDEFINED){
+			label.append(arrow.rightType)
+		}
+		label.append(" " + association.classRight.name);
 		if(association.text.length != 0){
 			label.append(" : ")
 			for(String text : association.text){
