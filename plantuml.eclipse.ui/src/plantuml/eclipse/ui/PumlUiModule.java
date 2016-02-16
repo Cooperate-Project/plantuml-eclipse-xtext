@@ -10,6 +10,8 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 
 import plantuml.eclipse.ui.highlighting.PumlSemanticHighlightingCalculator;
 import plantuml.eclipse.ui.quickfix.PumlTextEditComposer;
+import plantuml.eclipse.ui.contentassist.AbstractPumlProposalProvider;
+import plantuml.eclipse.ui.contentassist.PumlProposalProvider;
 import plantuml.eclipse.ui.highlighting.PumlHighlightingConfiguration;
 
 /**
@@ -18,6 +20,9 @@ import plantuml.eclipse.ui.highlighting.PumlHighlightingConfiguration;
 public class PumlUiModule extends plantuml.eclipse.ui.AbstractPumlUiModule {
 	public PumlUiModule(AbstractUIPlugin plugin) {
 		super(plugin);
+	}
+	public Class<? extends AbstractPumlProposalProvider> bindAbstractPumlProposalProvider() {
+		return PumlProposalProvider.class;
 	}
 	
 	public Class<? extends IHighlightingConfiguration> bindIHighlightingConfiguration() {
