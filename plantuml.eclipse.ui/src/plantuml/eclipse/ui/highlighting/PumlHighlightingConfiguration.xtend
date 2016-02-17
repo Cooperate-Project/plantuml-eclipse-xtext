@@ -19,6 +19,7 @@ public class PumlHighlightingConfiguration implements IHighlightingConfiguration
 	public static final String ATTRIBUTE_ID = "attribute"
 	public static final String METHOD_ID = "method"
 	public static final String CONSTANT_ID = "constant"
+	public static final String COLOR_ID = "color"
 	
 	TextStyle textStyle = new TextStyle();
 	
@@ -30,6 +31,7 @@ public class PumlHighlightingConfiguration implements IHighlightingConfiguration
 		acceptor.acceptDefaultHighlighting(ATTRIBUTE_ID, "Attribute", attributeTextStyle())
 		acceptor.acceptDefaultHighlighting(METHOD_ID, "Method", methodTextStyle())
 		acceptor.acceptDefaultHighlighting(CONSTANT_ID, "Constant", constantTextStyle())
+		acceptor.acceptDefaultHighlighting(COLOR_ID, "Color", colorTextStyle())
 	}
 	
 	def TextStyle keywordTextStyle(){
@@ -74,6 +76,12 @@ public class PumlHighlightingConfiguration implements IHighlightingConfiguration
 		textStyle = new TextStyle()
 		textStyle.setColor(new RGB(128,0,64))
 		textStyle.setStyle(SWT.ITALIC)
+		return textStyle
+	}
+	
+	def TextStyle colorTextStyle(){
+		textStyle = new TextStyle()
+		textStyle.setColor(new RGB(150,150,150))
 		return textStyle
 	}
 }

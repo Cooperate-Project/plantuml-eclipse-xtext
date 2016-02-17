@@ -30,6 +30,9 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	AbstractOutlineNode enumsParent;
 	AbstractOutlineNode associationsParent;
 	
+	/**
+	 * Loops through elements and creates our outline tree.
+	 */
 	def _createChildren(DocumentRootNode parentNode, UmlDiagram root) {
 		for(EObject umlDiagram : root.umlDiagrams){
 			// Contents of PlantUML Class Diagram
@@ -45,14 +48,14 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 						if(umlClassElement.interface){
 							createNode(interfacesParent, umlClassElement)
 						}else{
-							createNode(classesParent, umlClassElement);
+							createNode(classesParent, umlClassElement)
 						}
 					}
 					if(umlClassElement instanceof Enum){
-						createNode(enumsParent, umlClassElement);
+						createNode(enumsParent, umlClassElement)
 					}
 					if(umlClassElement instanceof Association){
-						createNode(associationsParent, umlClassElement);
+						createNode(associationsParent, umlClassElement)
 					}
 				}
 			}

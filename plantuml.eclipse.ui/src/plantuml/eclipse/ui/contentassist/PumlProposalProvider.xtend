@@ -11,36 +11,40 @@ import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.ui.IImageHelper
 
 /**
- * Content Assist.
+ * This class provides content assist in our editor. It offeres suggestions for code completion.
  */
 class PumlProposalProvider extends AbstractPumlProposalProvider {
 
 	@Inject
     private IImageHelper imageHelper
 
+	/** We don't want to display those proposals in the content assist window, because they are not helpful **/
 	static final String[] FILTERED_KEYWORDS = #["-", ".", "-[", "o", "*", "<", "<|" , "UNDEFINED"]
 
 	@Inject
 	private PumlGrammarAccess ga;
 	
+	/**
+	 * Removes the defined filter for proposals we do not want to have.
+	 */
 	override completeKeyword(Keyword keyword, ContentAssistContext contentAssistContext, ICompletionProposalAcceptor acceptor) {
-		// Removes content assists suggestions when creating an association
-		// They are not useful and we are creating our own
         if (FILTERED_KEYWORDS.contains(keyword.getValue())) {
             return;
         }
         super.completeKeyword(keyword, contentAssistContext, acceptor);
     }
 	
+	/**
+	 * Supresses content assist in special cases.
+	 */
 	override createProposals(ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		// suppress content assist in multi-line comments
 		if (context.getCurrentNode().getGrammarElement()==ga.getML_COMMENTRule())
 			return;
 		super.createProposals(context, acceptor);
 	}
 
 	/**
-	 * Content assist for creating associations.
+	 * Content assist for creating associations. They will be shown after a cross reference to a class was typed in.
 	 */
 	override completeAssociation_AssociationArrow(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		val linkIcon = imageHelper.getImage("link.png")

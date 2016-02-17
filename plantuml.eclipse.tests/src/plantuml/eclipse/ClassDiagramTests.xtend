@@ -262,6 +262,72 @@ class ClassDiagramTests {
 		Assert::assertEquals("J", classF.interfaces.get(1).name)
 	}
 	
+	@Test
+	def void coloredClassesAndEnums(){
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice #RosyBrown
+			interface Bob #FF0028
+			abstract class Mallory #22AB99 {
+				-age : int
+			}
+			enum weekend #PapayaWhip {
+				SATURDAY ,
+				SUNDAY
+			}
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val classAlice = classUml.umlElements.get(0) as Class
+		val classBob = classUml.umlElements.get(1) as Class
+		val classMallory = classUml.umlElements.get(2) as Class
+		val malloryAttr = classMallory.classContents.get(0) as Attribute
+		val enumWeekend = classUml.umlElements.get(3) as Enum
+		val weekendFirstAttr = enumWeekend.enumConstants.get(0) as EnumConstant
+		val weekendSecondAttr = enumWeekend.enumConstants.get(1) as EnumConstant
+		Assert::assertEquals("Alice", classAlice.name)
+		Assert::assertEquals("#RosyBrown", classAlice.color)
+		Assert::assertEquals("Bob", classBob.name)
+		Assert::assertTrue(classBob.interface)
+		Assert::assertEquals("#FF0028", classBob.color)
+		Assert::assertEquals("Mallory", classMallory.name)
+		Assert::assertEquals("#22AB99", classMallory.color)
+		Assert::assertEquals("abstract", classMallory.classifier)
+		Assert::assertEquals("age", malloryAttr.name)
+		Assert::assertEquals("int", malloryAttr.type)
+		Assert::assertEquals(Visibility.PRIVATE, malloryAttr.visibility)
+		Assert::assertEquals("weekend", enumWeekend.name)
+		Assert::assertEquals("#PapayaWhip", enumWeekend.color)
+		Assert::assertEquals("SATURDAY", weekendFirstAttr.name)
+		Assert::assertEquals("SUNDAY", weekendSecondAttr.name)
+	}
+	
+	@Test
+	def void attributesAndMethodsWithTypesArray(){
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice {
+				-friendNames : String[20]
+				+getFriendNames() : String[]
+			}
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val classAlice = classUml.umlElements.get(0) as Class
+		val aliceAttr = classAlice.classContents.get(0) as Attribute
+		val aliceMeth = classAlice.classContents.get(1) as Method
+		Assert::assertEquals("Alice", classAlice.name)
+		Assert::assertEquals("friendNames", aliceAttr.name)
+		Assert::assertEquals("String", aliceAttr.type)
+		Assert::assertTrue(aliceAttr.array)
+		Assert::assertEquals(20, aliceAttr.length)
+		Assert::assertEquals("getFriendNames()", aliceMeth.name)
+		Assert::assertEquals("String", aliceMeth.type)
+		Assert::assertTrue(aliceMeth.array)
+		Assert::assertEquals(0, aliceMeth.length)
+	}
 	
 	// ==================================================================================
 	// =========================== VALIDATOR TESTS ======================================

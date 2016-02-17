@@ -4,11 +4,12 @@ import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor
 import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator
 import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.util.CancelIndicator
-import plantuml.eclipse.puml.Class
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import java.util.Iterator
 import org.eclipse.emf.ecore.EObject
 import plantuml.eclipse.puml.PumlPackage
+import plantuml.eclipse.puml.Class
+import plantuml.eclipse.puml.Enum
 import plantuml.eclipse.puml.Attribute
 import plantuml.eclipse.puml.Method
 import plantuml.eclipse.puml.EnumConstant
@@ -35,6 +36,11 @@ class PumlSemanticHighlightingCalculator implements ISemanticHighlightingCalcula
             element = contents.next();
             if (element instanceof Class){
             	highlightNode(element, PumlPackage.Literals.CLASS__NAME, PumlHighlightingConfiguration.CLASS_ID, acceptor)
+            	highlightNode(element, PumlPackage.Literals.CLASS__COLOR, PumlHighlightingConfiguration.COLOR_ID, acceptor)
+            }
+            if (element instanceof Enum){
+            	highlightNode(element, PumlPackage.Literals.ENUM__NAME, PumlHighlightingConfiguration.CLASS_ID, acceptor)
+            	highlightNode(element, PumlPackage.Literals.ENUM__COLOR, PumlHighlightingConfiguration.COLOR_ID, acceptor)
             }
             if (element instanceof Attribute){
             	highlightNode(element, PumlPackage.Literals.CLASS_CONTENT__NAME, PumlHighlightingConfiguration.ATTRIBUTE_ID, acceptor)

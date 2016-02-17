@@ -30,22 +30,20 @@ ComponentUml:
 // ============== CLASS DIAGRAM ==================================================================
 // ===============================================================================================
 
-/*
- * Elements of the class diagram.
- */
+
+// Elements of the class diagram.
 ClassElement:
 	Class
 	| Enum
 	| Association;
 
-// TODO: Can't be cross referenced with string names.
 Class:
 	{Class}
 	(classifier='abstract')? ('class' | interface?='interface') name=ClassName
 	(color=ColorTag)?
-	(('extends' superTypes+=[Class] (',' superTypes+=[Class])*)
-	| ('implements' interfaces+=[Class] (',' interfaces+=[Class])?)
-	| ('extends' superTypes+=[Class] (',' superTypes+=[Class])* 'implements' interfaces+=[Class] (',' interfaces+=[Class])*))?
+	(('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])*)
+	| ('implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])?)
+	| ('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])* 'implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])*))?
 	('{' (classContents+=ClassContent)* '}')?;
 
 ClassContent:
@@ -56,7 +54,7 @@ ClassName:
 
 Enum:
 	{Enum}
-	'enum' name=ID
+	'enum' name=ID (color=ColorTag)?
 	('{' enumConstants+=EnumConstant (',' enumConstants+=EnumConstant)* '}')?;
 
 EnumConstant:
@@ -83,12 +81,13 @@ Association:
 	classRight=[Class|ClassName])
 	(':' text+=(ID)*)?;
 
+// TODO: Not working for most cases.
 AssociationArrow:
 	{AssociationArrow}
 	leftType=AssociationTypeLeft? ('-'|'.') ("[" color=ColorTag "]")? ('-'|'.') rightType=AssociationTypeRight?;
 
 ColorTag:
-	color=(COLOR | HEXCODE);
+	COLOR | HEXCODE;
 
 enum AssociationTypeLeft:
 	UNDEFINED

@@ -7,8 +7,7 @@ import plantuml.eclipse.puml.PumlPackage
 import java.util.HashSet
 
 /**
- * Custom validation rules. 
- *
+ * This class provides custom rules that will be validated.
  */
 class PumlValidator extends AbstractPumlValidator {
 
@@ -34,7 +33,7 @@ class PumlValidator extends AbstractPumlValidator {
 	}
 	
 	/**
-	 * Helper method for checkNoCycleClassHierarchy.
+	 * Helper method for {@link #checkNoCycleClassHierarchy checkNoCycleClassHierarchy} method.
 	 */
 	def boolean checkSuperTypesForCycle(HashSet<Class> visited, Class someClass) {
 		for(Class current : someClass.superTypes){
@@ -56,6 +55,7 @@ class PumlValidator extends AbstractPumlValidator {
 	
 	/**
 	 * Checks for non-capital letters in first character of class names.
+	 * Displays a warning if first character is not lower case.
 	 */
 	@Check
 	def checkForFirstLetterCapitalClassName(Class someClass) {
@@ -70,6 +70,7 @@ class PumlValidator extends AbstractPumlValidator {
 	 
 	/**
 	 * Checks for non-capital letters in enum constant names.
+	 * Displays a warning if enum constant name contains anything else than upper case letters.
 	 */
 	@Check
 	def checkForCapitalEnumName(EnumConstant someEnum) {
