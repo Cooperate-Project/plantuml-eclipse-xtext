@@ -11,6 +11,11 @@ import org.eclipse.xtext.ui.IImageHelper
 
 import plantuml.eclipse.puml.Association
 import plantuml.eclipse.puml.Class
+import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal
+import org.eclipse.xtext.ui.editor.contentassist.ReplacementTextApplier
+import org.eclipse.swt.widgets.Display
+import org.eclipse.swt.widgets.ColorDialog
+import org.eclipse.swt.graphics.RGB
 
 /**
  * This class provides content assist in our editor. It offeres suggestions for code completion.
@@ -110,7 +115,8 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 	 */
 	override completeClass_Color(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		// Prefetch images
-		var colorPalette = imageHelper.getImage("color_palette.jpg")
+		var colorPalette = imageHelper.getImage("colors/color_palette.jpg")
+		var colorPick = imageHelper.getImage("colors/color_pick.png")
 		var colors = #[
 			imageHelper.getImage("colors/color_black.png"),
 			imageHelper.getImage("colors/color_blue.png"),
@@ -120,13 +126,33 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 			imageHelper.getImage("colors/color_yellow.png")
 		]
 		if(element instanceof Class){
-			acceptor.accept(createCompletionProposal("#FFFFFF", "Color: Enter own hexcode" , colorPalette, context))
-			acceptor.accept(createCompletionProposal("#Black", "Color: Black" , colors.get(0), context))
-			acceptor.accept(createCompletionProposal("#Blue", "Color: Blue" , colors.get(1), context))
-			acceptor.accept(createCompletionProposal("#Green", "Color: Green" , colors.get(2), context))
-			acceptor.accept(createCompletionProposal("#Purple", "Color: Purple" , colors.get(3), context))
-			acceptor.accept(createCompletionProposal("#Red", "Color: Red" , colors.get(4), context))
-			acceptor.accept(createCompletionProposal("#Yellow", "Color: Yellow" , colors.get(5), context))
+			acceptor.accept(createCompletionProposal("#FFFFFF ", "Color... Enter own hexcode" , colorPick, context))
+			acceptor.accept(createCompletionProposal("#Black ", "Color: Black" , colors.get(0), context))
+			acceptor.accept(createCompletionProposal("#Blue ", "Color: Blue" , colors.get(1), context))
+			acceptor.accept(createCompletionProposal("#Green ", "Color: Green" , colors.get(2), context))
+			acceptor.accept(createCompletionProposal("#Purple ", "Color: Purple" , colors.get(3), context))
+			acceptor.accept(createCompletionProposal("#Red ", "Color: Red" , colors.get(4), context))
+			acceptor.accept(createCompletionProposal("#Yellow ", "Color: Yellow" , colors.get(5), context))
+			
+			// Color Picker
+			// Author: Sebastian Zarnekow
+			// Source: http://zarnekow.blogspot.de/2011/06/customizing-content-assist-with-xtext.html
+			val pickColor = createCompletionProposal("#FFFFFF","Color... Pick from palette", colorPalette, context) as ConfigurableCompletionProposal
+			if (pickColor != null) {
+				pickColor.setTextApplier(
+					new ReplacementTextApplier() {
+						override getActualReplacementString(ConfigurableCompletionProposal proposal) {
+							val display = context.getViewer().getTextWidget().getDisplay()
+							val colorDialog = new ColorDialog(display.getActiveShell());
+							val newColor = colorDialog.open();
+							val hexColor = String.format("#%02x%02x%02x", newColor.red, newColor.green, newColor.blue);
+							return hexColor.toUpperCase()
+						}
+					}
+				)
+				acceptor.accept(pickColor)
+			}
+			
 		}		
 	}
 }
