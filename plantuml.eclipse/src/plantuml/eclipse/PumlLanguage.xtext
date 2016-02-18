@@ -33,10 +33,11 @@ ComponentUml:
 
 // Elements of the class diagram.
 ClassElement:
-	Class
-	| Enum
-	| Association;
+	Association
+	| Class
+	| Enum;
 
+// TODO: Advanced Class Body nicht möglich. Schwer wegen Doppeldeutig mit Attributen
 Class:
 	{Class}
 	(classifier='abstract')? ('class' | interface?='interface') name=ClassName
@@ -44,10 +45,16 @@ Class:
 	(('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])*)
 	| ('implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])?)
 	| ('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])* 'implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])*))?
-	('{' (classContents+=ClassContent)* '}')?;
+	('{' classContents+=ClassContent* '}')?;
 
+ClassWithContent returns Class:
+	name=ClassName ":" classContents+=ClassContent
+;
+
+// TODO: Probleme mit Attribut / Methodenerkennung durch gleiche Möglichkeiten
+// --> Linienumbruch zwischen einzelnen ClassContens erzwingen ist Lösung
 ClassContent:
-	Attribute | Method;
+	Method | Attribute;
 
 ClassName:
 	(ID | STRING);
@@ -61,18 +68,17 @@ EnumConstant:
 	{EnumConstant}
 	name=ID;
 
-// TODO: Visibilities not working with '#' and no white space.
 Attribute:
 	{Attribute}
-	("{" classifier=Classifier "}")? (visibility=Visibility)? name=ID (":" type=ID (array?='[' (length=Int)? ']')?)?;
+	("{" classifier=Classifier "}")?
+	((type=ID (array?='[' (length=Int)? ']')? name=ID)
+	|((visibility=Visibility)? name=ID (":" type=ID (array?='[' (length=Int)? ']')?)?));
 
-
-// TODO: Solve name problems with pre- und postprocessor and not terminal.
-// TODO: Visibilities not working with '#' and no white space.
 Method:
 	{Method}
-	 ("{" classifier=Classifier "}")? (visibility=Visibility)? name=METHID
-	 (":" type=ID (array?='[' (length=Int)? ']')?)?;
+	("{" classifier=Classifier "}")?
+	((type=ID (array?='[' (length=Int)? ']')? name=METHID)
+	|((visibility=Visibility)? name=METHID (":" type=ID (array?='[' (length=Int)? ']')?)?));
 
 Association:
 	{Association}

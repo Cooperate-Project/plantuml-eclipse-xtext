@@ -329,6 +329,32 @@ class ClassDiagramTests {
 		Assert::assertEquals(0, aliceMeth.length)
 	}
 	
+	@Test
+	def void reverseMethodsAndAttributes(){
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice {
+				String firstName
+				friendNames
+				+getFirstName()
+			}
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val classAlice = classUml.umlElements.get(0) as Class
+		val aliceAttr = #[
+			classAlice.classContents.get(0) as Attribute,
+			classAlice.classContents.get(1) as Attribute,
+			classAlice.classContents.get(2) as Method
+		]
+		Assert::assertEquals("String", aliceAttr.get(0).type)
+		Assert::assertEquals("firstName", aliceAttr.get(0).name)
+		Assert::assertEquals("friendNames", aliceAttr.get(1).name)
+		Assert::assertEquals("getFirstName()", aliceAttr.get(2).name)
+		Assert::assertEquals(Visibility.PUBLIC, aliceAttr.get(2).visibility)
+		}
+	
 	// ==================================================================================
 	// =========================== VALIDATOR TESTS ======================================
 	// ==================================================================================
