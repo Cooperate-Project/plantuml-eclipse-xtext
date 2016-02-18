@@ -21,8 +21,7 @@ import plantuml.eclipse.puml.AssociationTypeRight
 
 /**
  * Provides labels for a EObjects.
- * 
- * see http://www.eclipse.org/Xtext/documentation.html#labelProvider
+ * TODO: Multiple icons per entry to display something is static or abstract.
  */
 class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider {
 
