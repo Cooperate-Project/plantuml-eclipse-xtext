@@ -21,6 +21,7 @@ import plantuml.eclipse.puml.EnumConstant
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import plantuml.eclipse.validation.PumlValidator
 import plantuml.eclipse.puml.PumlPackage
+import plantuml.eclipse.puml.NoteClass
 
 @RunWith(XtextRunner)
 @InjectWith(PumlInjectorProvider)
@@ -353,7 +354,78 @@ class ClassDiagramTests {
 		Assert::assertEquals("friendNames", aliceAttr.get(1).name)
 		Assert::assertEquals("getFirstName()", aliceAttr.get(2).name)
 		Assert::assertEquals(Visibility.PUBLIC, aliceAttr.get(2).visibility)
-		}
+	}
+	
+	@Test
+	def void notesOnClasses(){
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice
+			class Bob
+			class Mallory
+			note left of Alice
+				This is a comment for Alice
+			end note
+			note left of Bob
+				This is a multiline
+				comment for Bob
+			end note
+			note right of Mallory
+				Something important for Mallory
+			end note
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val aliceNote = classUml.umlElements.get(3) as NoteClass
+		val aliceNoteValue = #["This","is","a","comment","for","Alice"]
+		val bobNote = classUml.umlElements.get(4) as NoteClass
+		val bobNoteValue = #["This","is","a","multiline","comment","for","Bob"]
+		val malloryNote = classUml.umlElements.get(5) as NoteClass
+		val malloryNoteValue = #["Something","important","for","Mallory"]
+		Assert::assertEquals("Alice", aliceNote.noteOf.name)
+		Assert::assertEquals(aliceNoteValue, aliceNote.value)
+		Assert::assertEquals("Bob", bobNote.noteOf.name)
+		Assert::assertEquals(bobNoteValue, bobNote.value)
+		Assert::assertEquals("Mallory", malloryNote.noteOf.name)
+		Assert::assertEquals(malloryNoteValue, malloryNote.value)
+	}
+	
+	@Test
+	def void dividerInClass(){
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice {
+				== Attributes ==
+				#username : String
+				-- Encrypted Attributes --
+				-password : String
+				== Methods ==
+				+getUserName() : String
+				__ Reserved __
+			}
+			end note
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val classAlice = classUml.umlElements.get(0) as Class
+		val aliceContents = #[
+			classAlice.classContents.get(0) as Attribute,
+			classAlice.classContents.get(1) as Attribute,
+			classAlice.classContents.get(2) as Method
+		]
+		Assert::assertEquals("Alice", classAlice.name)
+		Assert::assertEquals("username", aliceContents.get(0).name)
+		Assert::assertEquals("String", aliceContents.get(0).type)
+		Assert::assertEquals(Visibility.PROTECTED, aliceContents.get(0).visibility)
+		Assert::assertEquals("password", aliceContents.get(1).name)
+		Assert::assertEquals("String", aliceContents.get(1).type)
+		Assert::assertEquals(Visibility.PRIVATE, aliceContents.get(1).visibility)
+		Assert::assertEquals("getUserName()", aliceContents.get(2).name)
+		Assert::assertEquals("String", aliceContents.get(2).type)
+		Assert::assertEquals(Visibility.PUBLIC, aliceContents.get(2).visibility)
+	}
 	
 	// ==================================================================================
 	// =========================== VALIDATOR TESTS ======================================

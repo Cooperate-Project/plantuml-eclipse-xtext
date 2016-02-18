@@ -20,6 +20,8 @@ public class PumlHighlightingConfiguration implements IHighlightingConfiguration
 	public static final String METHOD_ID = "method"
 	public static final String CONSTANT_ID = "constant"
 	public static final String COLOR_ID = "color"
+	public static final String NOTE_ID = "note"
+	public static final String DIVIDER_ID = "divider"
 	
 	TextStyle textStyle = new TextStyle();
 	
@@ -32,6 +34,8 @@ public class PumlHighlightingConfiguration implements IHighlightingConfiguration
 		acceptor.acceptDefaultHighlighting(METHOD_ID, "Method", methodTextStyle())
 		acceptor.acceptDefaultHighlighting(CONSTANT_ID, "Constant", constantTextStyle())
 		acceptor.acceptDefaultHighlighting(COLOR_ID, "Color", colorTextStyle())
+		acceptor.acceptDefaultHighlighting(NOTE_ID, "Note", noteTextStyle())
+		acceptor.acceptDefaultHighlighting(DIVIDER_ID, "Divider", dividerTextStyle())
 	}
 	
 	def TextStyle keywordTextStyle(){
@@ -82,6 +86,16 @@ public class PumlHighlightingConfiguration implements IHighlightingConfiguration
 	def TextStyle colorTextStyle(){
 		textStyle = new TextStyle()
 		textStyle.setColor(new RGB(150,150,150))
+		return textStyle
+	}
+	def TextStyle noteTextStyle(){
+		textStyle = new TextStyle()
+		textStyle.setColor(new RGB(135,175,135))
+		return textStyle
+	}
+	def TextStyle dividerTextStyle(){
+		textStyle = new TextStyle()
+		textStyle.setColor(new RGB(200,20,50))
 		return textStyle
 	}
 }
