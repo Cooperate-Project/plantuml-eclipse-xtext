@@ -23,12 +23,23 @@ import org.eclipse.swt.graphics.RGB
  */
 class PumlProposalProvider extends AbstractPumlProposalProvider {
 
-
 	@Inject
     private IImageHelper imageHelper
 
-	/** We don't want to display those proposals in the content assist window, because they are not helpful **/
+	// ------------------------ CONFIGURATION PARAMETERS ---------------------------------
+	
+	// Filtered Proposals
 	static final String[] FILTERED_KEYWORDS = #["{","}","--","==","__","[","#","+","~","-", ".", "-[", "o", "*", "<", "<|" , "UNDEFINED"]
+
+	// Visibilities of Attributes and Methods
+	static final val VISIBILITIES = #["public"->"+","private"->"-","protected"->"~","default"->"#"]
+	static final val DESC = "enterName"
+	static final val TYPE = "enterType"
+	
+	// Standard Colors
+	final val COLORS = #["black","blue","green","purple","red","yellow"]
+
+	// -----------------------------------------------------------------------------------
 
 	@Inject
 	private PumlGrammarAccess ga;
@@ -81,29 +92,25 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 	 */
 	override completeClass_ClassContents(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		if(element instanceof Class){
-			val visDescs = #["public","private","protected","default"]
-			val visChars = #["+","-","~","#"]
-			val desc = "name"
-			val type = "type"
-			for(var i = 0; i < visDescs.length ; i++){
+			for(var i = 0; i < VISIBILITIES.length ; i++){
 				// Add method proposal
 				acceptor.accept(createCompletionProposal(
-					visChars.get(i) + desc + "() : " + type,
-					"Method (" + visDescs.get(i) + ")",
-					imageHelper.getImage("visibilities/meth_" + visDescs.get(i) + "_obj.png"),
+					VISIBILITIES.get(i).value + DESC + "() : " + TYPE,
+					"Method (" + VISIBILITIES.get(i).key + ")",
+					imageHelper.getImage("visibilities/meth_" + VISIBILITIES.get(i).key + "_obj.png"),
 					context
 				));
 				// Add attribute proposal
 				acceptor.accept(createCompletionProposal(
-					visChars.get(i) + desc + " : " + type,
-					"Attribute (" + visDescs.get(i) + ")",
-					imageHelper.getImage("visibilities/field_" + visDescs.get(i) + "_obj.png"),
+					VISIBILITIES.get(i).value + DESC + " : " + TYPE,
+					"Attribute (" + VISIBILITIES.get(i).key + ")",
+					imageHelper.getImage("visibilities/field_" + VISIBILITIES.get(i).key + "_obj.png"),
 					context
 				));
 			}
 			// Add dividers
-			acceptor.accept(createCompletionProposal("-- text text text -- ", "Divider with text" , null, context));
-			acceptor.accept(createCompletionProposal("--", "Divider without text" , null, context));
+			acceptor.accept(createCompletionProposal("-- text text text -- ", "Divider with text" , imageHelper.getImage("divider.png"), context));
+			acceptor.accept(createCompletionProposal("--", "Divider without text" , imageHelper.getImage("divider.png"), context));
 		}		
 	}
 	
@@ -139,8 +146,7 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 		var colorPick = imageHelper.getImage("colors/color_pick.png")
 		acceptor.accept(createCompletionProposal("#FFFFFF ", "Color... Enter own hexcode" , colorPick, context))
 		// Create color by selecting from standard colors
-		var colors = #["black","blue","green","purple","red","yellow"]
-		for(color : colors){
+		for(color : COLORS){
 			val capColor = capitalizeFirstLetter(color)
 			acceptor.accept(createCompletionProposal("#" + capColor, "Color: " + capColor , imageHelper.getImage("colors/color_" + color + ".png"), context))
 		}
@@ -179,24 +185,5 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 			)
 			return pickColor
 		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}	
 }

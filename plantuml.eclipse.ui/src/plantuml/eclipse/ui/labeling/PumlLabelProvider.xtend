@@ -4,35 +4,41 @@
 package plantuml.eclipse.ui.labeling
 
 import com.google.inject.Inject
-import plantuml.eclipse.puml.ClassUml
-import plantuml.eclipse.puml.Class
-import plantuml.eclipse.puml.Enum
-import plantuml.eclipse.puml.Attribute
-import plantuml.eclipse.puml.Method
-import org.eclipse.xtext.ui.IImageHelper
-import plantuml.eclipse.puml.Visibility
-import plantuml.eclipse.puml.Classifier
-import plantuml.eclipse.puml.Association
-import plantuml.eclipse.puml.EnumConstant
+
+import org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider
 import org.eclipse.jface.viewers.StyledString
+import org.eclipse.xtext.ui.IImageHelper
+import org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider
+import org.eclipse.xtext.common.types.JvmVisibility
+import org.eclipse.xtext.xbase.ui.labeling.XbaseImages2
+import org.eclipse.jdt.ui.JavaElementImageDescriptor;
+
+import plantuml.eclipse.puml.Association
 import plantuml.eclipse.puml.AssociationArrow
 import plantuml.eclipse.puml.AssociationTypeLeft
 import plantuml.eclipse.puml.AssociationTypeRight
+import plantuml.eclipse.puml.Attribute
+import plantuml.eclipse.puml.Class
+import plantuml.eclipse.puml.ClassUml
+import plantuml.eclipse.puml.Enum
+import plantuml.eclipse.puml.EnumConstant
+import plantuml.eclipse.puml.Method
+import plantuml.eclipse.puml.Visibility
 
 /**
  * Provides labels for a EObjects.
  * TODO: Multiple icons per entry to display something is static or abstract.
  */
-class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelProvider {
+class PumlLabelProvider extends DefaultEObjectLabelProvider {
 
-	@Inject
-    private IImageHelper imageHelper
+	@Inject private IImageHelper imageHelper
+	@Inject private XbaseImages2 images
     
     private StringBuffer label
     private AssociationArrow arrow  
 
 	@Inject
-	new(org.eclipse.emf.edit.ui.provider.AdapterFactoryLabelProvider delegate) {
+	new(AdapterFactoryLabelProvider delegate) {
 		super(delegate);
 	}
 	
@@ -51,14 +57,14 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 * Returns the label text for Enums.
 	 */
 	def text(Enum someEnum){
-		return someEnum.name
+		return " " + someEnum.name
 	}
 	
 	/**
 	 * Returns the label text for enum constants.
 	 */
 	def text(EnumConstant enumConstant){
-		return enumConstant.name
+		return " " + enumConstant.name
 	}
 	
 	
@@ -91,10 +97,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	def text(Class someClass) {
 		label = new StringBuffer()
-		label.append(someClass.getName())
-		if(someClass.classifier != null){
-			label.append(" {abstract}")
-		}
+		label.append(" " + someClass.getName())
 		return label.toString()
 	}
 		
@@ -103,7 +106,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	def text(Attribute attribute){
 		var styledLabel = new StyledString()
-		styledLabel.append(attribute.getName())
+		styledLabel.append(" " + attribute.getName())
 		label = new StringBuffer();
 		if(attribute.type != null){
 			label.append(" : " + attribute.type)
@@ -115,14 +118,6 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 				label.append("]")
 			}
 		}
-		if(attribute.classifier != Classifier.UNSPECIFIED){
-			if(attribute.classifier == Classifier.ABSTRACT){
-				label.append(" {abstract}")
-			}
-			if(attribute.classifier == Classifier.STATIC){
-				label.append(" {static}")
-			}
-		}
 		styledLabel.append(new StyledString(label.toString(), StyledString::DECORATIONS_STYLER))
 		return styledLabel
 	}
@@ -132,7 +127,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	def text(Method method){
 		var styledLabel = new StyledString()
-		styledLabel.append(method.getName())
+		styledLabel.append(" " + method.getName())
 		label = new StringBuffer()
 		if(method.type != null){
 			label.append(" : " + method.type)
@@ -142,14 +137,6 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 					label.append(method.length)
 				}
 				label.append("]")
-			}
-		}
-		if(method.classifier != Classifier.UNSPECIFIED){
-			if(method.classifier == Classifier.ABSTRACT){
-				label.append(" {abstract}")
-			}
-			if(method.classifier == Classifier.STATIC){
-				label.append(" {static}")
 			}
 		}
 		styledLabel.append(new StyledString(label.toString(), StyledString::DECORATIONS_STYLER))
@@ -172,13 +159,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	def image(Attribute attribute){
 		if(attribute.visibility == Visibility.PROTECTED){
-			imageHelper.getImage("visibilities/field_protected_obj.png")
+			images.forField(JvmVisibility.PROTECTED, getAdornments(attribute))
 		}else if(attribute.visibility == Visibility.PRIVATE){
-			imageHelper.getImage("visibilities/field_private_obj.png")
+			images.forField(JvmVisibility.PRIVATE, getAdornments(attribute))
 		}else if(attribute.visibility == Visibility.PUBLIC){
-			imageHelper.getImage("visibilities/field_public_obj.png")
+			images.forField(JvmVisibility.PUBLIC, getAdornments(attribute))
 		}else if(attribute.visibility == Visibility.DEFAULT){
-			imageHelper.getImage("visibilities/field_default_obj.png")
+			images.forField(JvmVisibility.DEFAULT, getAdornments(attribute))
 		}
 	}
 	
@@ -186,7 +173,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 * Returns the image für enum constants.
 	 */
 	 def image(EnumConstant enumConstant){
-	 	imageHelper.getImage("field_public_obj.png")
+	 	images.forField(JvmVisibility.PUBLIC, getAdornments(enumConstant))
 	 }
 	
 	/**
@@ -194,13 +181,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	def image(Method method){
 		if(method.visibility == Visibility.PROTECTED){
-			imageHelper.getImage("visibilities/meth_proteced_obj.png")
+			images.forOperation(JvmVisibility.PROTECTED, getAdornments(method))
 		}else if(method.visibility == Visibility.PRIVATE){
-			imageHelper.getImage("visibilities/meth_private_obj.png")
+			images.forOperation(JvmVisibility.PRIVATE, getAdornments(method))
 		}else if(method.visibility == Visibility.PUBLIC){
-			imageHelper.getImage("visibilities/meth_public_obj.png")
+			images.forOperation(JvmVisibility.PUBLIC, getAdornments(method))
 		}else if(method.visibility == Visibility.DEFAULT){
-			imageHelper.getImage("visibilities/meth_default_obj.png")
+			images.forOperation(JvmVisibility.DEFAULT, getAdornments(method))
 		}
 	}
 	
@@ -208,7 +195,7 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 * Returns the image for enums.
 	 */
 	def image(Enum someEnum){
-		imageHelper.getImage("enum_obj.png");
+		images.forEnum(JvmVisibility.PUBLIC, getAdornments(someEnum))
 	}
 	
 	/**
@@ -216,12 +203,64 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	def image(Class someClass){
 		if(someClass.interface){
-			imageHelper.getImage("int_obj.png")
+			images.forInterface(JvmVisibility.PUBLIC, getAdornments(someClass))
 		}else{
-			imageHelper.getImage("class_obj.png")
+			images.forClass(JvmVisibility.PUBLIC, getAdornments(someClass))
 		}
 	}
+	
+	// -------------------------------------------------------------------------------------------
+	// ---------------------------------------- Helper -------------------------------------------
+	// -------------------------------------------------------------------------------------------
 
+	/**
+	 * Returns adornment for decoraters.
+	 */
+	def private int getAdornments(Object obj){
+		var adornment = 0
+		if(obj instanceof Attribute){
+			if(obj.static){
+				adornment += JavaElementImageDescriptor.STATIC
+			}
+			if(obj.abstract){
+				adornment += JavaElementImageDescriptor.ABSTRACT
+			}
+		}
+		if(obj instanceof Method){
+			if(obj.static){
+				adornment += JavaElementImageDescriptor.STATIC
+			}
+			if(obj.abstract){
+				adornment += JavaElementImageDescriptor.ABSTRACT
+			}
+		}
+		if(obj instanceof Class){
+			if(obj.abstract){
+				adornment += JavaElementImageDescriptor.ABSTRACT
+			}
+		}
+		if(obj instanceof EnumConstant){
+			adornment += JavaElementImageDescriptor.FINAL
+			adornment += JavaElementImageDescriptor.STATIC
+		}
+		if(obj instanceof Enum){
+			adornment += JavaElementImageDescriptor.FINAL
+			adornment += JavaElementImageDescriptor.STATIC
+		}
+		return adornment
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 }

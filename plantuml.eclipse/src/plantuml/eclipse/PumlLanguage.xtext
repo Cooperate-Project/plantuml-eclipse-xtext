@@ -46,7 +46,7 @@ ClassElement:
 // Class definition
 Class:
 	{Class}
-	(classifier='abstract')? ('class' | interface?='interface') (name=ID | (name=STRING ('as' name=ID)?))
+	(abstract?='abstract')? ('class' | interface?='interface') (name=ID | (name=STRING ('as' name=ID)?))
 	(color=ColorTag)?
 	(('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])*)
 	| ('implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])?)
@@ -84,14 +84,14 @@ EnumConstant:
 // Attributes in classes
 Attribute:
 	{Attribute}
-	("{" classifier=Classifier "}")?
+	(static?='{static}')? (abstract?='{abstract}')?
 	((type=ID (array?='[' (length=Int)? ']')? name=ID)
 	|((visibility=Visibility)? name=ID (":" type=ID (array?='[' (length=Int)? ']')?)?));
 
 // Methods in classes
 Method:
 	{Method}
-	("{" classifier=Classifier "}")?
+	(static?='{static}')? (abstract?='{abstract}')?
 	((type=ID (array?='[' (length=Int)? ']')? name=METHID)
 	|((visibility=Visibility)? name=METHID (":" type=ID (array?='[' (length=Int)? ']')?)?));
 
@@ -152,12 +152,6 @@ enum Visibility:
 	| PRIVATE='-'
 	| DEFAULT='~'
 	| PUBLIC='+';
-
-// Classifiers
-enum Classifier:
-	UNSPECIFIED
-	| ABSTRACT='abstract'
-	| STATIC='static';
 
 
 // -----------------------------------------------------------------------------------------------

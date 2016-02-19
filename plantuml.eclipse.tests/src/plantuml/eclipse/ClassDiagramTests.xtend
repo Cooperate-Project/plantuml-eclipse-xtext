@@ -15,7 +15,6 @@ import plantuml.eclipse.puml.Enum
 import plantuml.eclipse.puml.Attribute
 import plantuml.eclipse.puml.Visibility
 import plantuml.eclipse.puml.Method
-import plantuml.eclipse.puml.Classifier
 import plantuml.eclipse.puml.Association
 import plantuml.eclipse.puml.EnumConstant
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
@@ -85,7 +84,7 @@ class ClassDiagramTests {
 		'''.parse
 		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
 		Assert::assertEquals("Alice", classAlice.name)
-		Assert::assertEquals("abstract", classAlice.classifier)
+		Assert::assertTrue(classAlice.abstract)
 	}
 	
 	@Test
@@ -176,10 +175,10 @@ class ClassDiagramTests {
 		Assert::assertEquals("buildHouse()", firstMethdAlice.name)
 		Assert::assertEquals("House", firstMethdAlice.type)
 		Assert::assertEquals(Visibility.PRIVATE, firstMethdAlice.visibility)
-		Assert::assertEquals(Classifier.ABSTRACT, firstMethdAlice.classifier)
+		Assert::assertTrue(firstMethdAlice.abstract)
 		Assert::assertEquals("getDate()", secondMethAlice.name)
 		Assert::assertEquals("Date", secondMethAlice.type)
-		Assert::assertEquals(Classifier.STATIC, secondMethAlice.classifier)
+		Assert::assertTrue(secondMethAlice.static)
 	}
 	
 	@Test
@@ -200,11 +199,11 @@ class ClassDiagramTests {
 		Assert::assertEquals("pi", firstAttrAlice.name)
 		Assert::assertEquals("float", firstAttrAlice.type)
 		Assert::assertEquals(Visibility.PRIVATE, firstAttrAlice.visibility)
-		Assert::assertEquals(Classifier.STATIC, firstAttrAlice.classifier)
+		Assert::assertTrue(firstAttrAlice.static)
 		Assert::assertEquals("g", secondAttrAlice.name)
 		Assert::assertEquals("float", secondAttrAlice.type)
 		Assert::assertEquals(Visibility.PUBLIC, secondAttrAlice.visibility)
-		Assert::assertEquals(Classifier.STATIC, secondAttrAlice.classifier)
+		Assert::assertTrue(secondAttrAlice.static)
 	}
 	
 	@Test
@@ -294,7 +293,7 @@ class ClassDiagramTests {
 		Assert::assertEquals("#FF0028", classBob.color)
 		Assert::assertEquals("Mallory", classMallory.name)
 		Assert::assertEquals("#22AB99", classMallory.color)
-		Assert::assertEquals("abstract", classMallory.classifier)
+		Assert::assertTrue(classMallory.abstract)
 		Assert::assertEquals("age", malloryAttr.name)
 		Assert::assertEquals("int", malloryAttr.type)
 		Assert::assertEquals(Visibility.PRIVATE, malloryAttr.visibility)

@@ -41,7 +41,7 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 				classesParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("class_obj.png"), "Classes", false){}
 				interfacesParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("int_obj.png"), "Interfaces", false){}
 				enumsParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("enum_obj.png"), "Enums", false){}
-				associationsParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("link.png"), "Assocations", false){}
+				associationsParent = new AbstractOutlineNode(parentNode, imageHelper.getImage("reference.png"), "Assocations", false){}
 				// Loop through Class Elements
 				for(EObject umlClassElement : umlDiagram.umlElements){
 					if(umlClassElement instanceof Class){
