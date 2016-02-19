@@ -39,6 +39,7 @@ class PumlSemanticHighlightingCalculator implements ISemanticHighlightingCalcula
             if (element instanceof Class){
             	highlightNode(element, PumlPackage.Literals.CLASS__NAME, PumlHighlightingConfiguration.CLASS_ID, acceptor)
             	highlightNode(element, PumlPackage.Literals.CLASS__COLOR, PumlHighlightingConfiguration.COLOR_ID, acceptor)
+            	highlightNode(element, PumlPackage.Literals.CLASS__ADVANCED_BODY, PumlHighlightingConfiguration.NOTE_ID, acceptor)
             }
             if (element instanceof Enum){
             	highlightNode(element, PumlPackage.Literals.ENUM__NAME, PumlHighlightingConfiguration.CLASS_ID, acceptor)

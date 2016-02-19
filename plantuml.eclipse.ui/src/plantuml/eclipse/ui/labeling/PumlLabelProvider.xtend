@@ -172,13 +172,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	def image(Attribute attribute){
 		if(attribute.visibility == Visibility.PROTECTED){
-			imageHelper.getImage("field_protected_obj.png")
+			imageHelper.getImage("visibilities/field_protected_obj.png")
 		}else if(attribute.visibility == Visibility.PRIVATE){
-			imageHelper.getImage("field_private_obj.png")
+			imageHelper.getImage("visibilities/field_private_obj.png")
 		}else if(attribute.visibility == Visibility.PUBLIC){
-			imageHelper.getImage("field_public_obj.png")
+			imageHelper.getImage("visibilities/field_public_obj.png")
 		}else if(attribute.visibility == Visibility.DEFAULT){
-			imageHelper.getImage("field_default_obj.png")
+			imageHelper.getImage("visibilities/field_default_obj.png")
 		}
 	}
 	
@@ -194,13 +194,13 @@ class PumlLabelProvider extends org.eclipse.xtext.ui.label.DefaultEObjectLabelPr
 	 */
 	def image(Method method){
 		if(method.visibility == Visibility.PROTECTED){
-			imageHelper.getImage("methpro_obj.png")
+			imageHelper.getImage("visibilities/meth_proteced_obj.png")
 		}else if(method.visibility == Visibility.PRIVATE){
-			imageHelper.getImage("methpri_obj.png")
+			imageHelper.getImage("visibilities/meth_private_obj.png")
 		}else if(method.visibility == Visibility.PUBLIC){
-			imageHelper.getImage("methpub_obj.png")
+			imageHelper.getImage("visibilities/meth_public_obj.png")
 		}else if(method.visibility == Visibility.DEFAULT){
-			imageHelper.getImage("methdef_obj.png")
+			imageHelper.getImage("visibilities/meth_default_obj.png")
 		}
 	}
 	

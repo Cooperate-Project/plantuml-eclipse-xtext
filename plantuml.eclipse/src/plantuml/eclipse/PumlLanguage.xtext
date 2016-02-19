@@ -44,15 +44,14 @@ ClassElement:
 	| Enum;
 
 // Class definition
-// TODO: Advanced Class Body not possible - Interference with attribute definitions
 Class:
 	{Class}
-	(classifier='abstract')? ('class' | interface?='interface') name=ClassName
+	(classifier='abstract')? ('class' | interface?='interface') (name=ID | (name=STRING ('as' name=ID)?))
 	(color=ColorTag)?
 	(('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])*)
 	| ('implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])?)
 	| ('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])* 'implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])*))?
-	('{' (classContents+=ClassContent | divider+=DividerClass)* '}')?;
+	('{' (classContents+=ClassContent | divider+=DividerClass | advancedBody+=STRING)* '}')?;
 
 
 // Other possibility to create classes
