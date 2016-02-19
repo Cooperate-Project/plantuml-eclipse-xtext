@@ -46,7 +46,7 @@ ClassElement:
 // Class definition
 Class:
 	{Class}
-	(abstract?='abstract')? ('class' | interface?='interface') (name=ID | (name=STRING ('as' name=ID)?))
+	(((abstract?='abstract')? 'class') | interface?='interface') (name=ID | (name=STRING ('as' name=ID)?))
 	(color=ColorTag)?
 	(('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])*)
 	| ('implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])?)

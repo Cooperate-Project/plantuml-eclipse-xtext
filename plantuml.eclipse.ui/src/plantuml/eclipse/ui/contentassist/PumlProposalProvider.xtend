@@ -32,7 +32,7 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 	static final String[] FILTERED_KEYWORDS = #["{","}","--","==","__","[","#","+","~","-", ".", "-[", "o", "*", "<", "<|" , "UNDEFINED"]
 
 	// Visibilities of Attributes and Methods
-	static final val VISIBILITIES = #["public"->"+","private"->"-","protected"->"~","default"->"#"]
+	static final val VISIBILITIES = #["public"->"+","private"->"-","protected"->"#","default"->"~"]
 	static final val DESC = "enterName"
 	static final val TYPE = "enterType"
 	
@@ -69,7 +69,7 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 	override completeAssociation_AssociationArrow(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		if(element instanceof Association){
 			val asDescs = #[
-				"gets implemented by" -> ("implm_co.png" -> "<|--"),
+				"gets implemented by" -> ("implm_co.png" -> "<|.."),
 				"gets extended by" -> ("over_co.png" -> "<|--"),
 				"gets aggregated by" -> ("aggr_co.png" -> "o--"),
 				"gets composited by" -> ("comp_co.png" -> "*--"),

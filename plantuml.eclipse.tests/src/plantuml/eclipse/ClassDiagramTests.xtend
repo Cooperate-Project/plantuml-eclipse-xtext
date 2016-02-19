@@ -135,6 +135,41 @@ class ClassDiagramTests {
 	}
 	
 	@Test
+	def void visibilities() {
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice {
+				+firstName : String
+				-lastName : String
+				~age : int
+				#height : int
+			}
+			@enduml
+		'''.parse
+		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
+		val aliceAttr = #[
+			classAlice.classContents.get(0) as Attribute,
+			classAlice.classContents.get(1) as Attribute,
+			classAlice.classContents.get(2) as Attribute,
+			classAlice.classContents.get(3) as Attribute
+		]
+		Assert::assertEquals("Alice", classAlice.name)
+		Assert::assertEquals("firstName", aliceAttr.get(0).name)
+		Assert::assertEquals("String", aliceAttr.get(0).type)
+		Assert::assertEquals(Visibility.PUBLIC, aliceAttr.get(0).visibility)
+		Assert::assertEquals("lastName", aliceAttr.get(1).name)
+		Assert::assertEquals("String", aliceAttr.get(1).type)
+		Assert::assertEquals(Visibility.PRIVATE, aliceAttr.get(1).visibility)
+		Assert::assertEquals("age", aliceAttr.get(2).name)
+		Assert::assertEquals("int", aliceAttr.get(2).type)
+		Assert::assertEquals(Visibility.DEFAULT, aliceAttr.get(2).visibility)
+		Assert::assertEquals("height", aliceAttr.get(3).name)
+		Assert::assertEquals("int", aliceAttr.get(3).type)
+		Assert::assertEquals(Visibility.PROTECTED, aliceAttr.get(3).visibility)
+	}
+	
+	@Test
 	def void classWithMethodsAndAttributes() {
 		val heros = '''
 			CLASS
@@ -205,6 +240,39 @@ class ClassDiagramTests {
 		Assert::assertEquals(Visibility.PUBLIC, secondAttrAlice.visibility)
 		Assert::assertTrue(secondAttrAlice.static)
 	}
+	
+	@Test
+	def void abstractAndStaticAttributes() {
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice {
+				{static}{abstract} -pi : float
+				{abstract} +g : float
+				{static} -h : float
+			}
+			@enduml
+		'''.parse
+		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
+		val firstAttrAlice = (classAlice.classContents.get(0) as Attribute)
+		val secondAttrAlice = (classAlice.classContents.get(1) as Attribute)
+		val thirdAttrAlice = (classAlice.classContents.get(2) as Attribute)
+		Assert::assertEquals("Alice", classAlice.name)
+		Assert::assertEquals("pi", firstAttrAlice.name)
+		Assert::assertEquals("float", firstAttrAlice.type)
+		Assert::assertEquals(Visibility.PRIVATE, firstAttrAlice.visibility)
+		Assert::assertTrue(firstAttrAlice.abstract)
+		Assert::assertTrue(firstAttrAlice.static)
+		Assert::assertEquals("g", secondAttrAlice.name)
+		Assert::assertEquals("float", secondAttrAlice.type)
+		Assert::assertEquals(Visibility.PUBLIC, secondAttrAlice.visibility)
+		Assert::assertTrue(secondAttrAlice.abstract)
+		Assert::assertEquals("h", thirdAttrAlice.name)
+		Assert::assertEquals("float", thirdAttrAlice.type)
+		Assert::assertEquals(Visibility.PRIVATE, thirdAttrAlice.visibility)
+		Assert::assertTrue(thirdAttrAlice.static)
+	}
+	
 	
 	@Test
 	def void associationBidirectional(){
