@@ -5,6 +5,8 @@ import plantuml.eclipse.puml.Class
 import plantuml.eclipse.puml.EnumConstant
 import plantuml.eclipse.puml.PumlPackage
 import java.util.HashSet
+import plantuml.eclipse.puml.Method
+import java.util.HashMap
 
 /**
  * This class provides custom rules that will be validated.
@@ -14,6 +16,11 @@ class PumlValidator extends AbstractPumlValidator {
 	public static val HIERARCHY_CYCLE = "plantuml.eclipse.puml.HierarchyCycle"
 	public static val INVALID_ENUM_CONSTANT_NAME = "plantuml.eclipse.puml.InvalidEmunConstantName";
 	public static val INVALID_CLASS_NAME = "plantuml.eclipse.puml.InvalidClassName"
+	public static val INCOMPLETE_INTERFACE_IMPLEMENTATION = "plantuml.eclipse.IncompleteInterfaceImplementation"
+	public static val OVERLOAD_METHOD_RETURN_TYPE = "plantuml.eclipse.OverloadMethodReturnType"
+
+	// Helper
+	private HashMap<String,String> interfaceMethods;
 
 	/**
 	 * TODO: Mark correctly for several super types.
@@ -85,8 +92,45 @@ class PumlValidator extends AbstractPumlValidator {
 			}
 		}
 	}
-	 
-	 
+	
+	
+	/**
+	 * Checks for overloads of return types of implemented interface methods.
+	 */ 
+	@Check
+	def checkImplements(Class someClass) {
+		interfaceMethods = new HashMap<String,String>();
+		// Loop through interfaces
+		for(interface : someClass.interfaces){
+			for(classContent : interface.classContents){
+				if(classContent instanceof Method){
+					// Put in HashMap
+					// Example: Key("eineMethode()","String")
+					val output = interfaceMethods.put(classContent.name, classContent.type)
+					if(output != null && output != classContent.type){
+						warning("Overload for return type of method '" + classContent.name  +"' through implemented interface '" + interface.name + "'", 
+							PumlPackage::eINSTANCE.class_Name, 
+							OVERLOAD_METHOD_RETURN_TYPE, 
+							someClass.name
+						)
+					}
+				}
+			}
+		}
+		// Loop trough class methods
+		for(classContent : someClass.classContents){
+			if(classContent instanceof Method){
+				val output = interfaceMethods.remove(classContent.name)
+				if(output != null && output != classContent.type){
+						warning("Overload for return type of method '" + classContent.name +"'", 
+							PumlPackage::eINSTANCE.class_Name, 
+							OVERLOAD_METHOD_RETURN_TYPE, 
+							someClass.name
+						)
+				}
+			}
+		}
+	}
 	 
 	 
 	 

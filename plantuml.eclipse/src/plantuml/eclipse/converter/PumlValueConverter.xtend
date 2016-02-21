@@ -10,8 +10,8 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	/**
 	 * Allows to create classes with strings containing empty spaces as names.
 	 */
-	@ValueConverter(rule="ClassName")
-	def IValueConverter<String> getNameNameConverter() {
+	@ValueConverter(rule="STRING")
+	def IValueConverter<String> STRING() {
 		return new IValueConverter<String>() {
 			override toString(String value) throws ValueConverterException {
 				if (value.matches("^?[a-zA-Z_][a-zA-Z_0-9]*")) {
