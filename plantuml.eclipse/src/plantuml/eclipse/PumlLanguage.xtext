@@ -179,6 +179,7 @@ UmlElement:
 	//| QualifiedName
 ;
 
+
 Participant:
 	{Participant}
 	// TODO das Problem liegt am Konflikt in den Namen --> Daher hat xtext auch bei der ID den ^ als Konfliktvermeider
@@ -193,6 +194,7 @@ QualifiedName:
 	{QualifiedName}
 	ID;
 
+	
 Space:
 	{Space}
 	('||' value=ID '||' | '|||');
@@ -222,7 +224,7 @@ Newpage:
 
 Title:
 	{Title}
-	'TITLE' value+=(ID | STRING)*;
+	'TITLE' value+=(ID | STRING | WS)*;
 
 Legend:
 	{Legend}
@@ -310,14 +312,109 @@ ComponentElement:
 	| Title;
 	
 Link:
-	linkOne=[NamedElement|ID] ('-' | '<-' | '.' | '<.') (ID | '[' HEXCODE ']')* ('-' | '.' | '->' | '.>') linkTwo=[NamedElement|ID] (':'
-	text+=(ID)*)?;
+	linkOne=[NamedElement|ID] 
+	/**
+	 * Long list of possible clauses due to misunderstanding within the parser.
+	 * If you would split the detection into multiple ones this is not be detected in the right way.
+	 * Example: 
+	 * 		('<-' | '-') (d)? ('-' | '->')
+	 * does not work because if the parser is already in ID detection due to previous (':' text+=(ID)*)?
+	 * it is not possible to detect the upper clause for sure.
+	 */
+	('<-'
+		| '.'
+		| '<.'
+		| '-'
+		| '<->'
+		| '->'
+		| '<.>'
+		| '.>'
+		| '-d-'
+		| '<-d-'
+		| '<.d.'
+		| '.d.'
+		| '<-d->'
+		| '-d->'
+		| '<.d.>'
+		| '.d.>'
+		| '-r-'
+		| '<-r-'
+		| '<.r.'
+		| '.r.'
+		| '<-r->'
+		| '-r->'
+		| '<.r.>'
+		| '.r.>'
+		| '-u-'
+		| '<-u-'
+		| '<.u.'
+		| '.u.'
+		| '<-u->'
+		| '-u->'
+		| '<.u.>'
+		| '.u.>'
+		| '-l-'
+		| '<-l-'
+		| '<.l.'
+		| '.l.'
+		| '<-l->'
+		| '-l->'
+		| '<.l.>'
+		| '.l.>'
+		| '--'
+		| '<--'
+		| '<..'
+		| '<-->'
+		| '-->'
+		| '<..>'
+		| '..>'
+		| '-[' (color=ColorTag) ']d-'
+		| '<-[' (color=ColorTag) ']d-'
+		| '<.[' (color=ColorTag) ']d.'
+		| '.[' (color=ColorTag) ']d.'
+		| '<-[' (color=ColorTag) ']d->'
+		| '-[' (color=ColorTag) ']d->'
+		| '<.[' (color=ColorTag) ']d.>'
+		| '.[' (color=ColorTag) ']d.>'
+		| '-[' (color=ColorTag) ']r-'
+		| '<-[' (color=ColorTag) ']r-'
+		| '<.[' (color=ColorTag) ']r.'
+		| '.[' (color=ColorTag) ']r.'
+		| '<-[' (color=ColorTag) ']r->'
+		| '-[' (color=ColorTag) ']r->'
+		| '<.[' (color=ColorTag) ']r.>'
+		| '.[' (color=ColorTag) ']r.>'
+		| '-[' (color=ColorTag) ']u-'
+		| '<-[' (color=ColorTag) ']u-'
+		| '<.[' (color=ColorTag) ']u.'
+		| '.[' (color=ColorTag) ']u.'
+		| '<-[' (color=ColorTag) ']u->'
+		| '-[' (color=ColorTag) ']u->'
+		| '<.[' (color=ColorTag) ']u.>'
+		| '-[' (color=ColorTag) ']l-'
+		| '<-[' (color=ColorTag) ']l-'
+		| '<.[' (color=ColorTag) ']l.'
+		| '.[' (color=ColorTag) ']l.'
+		| '<-[' (color=ColorTag) ']l->'
+		| '-[' (color=ColorTag) ']l->'
+		| '<.[' (color=ColorTag) ']l.>'
+		| '.[' (color=ColorTag) ']l.>'
+		| '-[' (color=ColorTag) ']-'
+		| '<-[' (color=ColorTag) ']-'
+		| '<.[' (color=ColorTag) '].'
+		| '<-[' (color=ColorTag) ']->'
+		| '-[' (color=ColorTag) ']->'
+		| '<.[' (color=ColorTag) '].>'
+		| '.[' (color=ColorTag) '].>'	
+	) 
+	linkTwo=[NamedElement|ID] (':' text+=(ID)*)?;
 
 Interface returns NamedElement:
-	{Interface} ('()' | 'INTERFACE') description=STRING ('AS' name=ID)? (color=HEXCODE)?;
+	{Interface} ('(' name=ID nameExtension+=(ID)* ')' | 'INTERFACE' description=STRING) ('AS' name=ID)? (color=ColorTag)?;
 
 Component returns NamedElement:
-	{Component} '[' name=ID nameExtension+=(ID)* ']' ('AS' name=ID)? (color=HEXCODE)?;
+	{Component} ('[' name=ID nameExtension+=(ID | WS)* ']' | 'COMPONENT' description=STRING) ('AS' name=ID)? (color=ColorTag)?;
+
 
 
 // -----------------------------------------------------------------------------------------------
