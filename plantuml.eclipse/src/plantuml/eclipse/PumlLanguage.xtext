@@ -99,7 +99,7 @@ Method:
 Association:
 	{Association}
 	(classLeft=[Class|ClassName]
-	associationArrow=AssociationArrow
+	associationArrow=ARROW
 	classRight=[Class|ClassName])
 	(':' text+=(ID)*)?;
 
@@ -107,9 +107,9 @@ Association:
 // TODO: Not working for most cases.
 AssociationArrow:
 	{AssociationArrow}
-	leftType=AssociationTypeLeft?
-	('-'|'.') ("[" color=ColorTag "]")? ('-'|'.')
-	rightType=AssociationTypeRight?;
+	leftType=AssociationType
+	color=ColorTag
+	rightType=AssociationType;
 
 // Notes for classes
 NoteClass:
@@ -131,20 +131,13 @@ DividerClass:
 ;
 
 // Left types of an association
-enum AssociationTypeLeft:
+enum AssociationType:
 	UNDEFINED
-	| DIRECTIONAL='<'
-	| INHERITANCE='<|'
-	| AGGREGATION='o'
-	| COMPOSITION='*';
+	| DIRECTIONAL
+	| INHERITANCE
+	| AGGREGATION
+	| COMPOSITION;
 
-// Right types of an association
-enum AssociationTypeRight:
-	UNDEFINED
-	| DIRECTIONAL='>'
-	| INHERITANCE='|>'
-	| AGGREGATION='o'
-	| COMPOSITION='*';
 
 // Visibility for attributes and methods
 enum Visibility: 
@@ -454,16 +447,11 @@ terminal HEXCODE:
 
 // Terminal to detect methods
 terminal METHID:
-	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '*' | '//' | '<' | '>' | '\\') 
-	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | ':' | '.' | ',')*
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9') 
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*
 	"("
-	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '-' | '~' | '*' | '//' | '<' | '>' | '\\' | ':' | '.' | ',')*
+	('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*
 	")";
-
-// TODO: Does not work
-// Multiline comments
-terminal ML_COMMENT:
-	"//'" ('\r'? '\n')* "'//" ;
 
 // Integer
 Int returns ecore::EInt:
@@ -476,6 +464,11 @@ terminal NUMBER:
 // String
 terminal STRING:
 	'"' ('\\' . | !('\\' | '"'))* '"';
+	
+terminal ARROW:
+	('<' | '-' | '.' | 'o' | '*')
+	('>' | '-' | '.' | 'o' | '*' | '#' | '[' | ']' | '|' | 'A' .. 'F' | '0' .. '9')*
+;
 
 // Tab
 terminal WS:
@@ -494,3 +487,7 @@ terminal ID:
 terminal SL_COMMENT:
 	"'" !('\n' | '\r')* ('\r'? '\n')?;
 
+// TODO: Does not work
+// Multiline comments
+terminal ML_COMMENT:
+	"//'" ('\r'? '\n')* "'//" ;

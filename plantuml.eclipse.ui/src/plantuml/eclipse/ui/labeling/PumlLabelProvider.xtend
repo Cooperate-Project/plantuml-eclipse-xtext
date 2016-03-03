@@ -14,9 +14,6 @@ import org.eclipse.xtext.xbase.ui.labeling.XbaseImages2
 import org.eclipse.jdt.ui.JavaElementImageDescriptor;
 
 import plantuml.eclipse.puml.Association
-import plantuml.eclipse.puml.AssociationArrow
-import plantuml.eclipse.puml.AssociationTypeLeft
-import plantuml.eclipse.puml.AssociationTypeRight
 import plantuml.eclipse.puml.Attribute
 import plantuml.eclipse.puml.Class
 import plantuml.eclipse.puml.ClassUml
@@ -35,7 +32,6 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	@Inject private XbaseImages2 images
     
     private StringBuffer label
-    private AssociationArrow arrow  
 
 	@Inject
 	new(AdapterFactoryLabelProvider delegate) {
@@ -75,13 +71,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 		label = new StringBuffer()
 		label.append(association.classLeft.name + " ");
 		// Which association do we have?
-		arrow = association.associationArrow;
-		if(arrow.leftType != AssociationTypeLeft.UNDEFINED){
-			label.append(arrow.leftType)
-		}
-		if(arrow.rightType != AssociationTypeRight.UNDEFINED){
-			label.append(arrow.rightType)
-		}
+		label.append(" " + association.associationArrow + " ")
 		label.append(" " + association.classRight.name);
 		if(association.text.length != 0){
 			label.append(" : ")

@@ -7,6 +7,26 @@ import org.eclipse.xtext.nodemodel.INode
 import org.eclipse.xtext.conversion.ValueConverterException
 
 class PumlValueConverter extends AbstractDeclarativeValueConverterService {
+	
+	@ValueConverter(rule="ARROW")
+	def IValueConverter<String> ARROW() {
+		return new IValueConverter<String>(){	
+			override toString(String value) throws ValueConverterException {
+				System.out.println(value);
+				// TODO implement me
+				return value + "?";
+			}
+			
+			override toValue(String value, INode node) throws ValueConverterException {
+				if (value == null) {
+					throw new ValueConverterException("null value", node, null);
+				}
+				System.out.println(value);
+				return value + " ! ";
+			}
+		};
+	}
+	
 	/**
 	 * Allows to create classes with strings containing empty spaces as names.
 	 */
