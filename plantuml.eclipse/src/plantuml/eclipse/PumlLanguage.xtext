@@ -281,8 +281,6 @@ UseRight returns UmlUse:
 	(userOne=[Participant|ID]) ('o->' | '->o' | 'o->o' | '->' | 'o-->' | '-->o' | 'o-->o' | '-->' | 'x->' | '->x' |
 	'x->x' | 'x-->' | '-->x' | 'x-->x') (userTwo=[Participant|ID] | ']') (':' text+=(ID)*)?;
 
-
-	
 UmlElementsContainer:
 	{UmlElementsContainer}
 	umlElements+=(UmlElement)*;
@@ -408,8 +406,6 @@ Interface returns NamedElement:
 Component returns NamedElement:
 	{Component} ('[' name=ID nameExtension+=(ID | WS)* ']' | 'COMPONENT' description=STRING) ('AS' name=ID)? (color=ColorTag)?;
 
-
-
 // -----------------------------------------------------------------------------------------------
 // ------------------------------- Shared Rules and Terminals ------------------------------------
 // -----------------------------------------------------------------------------------------------
@@ -465,7 +461,7 @@ terminal NUMBER:
 terminal STRING:
 	'"' ('\\' . | !('\\' | '"'))* '"';
 	
-terminal ARROW:
+terminal ARROW returns AssociationType:
 	('<' | '-' | '.' | 'o' | '*')
 	('>' | '-' | '.' | 'o' | '*' | '#' | '[' | ']' | '|' | 'A' .. 'F' | '0' .. '9')*
 ;

@@ -5,15 +5,14 @@ import org.eclipse.xtext.conversion.IValueConverter
 import org.eclipse.xtext.conversion.ValueConverter
 import org.eclipse.xtext.nodemodel.INode
 import org.eclipse.xtext.conversion.ValueConverterException
+import plantuml.eclipse.puml.AssociationType
 
 class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	
 	@ValueConverter(rule="ARROW")
-	def IValueConverter<String> ARROW() {
-		return new IValueConverter<String>(){	
-			override toString(String value) throws ValueConverterException {
-				System.out.println(value);
-				// TODO implement me
+	def IValueConverter<AssociationType> ARROW() {
+		return new IValueConverter<AssociationType>(){	
+			override toString(AssociationType value) throws ValueConverterException {
 				return value + "?";
 			}
 			
@@ -21,8 +20,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 				if (value == null) {
 					throw new ValueConverterException("null value", node, null);
 				}
-				System.out.println(value);
-				return value + " ! ";
+				return AssociationType.INHERITANCE;
 			}
 		};
 	}
