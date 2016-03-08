@@ -99,7 +99,7 @@ Method:
 Association:
 	{Association}
 	(classLeft=[Class|ClassName]
-	associationArrow=ARROW
+	=>associationArrow=ARROWTYPE
 	classRight=[Class|ClassName])
 	(':' text+=(ID)*)?;
 
@@ -461,10 +461,13 @@ terminal NUMBER:
 terminal STRING:
 	'"' ('\\' . | !('\\' | '"'))* '"';
 	
-terminal ARROW returns AssociationType:
+Arrow:
+	type=ARROWTYPE
+;	
+
+terminal ARROWTYPE returns AssociationType:
 	('<' | '-' | '.' | 'o' | '*')
-	('>' | '-' | '.' | 'o' | '*' | '#' | '[' | ']' | '|' | 'A' .. 'F' | '0' .. '9')*
-;
+	('>' | '-' | '.' | 'o' | '*' | '#' | '[' | ']' | '|' | 'A' .. 'F' | '0' .. '9')*;
 
 // Tab
 terminal WS:

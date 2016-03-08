@@ -3,16 +3,18 @@
  */
 package plantuml.eclipse;
 
-import org.eclipse.xtext.conversion.impl.AbstractDeclarativeValueConverterService;
+import org.eclipse.xtext.conversion.IValueConverterService;
+
 import plantuml.eclipse.converter.PumlValueConverter;
 
 /**
  * Use this class to register components to be used at runtime / without the Equinox extension registry.
  */
 public class PumlRuntimeModule extends plantuml.eclipse.AbstractPumlRuntimeModule {
-
-	public Class<? extends AbstractDeclarativeValueConverterService> bindAbstractDeclarativeValueConverterService(){
-		return PumlValueConverter.class;
-	}
+    
+	@Override
+    public Class<? extends IValueConverterService> bindIValueConverterService() {
+        return PumlValueConverter.class;
+    }
 	
 }

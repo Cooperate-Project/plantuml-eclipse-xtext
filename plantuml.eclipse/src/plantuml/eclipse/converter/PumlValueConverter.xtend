@@ -6,22 +6,22 @@ import org.eclipse.xtext.conversion.ValueConverter
 import org.eclipse.xtext.nodemodel.INode
 import org.eclipse.xtext.conversion.ValueConverterException
 import plantuml.eclipse.puml.AssociationType
+import org.eclipse.xtext.conversion.impl.AbstractNullSafeConverter
 
 class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	
-	@ValueConverter(rule="ARROW")
+	@ValueConverter(rule="ARROWTYPE")
 	def IValueConverter<AssociationType> ARROW() {
-		return new IValueConverter<AssociationType>(){	
-			override toString(AssociationType value) throws ValueConverterException {
+		return new AbstractNullSafeConverter<AssociationType>() {
+			
+			override protected internalToString(AssociationType value) {
 				return value + "?";
 			}
 			
-			override toValue(String value, INode node) throws ValueConverterException {
-				if (value == null) {
-					throw new ValueConverterException("null value", node, null);
-				}
+			override protected internalToValue(String string, INode node) throws ValueConverterException {
 				return AssociationType.INHERITANCE;
 			}
+			
 		};
 	}
 	
