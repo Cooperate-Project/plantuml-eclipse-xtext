@@ -10,16 +10,24 @@ import org.eclipse.xtext.conversion.impl.AbstractNullSafeConverter
 
 class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	
+	StringBuffer stringBuffer;
+	String buffer;
+	
+	/**
+	 * Checks for correct association arrows.
+	 */
 	@ValueConverter(rule="ARROWTYPE")
 	def IValueConverter<AssociationType> ARROW() {
 		return new AbstractNullSafeConverter<AssociationType>() {
-			
 			override protected internalToString(AssociationType value) {
 				return value + "?";
 			}
-			
 			override protected internalToValue(String string, INode node) throws ValueConverterException {
-				return AssociationType.INHERITANCE;
+				if (string == null && checkArrowEnd(string) == null) {
+					throw new ValueConverterException("null value", node, null);
+				}
+				return checkArrowEnd(string);
+				
 			}
 			
 		};
@@ -48,4 +56,76 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 			}
 		}
 	}
+	
+	// -------------------------------------------------------------------------------------------
+	// ---------------------------------------- Helper -------------------------------------------
+	// -------------------------------------------------------------------------------------------
+	
+	/**
+	 * Checks for color tag in an arrow. Returns color (as hex or word), else null.
+	 */
+	def String checkForColorTag(String string){
+		if(!string.contains("[")){
+			return null;
+		}
+		// contains color tag
+		
+		buffer = string.split("\\[").get(0);
+		if(buffer.contains("]")){
+			return buffer = buffer.split("\\]").get(0);
+		}
+		// Parsing Error
+		return "#";
+	}
+	
+	def String removeColorTag(String string){
+		stringBuffer = new StringBuffer();
+		if(!string.contains("[")){
+			return string;
+		}
+		// contains color tag
+		stringBuffer.append(string.split("\\[").get(0));
+		if(string.contains("]")){
+			return stringBuffer.append(string.split("\\]").get(1)).toString();
+		}
+		// Parsing Error
+		return "#";
+	}
+	
+	def AssociationType checkArrowEnd(String string){
+		switch (removeColorTag(string)){
+			case "<|--": 	return AssociationType.INHERITANCELEFT
+			case "<|..": 	return AssociationType.INHERITANCELEFT
+			case "--|>": 	return AssociationType.INHERITANCERIGHT
+			case "..|>": 	return AssociationType.INHERITANCERIGHT
+			case "--":		return AssociationType.BIDIRECTIONAL
+			case "..":		return AssociationType.BIDIRECTIONAL
+			case "<--": 	return AssociationType.DIRECTIONALLEFT
+			case "<..": 	return AssociationType.DIRECTIONALLEFT
+			case "-->": 	return AssociationType.DIRECTIONALRIGHT
+			case "..>": 	return AssociationType.DIRECTIONALRIGHT
+			case "o--": 	return AssociationType.AGGREGATIONLEFT
+			case "o..": 	return AssociationType.AGGREGATIONLEFT
+			case "--o": 	return AssociationType.AGGREGATIONRIGHT
+			case "..o": 	return AssociationType.AGGREGATIONRIGHT
+			case "*--": 	return AssociationType.COMPOSITIONLEFT
+			case "*..": 	return AssociationType.COMPOSITIONLEFT
+			case "--*": 	return AssociationType.COMPOSITIONRIGHT
+			case "..*": 	return AssociationType.COMPOSITIONRIGHT
+		}
+		return null;
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 }

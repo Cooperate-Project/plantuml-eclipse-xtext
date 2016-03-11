@@ -21,6 +21,7 @@ import plantuml.eclipse.puml.Enum
 import plantuml.eclipse.puml.EnumConstant
 import plantuml.eclipse.puml.Method
 import plantuml.eclipse.puml.Visibility
+import plantuml.eclipse.puml.AssociationType
 
 /**
  * Provides labels for a EObjects.
@@ -76,7 +77,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 		if(association.text.length != 0){
 			label.append(" : ")
 			for(String text : association.text){
-				label.append(text)
+				label.append(text + " ")
 			}
 		}
 		return label.toString()
@@ -198,6 +199,27 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 			images.forClass(JvmVisibility.PUBLIC, getAdornments(someClass))
 		}
 	}
+	
+	/** 
+	 * Returns the images for associations
+	 */
+	 def image(Association association){
+	 	if(association.associationArrow == AssociationType.BIDIRECTIONAL){
+	 		imageHelper.getImage("ref_co")
+	 	}else if(association.associationArrow == AssociationType.INHERITANCELEFT
+	 		|| association.associationArrow == AssociationType.INHERITANCELEFT){
+	 		imageHelper.getImage("implm_co")
+	 	}else if(association.associationArrow == AssociationType.COMPOSITIONLEFT
+	 		|| association.associationArrow == AssociationType.COMPOSITIONRIGHT){
+	 		imageHelper.getImage("comp_co")
+	 	}else if(association.associationArrow == AssociationType.AGGREGATIONLEFT
+	 		|| association.associationArrow == AssociationType.AGGREGATIONRIGHT){
+	 		imageHelper.getImage("aggr_co")
+	 	}else if(association.associationArrow == AssociationType.DIRECTIONALLEFT
+	 		|| association.associationArrow == AssociationType.DIRECTIONALRIGHT){
+	 		imageHelper.getImage("comp_co")
+	 	}
+	 }
 	
 	// -------------------------------------------------------------------------------------------
 	// ---------------------------------------- Helper -------------------------------------------

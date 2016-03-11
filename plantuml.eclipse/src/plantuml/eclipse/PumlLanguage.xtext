@@ -133,10 +133,15 @@ DividerClass:
 // Left types of an association
 enum AssociationType:
 	UNDEFINED
-	| DIRECTIONAL
-	| INHERITANCE
-	| AGGREGATION
-	| COMPOSITION;
+	| BIDIRECTIONAL
+	| DIRECTIONALLEFT
+	| DIRECTIONALRIGHT
+	| INHERITANCELEFT
+	| INHERITANCERIGHT
+	| AGGREGATIONLEFT
+	| AGGREGATIONRIGHT
+	| COMPOSITIONLEFT
+	| COMPOSITIONRIGHT;
 
 
 // Visibility for attributes and methods
@@ -410,6 +415,12 @@ Component returns NamedElement:
 // ------------------------------- Shared Rules and Terminals ------------------------------------
 // -----------------------------------------------------------------------------------------------
 
+terminal ARROWTYPE returns AssociationType:
+	('<' | '-' | '.' | 'o' | '*')
+	('>' | '-' | '.' | 'o' | '*' | '|' 
+	| '[#' ( 'a'..'z' | 'A'..'Z' | '0'..'9' )+ ']'
+	)*;
+
 // Colors as words for PlantUML
 // Source: https://github.com/EricssonPlant/plantuml-xtext-light/
 terminal COLOR:
@@ -465,9 +476,7 @@ Arrow:
 	type=ARROWTYPE
 ;	
 
-terminal ARROWTYPE returns AssociationType:
-	('<' | '-' | '.' | 'o' | '*')
-	('>' | '-' | '.' | 'o' | '*' | '#' | '[' | ']' | '|' | 'A' .. 'F' | '0' .. '9')*;
+
 
 // Tab
 terminal WS:
