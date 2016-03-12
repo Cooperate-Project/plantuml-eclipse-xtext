@@ -46,7 +46,7 @@ ClassElement:
 // Class definition
 Class:
 	{Class}
-	(((abstract?='abstract')? 'class') | interface?='interface') (name=ID | (name=STRING ('as' name=ID)?))
+	(((abstract?='abstract')? 'class') | interface?='interface') (name=ID | name=STRING | longName=STRING 'as' name=ID)
 	(color=ColorTag)?
 	(('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])*)
 	| ('implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])?)
@@ -61,7 +61,6 @@ ClassWithContent returns Class:
 ;
 
 // Important contents inside a class
-// TODO: contains bugs in attribute vs. method detection in special cases --> force line break between contents should be the solution
 ClassContent:
 	Method
 	| Attribute;
@@ -473,10 +472,7 @@ terminal STRING:
 	'"' ('\\' . | !('\\' | '"'))* '"';
 	
 Arrow:
-	type=ARROWTYPE
-;	
-
-
+	type=ARROWTYPE;	
 
 // Tab
 terminal WS:

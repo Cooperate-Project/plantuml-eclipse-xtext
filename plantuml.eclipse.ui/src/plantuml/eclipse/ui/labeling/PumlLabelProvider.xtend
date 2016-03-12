@@ -33,6 +33,18 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	@Inject private XbaseImages2 images
     
     private StringBuffer label
+    
+	static final val ASSOCIATION_LABELS = newHashMap(
+		AssociationType.BIDIRECTIONAL -> "--",
+		AssociationType.DIRECTIONALLEFT -> "<--",
+		AssociationType.DIRECTIONALRIGHT -> "-->",
+		AssociationType.INHERITANCELEFT -> "--|>",
+		AssociationType.INHERITANCERIGHT -> "<|--",
+		AssociationType.COMPOSITIONLEFT -> "*--",
+		AssociationType.COMPOSITIONRIGHT -> "--*",
+		AssociationType.AGGREGATIONLEFT -> "o--",
+		AssociationType.AGGREGATIONRIGHT -> "--o"
+	)
 
 	@Inject
 	new(AdapterFactoryLabelProvider delegate) {
@@ -69,27 +81,31 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	 * Returns the label text for connections.
 	 */
 	 def text(Association association){
-		label = new StringBuffer()
-		label.append(association.classLeft.name + " ");
+		var styledLabel = new StyledString()
+		styledLabel.append(association.classLeft.name + " ");
 		// Which association do we have?
-		label.append(" " + association.associationArrow + " ")
-		label.append(" " + association.classRight.name);
+		styledLabel.append(ASSOCIATION_LABELS.get(association.associationArrow))
+		styledLabel.append(" " + association.classRight.name);
 		if(association.text.length != 0){
-			label.append(" : ")
+			label = new StringBuffer(" : ");
 			for(String text : association.text){
 				label.append(text + " ")
 			}
+			styledLabel.append(new StyledString(label.toString(), StyledString::DECORATIONS_STYLER))
 		}
-		return label.toString()
+		return styledLabel
 	 }
 
 	/**
 	 * Returns the label text for classes.
 	 */
 	def text(Class someClass) {
-		label = new StringBuffer()
-		label.append(" " + someClass.getName())
-		return label.toString()
+		var styledLabel = new StyledString()
+		styledLabel.append(" " + someClass.getName())
+		if(someClass.longName != null){
+			styledLabel.append(new StyledString(" as \"" + someClass.longName + "\"" , StyledString::DECORATIONS_STYLER))
+		}
+		return styledLabel
 	}
 		
 	/**
@@ -205,19 +221,19 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	 */
 	 def image(Association association){
 	 	if(association.associationArrow == AssociationType.BIDIRECTIONAL){
-	 		imageHelper.getImage("ref_co")
+	 		imageHelper.getImage("ref_co.png")
 	 	}else if(association.associationArrow == AssociationType.INHERITANCELEFT
-	 		|| association.associationArrow == AssociationType.INHERITANCELEFT){
-	 		imageHelper.getImage("implm_co")
+	 		|| association.associationArrow == AssociationType.INHERITANCERIGHT){
+	 		imageHelper.getImage("implm_co.png")
 	 	}else if(association.associationArrow == AssociationType.COMPOSITIONLEFT
 	 		|| association.associationArrow == AssociationType.COMPOSITIONRIGHT){
-	 		imageHelper.getImage("comp_co")
+	 		imageHelper.getImage("comp_co.png")
 	 	}else if(association.associationArrow == AssociationType.AGGREGATIONLEFT
 	 		|| association.associationArrow == AssociationType.AGGREGATIONRIGHT){
-	 		imageHelper.getImage("aggr_co")
+	 		imageHelper.getImage("aggr_co.png")
 	 	}else if(association.associationArrow == AssociationType.DIRECTIONALLEFT
 	 		|| association.associationArrow == AssociationType.DIRECTIONALRIGHT){
-	 		imageHelper.getImage("comp_co")
+	 		imageHelper.getImage("ref_co.png")
 	 	}
 	 }
 	

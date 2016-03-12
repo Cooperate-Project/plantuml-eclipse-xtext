@@ -109,7 +109,7 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 				));
 			}
 			// Add dividers
-			acceptor.accept(createCompletionProposal("-- text text text -- ", "Divider with text" , imageHelper.getImage("divider.png"), context));
+			acceptor.accept(createCompletionProposal("-- text text text -- ", "Divider with text" , imageHelper.getImage("divider_text.png"), context));
 			acceptor.accept(createCompletionProposal("--", "Divider without text" , imageHelper.getImage("divider.png"), context));
 		}		
 	}

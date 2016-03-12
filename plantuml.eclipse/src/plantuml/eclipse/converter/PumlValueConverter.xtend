@@ -78,6 +78,9 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 		return "#";
 	}
 	
+	/**
+	 * Removes color tag from an association.
+	 */
 	def String removeColorTag(String string){
 		stringBuffer = new StringBuffer();
 		if(!string.contains("[")){
@@ -92,6 +95,9 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 		return "#";
 	}
 	
+	/**
+	 * Checks for the type of an association and returns an Association Enum.
+	 */
 	def AssociationType checkArrowEnd(String string){
 		switch (removeColorTag(string)){
 			case "<|--": 	return AssociationType.INHERITANCELEFT
@@ -114,18 +120,5 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 			case "..*": 	return AssociationType.COMPOSITIONRIGHT
 		}
 		return null;
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}	
 }

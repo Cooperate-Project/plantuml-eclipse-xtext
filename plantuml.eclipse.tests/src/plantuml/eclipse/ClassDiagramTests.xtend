@@ -21,6 +21,7 @@ import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import plantuml.eclipse.validation.PumlValidator
 import plantuml.eclipse.puml.PumlPackage
 import plantuml.eclipse.puml.NoteClass
+import plantuml.eclipse.puml.AssociationType
 
 @RunWith(XtextRunner)
 @InjectWith(PumlInjectorProvider)
@@ -273,7 +274,6 @@ class ClassDiagramTests {
 		Assert::assertTrue(thirdAttrAlice.static)
 	}
 	
-	// TODO: Fix
 	@Test
 	def void associationBidirectional(){
 		val heros = '''
@@ -281,13 +281,165 @@ class ClassDiagramTests {
 			@startuml
 			class Alice
 			class Bob
+			Alice .. Bob
+			Alice .[#Red]. Bob
 			@enduml
 		'''.parse
 		val classUml = heros.umlDiagrams.head as ClassUml
 		val classAlice = classUml.umlElements.get(0) as Class
 		val classBob = classUml.umlElements.get(1) as Class
+		val association = classUml.umlElements.get(2) as Association
 		Assert::assertEquals("Alice", classAlice.name);
 		Assert::assertEquals("Bob", classBob.name);
+		Assert::assertEquals(AssociationType.BIDIRECTIONAL, association.associationArrow)
+	}
+	
+	@Test
+	def void associationDirectional(){
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice
+			class Bob
+			Alice -[#FF0022]-> Bob
+			Alice .[#AA1289].> Bob
+			Alice <-[#Orange]- Bob
+			Alice <.[#Blue]. Bob
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val classAlice = classUml.umlElements.get(0) as Class
+		val classBob = classUml.umlElements.get(1) as Class
+		val associationsRight = #[
+			classUml.umlElements.get(2) as Association,
+			classUml.umlElements.get(3) as Association
+			]
+		val associationsLeft = #[
+			classUml.umlElements.get(4) as Association,
+			classUml.umlElements.get(5) as Association
+			]
+		Assert::assertEquals("Alice", classAlice.name);
+		Assert::assertEquals("Bob", classBob.name);
+		for(Association association : associationsRight){
+			Assert::assertEquals(AssociationType.DIRECTIONALRIGHT, association.associationArrow)
+		}
+		for(Association association : associationsLeft){
+			Assert::assertEquals(AssociationType.DIRECTIONALLEFT, association.associationArrow)
+		}
+	}
+	
+	@Test
+	def void associationInheritance(){
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice
+			class Bob
+			Alice --|> Bob
+			Alice ..|> Bob
+			Alice -[#FF0022]-|> Bob
+			Alice <|-- Bob
+			Alice <|.. Bob
+			Alice <|-[#Orange]- Bob
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val classAlice = classUml.umlElements.get(0) as Class
+		val classBob = classUml.umlElements.get(1) as Class
+		val associationsRight = #[
+			classUml.umlElements.get(2) as Association,
+			classUml.umlElements.get(3) as Association,
+			classUml.umlElements.get(4) as Association
+			]
+		val associationsLeft = #[
+			classUml.umlElements.get(5) as Association,
+			classUml.umlElements.get(6) as Association,
+			classUml.umlElements.get(7) as Association
+			]
+		Assert::assertEquals("Alice", classAlice.name);
+		Assert::assertEquals("Bob", classBob.name);
+		for(Association association : associationsRight){
+			Assert::assertEquals(AssociationType.INHERITANCERIGHT, association.associationArrow)
+		}
+		for(Association association : associationsLeft){
+			Assert::assertEquals(AssociationType.INHERITANCELEFT, association.associationArrow)
+		}
+	}
+	
+	@Test
+	def void associationComposition(){
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice
+			class Bob
+			Alice --* Bob
+			Alice ..* Bob
+			Alice -[#123456]-* Bob
+			Alice *-- Bob
+			Alice *.. Bob
+			Alice *-[#Red]- Bob
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val classAlice = classUml.umlElements.get(0) as Class
+		val classBob = classUml.umlElements.get(1) as Class
+		val associationsRight = #[
+			classUml.umlElements.get(2) as Association,
+			classUml.umlElements.get(3) as Association,
+			classUml.umlElements.get(4) as Association
+			]
+		val associationsLeft = #[
+			classUml.umlElements.get(5) as Association,
+			classUml.umlElements.get(6) as Association,
+			classUml.umlElements.get(7) as Association
+			]
+		Assert::assertEquals("Alice", classAlice.name);
+		Assert::assertEquals("Bob", classBob.name);
+		for(Association association : associationsRight){
+			Assert::assertEquals(AssociationType.COMPOSITIONRIGHT, association.associationArrow)
+		}
+		for(Association association : associationsLeft){
+			Assert::assertEquals(AssociationType.COMPOSITIONLEFT, association.associationArrow)
+		}
+	}
+	
+	@Test
+	def void associationAggregation(){
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice
+			class Bob
+			Alice --o Bob
+			Alice ..o Bob
+			Alice -[#123456]-o Bob
+			Alice o-- Bob
+			Alice o.. Bob
+			Alice o-[#Red]- Bob
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val classAlice = classUml.umlElements.get(0) as Class
+		val classBob = classUml.umlElements.get(1) as Class
+		val associationsRight = #[
+			classUml.umlElements.get(2) as Association,
+			classUml.umlElements.get(3) as Association,
+			classUml.umlElements.get(4) as Association
+			]
+		val associationsLeft = #[
+			classUml.umlElements.get(5) as Association,
+			classUml.umlElements.get(6) as Association,
+			classUml.umlElements.get(7) as Association
+			]
+		Assert::assertEquals("Alice", classAlice.name);
+		Assert::assertEquals("Bob", classBob.name);
+		for(Association association : associationsRight){
+			Assert::assertEquals(AssociationType.AGGREGATIONRIGHT, association.associationArrow)
+		}
+		for(Association association : associationsLeft){
+			Assert::assertEquals(AssociationType.AGGREGATIONLEFT, association.associationArrow)
+		}
 	}
 	
 	@Test
