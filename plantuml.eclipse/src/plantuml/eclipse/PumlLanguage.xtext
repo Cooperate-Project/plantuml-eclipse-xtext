@@ -85,14 +85,14 @@ Attribute:
 	{Attribute}
 	(static?='{static}')? (abstract?='{abstract}')?
 	((type=ID (array?='[' (length=Int)? ']')? name=ID)
-	|((visibility=Visibility)? name=ID (":" type=ID (array?='[' (length=Int)? ']')?)?));
+	|((visibility=Visibility)? name=ID (":" type=ID (array?='[' (length=Int)? ']')?)));
 
 // Methods in classes
 Method:
 	{Method}
 	(static?='{static}')? (abstract?='{abstract}')?
 	((type=ID (array?='[' (length=Int)? ']')? name=METHID)
-	|((visibility=Visibility)? name=METHID (":" type=ID (array?='[' (length=Int)? ']')?)?));
+	|((visibility=Visibility)? name=METHID (":" type=ID (array?='[' (length=Int)? ']')?)));
 
 // Associations between classes
 Association:
@@ -416,9 +416,10 @@ Component returns NamedElement:
 
 terminal ARROWTYPE returns AssociationType:
 	('<' | '-' | '.' | 'o' | '*')
-	('>' | '-' | '.' | 'o' | '*' | '|' 
+	('>' | '-' | '.' | 'o' | '*' | '|' | 'l' | 'r' | 'u' | 'd'
 	| '[#' ( 'a'..'z' | 'A'..'Z' | '0'..'9' )+ ']'
 	)*;
+
 
 // Colors as words for PlantUML
 // Source: https://github.com/EricssonPlant/plantuml-xtext-light/
@@ -472,7 +473,7 @@ terminal STRING:
 	'"' ('\\' . | !('\\' | '"'))* '"';
 	
 Arrow:
-	type=ARROWTYPE;	
+	type=ARROWTYPE;
 
 // Tab
 terminal WS:

@@ -20,14 +20,25 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	def IValueConverter<AssociationType> ARROW() {
 		return new AbstractNullSafeConverter<AssociationType>() {
 			override protected internalToString(AssociationType value) {
-				return value + "?";
+				return value.toString()
 			}
 			override protected internalToValue(String string, INode node) throws ValueConverterException {
-				if (string == null && checkArrowEnd(string) == null) {
-					throw new ValueConverterException("null value", node, null);
+				if (string == null) {
+					throw new ValueConverterException("The assiciation arrow can't be empty", node, null)
 				}
-				return checkArrowEnd(string);
-				
+				var modifiedString = removeColorTag(string)
+				if(modifiedString == null) {
+					throw new ValueConverterException(modifiedString + " - Incorrect Color Tag! Reminder: Syntax is \'#[<Hexcode|Color>]\'.", node, null)
+				}
+				modifiedString = removeOrientationInformation(modifiedString)
+				if(modifiedString == null) {
+					throw new ValueConverterException(modifiedString + "More than one orientation information or on the wrong position!", node, null)
+				}
+				val result = checkArrowEnd(modifiedString)
+				if(result == null){
+					throw new ValueConverterException("\'" + modifiedString + "\' is not a correct association arrow.", node, null)
+				}
+				return result
 			}
 			
 		};
@@ -43,16 +54,16 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 				if (value.matches("^?[a-zA-Z_][a-zA-Z_0-9]*")) {
 					return value;
 				}
-				return String.format("\"%s\"", value);
+				return String.format("\"%s\"", value)
 			}
 			override toValue(String value, INode node) throws ValueConverterException {
 				if (value == null) {
-					throw new ValueConverterException("null value", node, null);
+					throw new ValueConverterException("null value", node, null)
 				}
 				if (value.matches("\\\".*\\\"")) {
 					return value.subSequence(1, value.length - 1).toString;
 				}
-				return value;
+				return value
 			}
 		}
 	}
@@ -75,7 +86,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 			return buffer = buffer.split("\\]").get(0);
 		}
 		// Parsing Error
-		return "#";
+		return null;
 	}
 	
 	/**
@@ -92,14 +103,58 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 			return stringBuffer.append(string.split("\\]").get(1)).toString();
 		}
 		// Parsing Error
-		return "#";
+		return null;
+	}
+	
+	/**
+	 * Removes the orientation information of an arrow.
+	 * Color information has to be removed before calling this method.
+	 */
+	 def String removeOrientationInformation(String string){
+		val orientations = #["l","r","u","d"]
+		buffer = null;
+		for(String orientation : orientations){
+			if(string.contains(orientation)){
+				if (buffer == null){
+					buffer = orientation
+				}else{
+					// More than one orientation information
+					return null
+				}
+			}
+		}
+		// Nothing to do
+		if(buffer == null){
+			return string
+		}
+		return removeSubstring(string, buffer)
+	 }
+	 
+	 /**
+	  * Removes a substring from a string.
+	  * Conditions: only one occurence of substring, first character can't be the end of the string.
+	  * Returns null if conditions are violated.
+	  */
+	def String removeSubstring(String string, String sub){
+		stringBuffer = new StringBuffer()
+		if(string.contains(sub)){
+			if(string.indexOf(sub) != string.length()-1){
+				stringBuffer.append(string.replaceFirst(sub,""))
+				if(!stringBuffer.toString().contains(sub)){
+					return stringBuffer.toString()
+				}
+				return null
+			}
+			return null
+		}
+		return string
 	}
 	
 	/**
 	 * Checks for the type of an association and returns an Association Enum.
 	 */
 	def AssociationType checkArrowEnd(String string){
-		switch (removeColorTag(string)){
+		switch (string){
 			case "<|--": 	return AssociationType.INHERITANCELEFT
 			case "<|..": 	return AssociationType.INHERITANCELEFT
 			case "--|>": 	return AssociationType.INHERITANCERIGHT
