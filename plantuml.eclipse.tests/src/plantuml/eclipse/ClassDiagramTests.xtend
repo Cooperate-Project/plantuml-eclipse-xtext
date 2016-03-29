@@ -94,9 +94,9 @@ class ClassDiagramTests {
 			CLASS
 			@startuml
 			class Alice {
-				-firstName : String
-				-lastName : String
-				+age : int
+				+firstName : String
+				+lastName : String
+				-age : int
 			}
 			@enduml
 		'''.parse
@@ -108,13 +108,13 @@ class ClassDiagramTests {
 		Assert::assertEquals(3,classAlice.classContents.length)
 		Assert::assertEquals("firstName", firstAttrAlice.name)
 		Assert::assertEquals("String", firstAttrAlice.type)
-		Assert::assertEquals(Visibility.PRIVATE, firstAttrAlice.visibility)
+		Assert::assertEquals(Visibility.PUBLIC, firstAttrAlice.visibility)
 		Assert::assertEquals("lastName", secondAttrAlice.name)
 		Assert::assertEquals("String", firstAttrAlice.type)
-		Assert::assertEquals(Visibility.PRIVATE, firstAttrAlice.visibility)
+		Assert::assertEquals(Visibility.PUBLIC, firstAttrAlice.visibility)
 		Assert::assertEquals("age", thirdAttrAlice.name)
 		Assert::assertEquals("int", thirdAttrAlice.type)
-		Assert::assertEquals(Visibility.PUBLIC, thirdAttrAlice.visibility)
+		Assert::assertEquals(Visibility.PRIVATE, thirdAttrAlice.visibility)
 	}
 	
 	@Test
@@ -542,32 +542,6 @@ class ClassDiagramTests {
 	}
 	
 	@Test
-	def void reverseMethodsAndAttributes(){
-		val heros = '''
-			CLASS
-			@startuml
-			class Alice {
-				String firstName
-				friendNames
-				+getFirstName()
-			}
-			@enduml
-		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val classAlice = classUml.umlElements.get(0) as Class
-		val aliceAttr = #[
-			classAlice.classContents.get(0) as Attribute,
-			classAlice.classContents.get(1) as Attribute,
-			classAlice.classContents.get(2) as Method
-		]
-		Assert::assertEquals("String", aliceAttr.get(0).type)
-		Assert::assertEquals("firstName", aliceAttr.get(0).name)
-		Assert::assertEquals("friendNames", aliceAttr.get(1).name)
-		Assert::assertEquals("getFirstName()", aliceAttr.get(2).name)
-		Assert::assertEquals(Visibility.PUBLIC, aliceAttr.get(2).visibility)
-	}
-	
-	@Test
 	def void notesOnClasses(){
 		val heros = '''
 			CLASS
@@ -610,7 +584,7 @@ class ClassDiagramTests {
 			class Alice {
 				== Attributes ==
 				#username : String
-				-- Encrypted Attributes --
+				__ Encrypted Attributes __
 				-password : String
 				== Methods ==
 				+getUserName() : String
