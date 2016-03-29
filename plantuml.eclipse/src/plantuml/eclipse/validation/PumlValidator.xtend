@@ -131,10 +131,4 @@ class PumlValidator extends AbstractPumlValidator {
 			}
 		}
 	}
-	 
-	 
-	 
-	 
-	 
-	 
 }

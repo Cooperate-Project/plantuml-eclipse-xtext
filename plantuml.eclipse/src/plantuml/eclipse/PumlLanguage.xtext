@@ -102,14 +102,6 @@ Association:
 	classRight=[Class|ClassName])
 	(':' text+=(ID)*)?;
 
-// Special association arrows
-// TODO: Not working for most cases.
-AssociationArrow:
-	{AssociationArrow}
-	leftType=AssociationType
-	color=ColorTag
-	rightType=AssociationType;
-
 // Notes for classes
 NoteClass:
 	{NoteClass}
@@ -122,10 +114,11 @@ ColorTag:
 	COLOR | HEXCODE;
 
 // Divider to separate parts of a class
+// Problem: ambiguity with association arrow
 DividerClass:
 	{DividerClass}
 	((value+='==' (value+=(ID)* value+='==')?)
-	| (value+='--' (value+=(ID)* value+='--')?)
+	//| (value+='--' (value+=(ID)* value+='--')?)
 	| (value+='__' (value+=(ID)* value+='__')?))
 ;
 
@@ -277,13 +270,17 @@ SkinElement:
 
 UseLeft returns UmlUse:
 	{UseLeft}
-	(userOne=[Participant|ID] | '[') ('o<-' | '<-o' | 'o<-o' | '<-' | 'o<--' | '<--o' | 'o<--o' | '<--' | 'x<-' | '<-x' |
-	'x<-x' | 'x<--' | '<--x' | 'x<--x') userTwo=[Participant|ID] (':' text+=(ID)*)?;
+	(userOne=[Participant|ID] | '[')
+	associationArrow=ARROWTYPE
+	// ('o<-' | '<-o' | 'o<-o' | '<-' | 'o<--' | '<--o' | 'o<--o' | '<--' | 'x<-' | '<-x' | 'x<-x' | 'x<--' | '<--x' | 'x<--x')
+	userTwo=[Participant|ID] (':' text+=(ID)*)?;
 
 UseRight returns UmlUse:
 	{UseRight}
-	(userOne=[Participant|ID]) ('o->' | '->o' | 'o->o' | '->' | 'o-->' | '-->o' | 'o-->o' | '-->' | 'x->' | '->x' |
-	'x->x' | 'x-->' | '-->x' | 'x-->x') (userTwo=[Participant|ID] | ']') (':' text+=(ID)*)?;
+	(userOne=[Participant|ID])
+	associationArrow=ARROWTYPE
+	//('o->' | '->o' | 'o->o' | '->' | 'o-->' | '-->o' | 'o-->o' | '-->' | 'x->' | '->x' | 'x->x' | 'x-->' | '-->x' | 'x-->x')
+	(userTwo=[Participant|ID] | ']') (':' text+=(ID)*)?;
 
 UmlElementsContainer:
 	{UmlElementsContainer}
@@ -316,92 +313,7 @@ Link:
 	 * does not work because if the parser is already in ID detection due to previous (':' text+=(ID)*)?
 	 * it is not possible to detect the upper clause for sure.
 	 */
-	('<-'
-		| '.'
-		| '<.'
-		| '-'
-		| '<->'
-		| '->'
-		| '<.>'
-		| '.>'
-		| '-d-'
-		| '<-d-'
-		| '<.d.'
-		| '.d.'
-		| '<-d->'
-		| '-d->'
-		| '<.d.>'
-		| '.d.>'
-		| '-r-'
-		| '<-r-'
-		| '<.r.'
-		| '.r.'
-		| '<-r->'
-		| '-r->'
-		| '<.r.>'
-		| '.r.>'
-		| '-u-'
-		| '<-u-'
-		| '<.u.'
-		| '.u.'
-		| '<-u->'
-		| '-u->'
-		| '<.u.>'
-		| '.u.>'
-		| '-l-'
-		| '<-l-'
-		| '<.l.'
-		| '.l.'
-		| '<-l->'
-		| '-l->'
-		| '<.l.>'
-		| '.l.>'
-		| '--'
-		| '<--'
-		| '<..'
-		| '<-->'
-		| '-->'
-		| '<..>'
-		| '..>'
-		| '-[' (color=ColorTag) ']d-'
-		| '<-[' (color=ColorTag) ']d-'
-		| '<.[' (color=ColorTag) ']d.'
-		| '.[' (color=ColorTag) ']d.'
-		| '<-[' (color=ColorTag) ']d->'
-		| '-[' (color=ColorTag) ']d->'
-		| '<.[' (color=ColorTag) ']d.>'
-		| '.[' (color=ColorTag) ']d.>'
-		| '-[' (color=ColorTag) ']r-'
-		| '<-[' (color=ColorTag) ']r-'
-		| '<.[' (color=ColorTag) ']r.'
-		| '.[' (color=ColorTag) ']r.'
-		| '<-[' (color=ColorTag) ']r->'
-		| '-[' (color=ColorTag) ']r->'
-		| '<.[' (color=ColorTag) ']r.>'
-		| '.[' (color=ColorTag) ']r.>'
-		| '-[' (color=ColorTag) ']u-'
-		| '<-[' (color=ColorTag) ']u-'
-		| '<.[' (color=ColorTag) ']u.'
-		| '.[' (color=ColorTag) ']u.'
-		| '<-[' (color=ColorTag) ']u->'
-		| '-[' (color=ColorTag) ']u->'
-		| '<.[' (color=ColorTag) ']u.>'
-		| '-[' (color=ColorTag) ']l-'
-		| '<-[' (color=ColorTag) ']l-'
-		| '<.[' (color=ColorTag) ']l.'
-		| '.[' (color=ColorTag) ']l.'
-		| '<-[' (color=ColorTag) ']l->'
-		| '-[' (color=ColorTag) ']l->'
-		| '<.[' (color=ColorTag) ']l.>'
-		| '.[' (color=ColorTag) ']l.>'
-		| '-[' (color=ColorTag) ']-'
-		| '<-[' (color=ColorTag) ']-'
-		| '<.[' (color=ColorTag) '].'
-		| '<-[' (color=ColorTag) ']->'
-		| '-[' (color=ColorTag) ']->'
-		| '<.[' (color=ColorTag) '].>'
-		| '.[' (color=ColorTag) '].>'	
-	) 
+	associationArrow=ARROWTYPE
 	linkTwo=[NamedElement|ID] (':' text+=(ID)*)?;
 
 Interface returns NamedElement:

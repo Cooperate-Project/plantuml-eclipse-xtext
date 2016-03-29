@@ -12,6 +12,8 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	
 	StringBuffer stringBuffer;
 	String buffer;
+	char type;
+	boolean left = false;
 	
 	/**
 	 * Checks for correct association arrows.
@@ -28,11 +30,15 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 				}
 				var modifiedString = removeColorTag(string)
 				if(modifiedString == null) {
-					throw new ValueConverterException(modifiedString + " - Incorrect Color Tag! Reminder: Syntax is \'#[<Hexcode|Color>]\'.", node, null)
+					throw new ValueConverterException("Incorrect Color Tag! Reminder: Syntax is \'#[<Hexcode|Color>]\'.", node, null)
 				}
 				modifiedString = removeOrientationInformation(modifiedString)
 				if(modifiedString == null) {
-					throw new ValueConverterException(modifiedString + "More than one orientation information or on the wrong position!", node, null)
+					throw new ValueConverterException("More than one orientation information or on the wrong position!", node, null)
+				}
+				modifiedString = fixLength(modifiedString)
+				if(modifiedString == null){
+					throw new ValueConverterException("You should not mix dashed and continuous linies.", node, null)
 				}
 				val result = checkArrowEnd(modifiedString)
 				if(result == null){
@@ -150,29 +156,55 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 		return string
 	}
 	
+	def String fixLength(String string){
+		// Check for arrow style
+		type = '-'
+		if(string.contains(".")){
+			if(string.contains("-")) {
+				// We don't allow mixed styles
+				// (does not make any sense, although it's not a syntax error in PlantUML)
+				return null;
+			}
+			type = '.';
+		}
+		left = false;
+		if(string.charAt(0) != type){
+			left = true;
+		}
+		// delete all occurences of character
+		buffer = string.replace(type.toString(), "");
+		// insert single character for style information
+		if(left){
+			buffer = buffer + type;
+		}else{
+			buffer = type + buffer;
+		}
+		return buffer;
+	}
+	
 	/**
 	 * Checks for the type of an association and returns an Association Enum.
 	 */
 	def AssociationType checkArrowEnd(String string){
 		switch (string){
-			case "<|--": 	return AssociationType.INHERITANCELEFT
-			case "<|..": 	return AssociationType.INHERITANCELEFT
-			case "--|>": 	return AssociationType.INHERITANCERIGHT
-			case "..|>": 	return AssociationType.INHERITANCERIGHT
-			case "--":		return AssociationType.BIDIRECTIONAL
-			case "..":		return AssociationType.BIDIRECTIONAL
-			case "<--": 	return AssociationType.DIRECTIONALLEFT
-			case "<..": 	return AssociationType.DIRECTIONALLEFT
-			case "-->": 	return AssociationType.DIRECTIONALRIGHT
-			case "..>": 	return AssociationType.DIRECTIONALRIGHT
-			case "o--": 	return AssociationType.AGGREGATIONLEFT
-			case "o..": 	return AssociationType.AGGREGATIONLEFT
-			case "--o": 	return AssociationType.AGGREGATIONRIGHT
-			case "..o": 	return AssociationType.AGGREGATIONRIGHT
-			case "*--": 	return AssociationType.COMPOSITIONLEFT
-			case "*..": 	return AssociationType.COMPOSITIONLEFT
-			case "--*": 	return AssociationType.COMPOSITIONRIGHT
-			case "..*": 	return AssociationType.COMPOSITIONRIGHT
+			case "<|-": return AssociationType.INHERITANCELEFT
+			case "<|.": return AssociationType.INHERITANCELEFT
+			case "-|>": return AssociationType.INHERITANCERIGHT
+			case ".|>": return AssociationType.INHERITANCERIGHT
+			case "-":	return AssociationType.BIDIRECTIONAL
+			case ".":	return AssociationType.BIDIRECTIONAL
+			case "<-": 	return AssociationType.DIRECTIONALLEFT
+			case "<.": 	return AssociationType.DIRECTIONALLEFT
+			case "->": 	return AssociationType.DIRECTIONALRIGHT
+			case ".>": 	return AssociationType.DIRECTIONALRIGHT
+			case "o-": 	return AssociationType.AGGREGATIONLEFT
+			case "o.": 	return AssociationType.AGGREGATIONLEFT
+			case "-o": 	return AssociationType.AGGREGATIONRIGHT
+			case ".o": 	return AssociationType.AGGREGATIONRIGHT
+			case "*-": 	return AssociationType.COMPOSITIONLEFT
+			case "*.": 	return AssociationType.COMPOSITIONLEFT
+			case "-*": 	return AssociationType.COMPOSITIONRIGHT
+			case ".*": 	return AssociationType.COMPOSITIONRIGHT
 		}
 		return null;
 	}	
