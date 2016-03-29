@@ -282,16 +282,27 @@ class ClassDiagramTests {
 			class Alice
 			class Bob
 			Alice .. Bob
+			Alice -- Bob
+			Alice ------ Bob
 			Alice .[#Red]. Bob
+			Alice ..[#FF00FF].... Bob
 			@enduml
 		'''.parse
 		val classUml = heros.umlDiagrams.head as ClassUml
 		val classAlice = classUml.umlElements.get(0) as Class
 		val classBob = classUml.umlElements.get(1) as Class
-		val association = classUml.umlElements.get(2) as Association
+		val associations = #[
+			classUml.umlElements.get(2) as Association,
+			classUml.umlElements.get(3) as Association,
+			classUml.umlElements.get(4) as Association,
+			classUml.umlElements.get(5) as Association,
+			classUml.umlElements.get(6) as Association
+		]
 		Assert::assertEquals("Alice", classAlice.name);
 		Assert::assertEquals("Bob", classBob.name);
-		Assert::assertEquals(AssociationType.BIDIRECTIONAL, association.associationArrow)
+		for(Association association : associations){
+			Assert::assertEquals(AssociationType.BIDIRECTIONAL, association.associationArrow)
+		}
 	}
 	
 	@Test
