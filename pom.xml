@@ -1,0 +1,23 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<relativePath>plantuml.eclipse.releng/pom.xml</relativePath>
+		<groupId>plantuml.eclipse</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>plantuml.eclipse.main</artifactId>
+	<name>PlantUML Editor</name>
+	<packaging>pom</packaging>
+
+	<properties>
+		<sonar.projectName>PlantUML Editor</sonar.projectName>
+	</properties>
+
+	<modules>
+		<module>plantuml.eclipse.releng</module>
+	</modules>
+</project> 
+

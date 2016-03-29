@@ -1,18 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
-  <modelVersion>4.0.0</modelVersion>
+	<modelVersion>4.0.0</modelVersion>
 
-  <parent>
-    <relativePath>../plantuml.eclipse.releng/pom.xml</relativePath>
-    <groupId>plantuml.eclipse</groupId>
-    <artifactId>parent</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
-  </parent>
+	<parent>
+		<relativePath>../plantuml.eclipse.releng/pom.xml</relativePath>
+		<groupId>plantuml.eclipse</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
 
-  <artifactId>plantuml.eclipse.updatesite</artifactId>
-  <packaging>eclipse-repository</packaging>
+	<artifactId>plantuml.eclipse.updatesite</artifactId>
+	<packaging>eclipse-repository</packaging>
 
-  <name>Plantuml Eclipse Language Update Site</name>
+	<name>Plantuml Eclipse Language Update Site</name>
+
+	<properties>
+		<!-- We use the nightly profile as defaults -->
+		<deployUser>${env.DEPLOY_USERNAME}</deployUser>
+		<deployKey>${env.DEPLOY_PASSWORD}</deployKey>
+		<deploySubject>cooperate-project</deploySubject>
+		<deployRepository>PlantUMLEditor</deployRepository>
+		<deployPackage>updatesite</deployPackage>
+		<deployVersion>latest</deployVersion>
+	</properties>
 
 	<build>
 		<plugins>
@@ -35,6 +45,63 @@
 					</execution>
 				</executions>
 			</plugin>
+
+			<plugin>
+				<artifactId>maven-release-plugin</artifactId>
+				<version>2.4.1</version>
+				<configuration>
+					<useReleaseProfile>false</useReleaseProfile>
+					<releaseProfiles>release</releaseProfiles>
+					<autoVersionSubmodules>true</autoVersionSubmodules>
+					<releaseVersion>${deployVersion}</releaseVersion>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-deploy-plugin</artifactId>
+				<version>${maven.deploy-plugin.version}</version>
+				<configuration>
+					<skip>false</skip>
+				</configuration>
+				<executions>
+					<execution>
+						<id>default-deploy</id>
+						<phase>none</phase>
+					</execution>
+					<execution>
+						<id>deploy-updatesite</id>
+						<phase>deploy</phase>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>1.4.0</version>
+				<executions>
+					<execution>
+						<id>deploy-updatesite</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>exec</goal>
+						</goals>
+						<configuration>
+							<executable>python</executable>
+							<arguments>
+								<argument>${basedir}/../deploy.py</argument>
+								<argument>${deployUser}</argument>
+								<argument>${deployKey}</argument>
+								<argument>${deploySubject}</argument>
+								<argument>${deployRepository}</argument>
+								<argument>${deployPackage}</argument>
+								<argument>${deployVersion}</argument>
+								<argument>${project.build.directory}/${project.artifactId}-${project.version}.zip</argument>
+							</arguments>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
 		</plugins>
 	</build>
 </project>
