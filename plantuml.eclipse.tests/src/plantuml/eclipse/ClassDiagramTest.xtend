@@ -25,7 +25,7 @@ import plantuml.eclipse.puml.AssociationType
 
 @RunWith(XtextRunner)
 @InjectWith(PumlInjectorProvider)
-class ClassDiagramTests {
+class ClassDiagramTest {
 
 	@Inject extension ParseHelper<UmlDiagram>
 	@Inject extension ValidationTestHelper

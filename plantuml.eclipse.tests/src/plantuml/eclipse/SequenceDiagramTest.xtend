@@ -33,7 +33,7 @@ import static org.junit.Assert.*
 
 @RunWith(XtextRunner)
 @InjectWith(PumlInjectorProvider)
-class SequenceDiagramTests {
+class SequenceDiagramTest {
 
 	@Inject extension ParseHelper<UmlDiagram>
 
