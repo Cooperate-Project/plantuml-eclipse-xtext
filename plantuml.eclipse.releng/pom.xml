@@ -14,6 +14,12 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<module>../plantuml.eclipse.updatesite</module>
 	</modules>
 
+	<scm>
+		<connection>scm:git:git@github.com:Cooperate-Project/plantuml-eclipse-xtext.git</connection>
+		<developerConnection>scm:git:git@github.com:Cooperate-Project/plantuml-eclipse-xtext.git</developerConnection>
+		<url>http://github.com/Cooperate-Project/plantuml-eclipse-xtext</url>
+	</scm>
+	
 	<properties>
 		<tycho-version>0.24.0</tycho-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

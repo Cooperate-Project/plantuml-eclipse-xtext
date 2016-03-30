@@ -14,6 +14,13 @@
 
 	<name>Plantuml Eclipse Language Update Site</name>
 
+	<distributionManagement>
+		<site>
+			<id>github-cooperate-deploy</id>
+			<url>gitsite:git@github.com/Cooperate-Project/plantuml-eclipse-xtext</url>
+		</site>
+	</distributionManagement>
+	
 	<properties>
 		<!-- We use the nightly profile as defaults -->
 		<deployUser>${env.DEPLOY_USERNAME}</deployUser>
@@ -22,6 +29,7 @@
 		<deployRepository>PlantUMLEditor</deployRepository>
 		<deployPackage>updatesite</deployPackage>
 		<deployVersion>latest</deployVersion>
+		<github.global.server>github-cooperate-deploy</github.global.server>
 	</properties>
 
 	<build>
@@ -74,31 +82,29 @@
 					</execution>
 				</executions>
 			</plugin>
+
 			<plugin>
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>exec-maven-plugin</artifactId>
-				<version>1.4.0</version>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<version>0.11</version>
+				<configuration>
+					<message>Update site artifacts for ${project.version}</message>
+					<noJekyll>true</noJekyll>
+					<outputDirectory>${project.build.directory}/repository</outputDirectory>
+					<branch>refs/heads/gh-pages</branch>
+					<includes><include>**/*</include></includes>
+					<repositoryName>plantuml-eclipse-xtext</repositoryName>
+					<repositoryOwner>Cooperate-Project</repositoryOwner>
+					<path>${deployVersion}</path>
+					<merge>true</merge>
+				</configuration>
 				<executions>
-					<execution>
-						<id>deploy-updatesite</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>exec</goal>
-						</goals>
-						<configuration>
-							<executable>python</executable>
-							<arguments>
-								<argument>${basedir}/../deploy.py</argument>
-								<argument>${deployUser}</argument>
-								<argument>${deployKey}</argument>
-								<argument>${deploySubject}</argument>
-								<argument>${deployRepository}</argument>
-								<argument>${deployPackage}</argument>
-								<argument>${deployVersion}</argument>
-								<argument>${project.build.directory}/${project.artifactId}-${project.version}.zip</argument>
-							</arguments>
-						</configuration>
-					</execution>
+				  <execution>
+					<goals>
+					  <goal>site</goal>
+					</goals>
+					<phase>deploy</phase>
+				  </execution>
 				</executions>
 			</plugin>
 

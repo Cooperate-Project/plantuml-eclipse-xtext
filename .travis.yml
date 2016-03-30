@@ -1,6 +1,4 @@
 language: java
-before_install:
-- pip install --user requests
 install: true
 script:
 - mvn clean install
