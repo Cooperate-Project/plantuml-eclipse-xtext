@@ -23,11 +23,6 @@
 	
 	<properties>
 		<!-- We use the nightly profile as defaults -->
-		<deployUser>${env.DEPLOY_USERNAME}</deployUser>
-		<deployKey>${env.DEPLOY_PASSWORD}</deployKey>
-		<deploySubject>cooperate-project</deploySubject>
-		<deployRepository>PlantUMLEditor</deployRepository>
-		<deployPackage>updatesite</deployPackage>
 		<deployVersion>latest</deployVersion>
 		<github.global.server>github-cooperate-deploy</github.global.server>
 	</properties>
