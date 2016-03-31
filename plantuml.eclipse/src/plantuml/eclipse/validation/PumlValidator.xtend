@@ -7,6 +7,8 @@ import plantuml.eclipse.puml.PumlPackage
 import java.util.HashSet
 import plantuml.eclipse.puml.Method
 import java.util.HashMap
+import plantuml.eclipse.puml.Association
+import plantuml.eclipse.puml.AssociationType
 
 /**
  * This class provides custom rules that will be validated.
@@ -18,6 +20,7 @@ class PumlValidator extends AbstractPumlValidator {
 	public static val INVALID_CLASS_NAME = "plantuml.eclipse.puml.InvalidClassName"
 	public static val INCOMPLETE_INTERFACE_IMPLEMENTATION = "plantuml.eclipse.IncompleteInterfaceImplementation"
 	public static val OVERLOAD_METHOD_RETURN_TYPE = "plantuml.eclipse.OverloadMethodReturnType"
+	public static val WRONG_ASSOCIATION_FOR_DIAGRAMTYPE = "plantuml.eclipse.WrongAssociationForDiagramType"
 
 	// Helper
 	private HashMap<String,String> interfaceMethods;
@@ -93,6 +96,23 @@ class PumlValidator extends AbstractPumlValidator {
 		}
 	}
 	
+	/**
+	 * Checks for associations that are not allowed in class diagrams.
+	 */
+	@Check
+	def checkAssociations(Association association){
+		if(association.associationArrow == AssociationType.DIRECTIONALRIGHTX
+			|| association.associationArrow == AssociationType.DIRECTIONALRIGHTO
+			|| association.associationArrow == AssociationType.DIRECTIONALLEFTX
+			|| association.associationArrow == AssociationType.DIRECTIONALLEFTO
+		){
+			error("This arrow is not allowed for class diagrams.", 
+				PumlPackage::eINSTANCE.association_AssociationArrow, 
+				WRONG_ASSOCIATION_FOR_DIAGRAMTYPE, 
+				null
+			)
+		}
+	}
 	
 	/**
 	 * Checks for overloads of return types of implemented interface methods.

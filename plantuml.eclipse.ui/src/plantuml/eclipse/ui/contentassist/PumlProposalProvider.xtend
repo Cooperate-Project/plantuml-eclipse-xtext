@@ -178,7 +178,7 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 						val display = context.getViewer().getTextWidget().getDisplay()
 						val colorDialog = new ColorDialog(display.getActiveShell());
 						val newColor = colorDialog.open();
-						val hexColor = String.format("#%02x%02x%02x", newColor.red, newColor.green, newColor.blue);
+						val hexColor = String.format(" #%02x%02x%02x", newColor.red, newColor.green, newColor.blue);
 						return hexColor.toUpperCase()
 					}
 				}

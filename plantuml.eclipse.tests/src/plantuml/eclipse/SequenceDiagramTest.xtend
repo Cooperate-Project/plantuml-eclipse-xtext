@@ -28,8 +28,10 @@ import plantuml.eclipse.puml.Title
 import plantuml.eclipse.puml.UmlDiagram
 import plantuml.eclipse.puml.UseLeft
 import plantuml.eclipse.puml.UseRight
+import plantuml.eclipse.puml.AssociationType
 
 import static org.junit.Assert.*
+import plantuml.eclipse.puml.UmlUse
 
 @RunWith(XtextRunner)
 @InjectWith(PumlInjectorProvider)
@@ -145,14 +147,14 @@ class SequenceDiagramTest {
 			[<- lol
 			@enduml
 		'''.parse
-		assertEquals("test", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UseRight).userOne.name)
-		assertEquals("test2", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UseRight).userTwo.name)
-		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UseRight).userOne.name)
-		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UseRight).userTwo.name)
-		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UseLeft).userOne.name)
-		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UseLeft).userTwo.name)
-		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UseLeft).userOne.name)
-		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UseLeft).userTwo.name)
+		assertEquals("test", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UmlUse).userOne.name)
+		assertEquals("test2", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UmlUse).userTwo.name)
+		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UmlUse).userOne.name)
+		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UmlUse).userTwo.name)
+		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UmlUse).userOne.name)
+		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UmlUse).userTwo.name)
+		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UmlUse).userOne.name)
+		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UmlUse).userTwo.name)
 	}
 
 	@Test def void testAlt() {
@@ -161,13 +163,12 @@ class SequenceDiagramTest {
 			PARTICIPANT test
 			PARTICIPANT test2
 			ALT Successful ABC lookup
-				DEV ->] : Forward something via ABC
+				test ->] : Forward something via ABC
 			ELSE Failed ABS lookup
-				DEV -> DEV : Reject ABC\nvia DEV 
+				test2 -> test : Reject ABC\nvia DEV 
 			END
 			@enduml
 		'''.parse
-
 		assertEquals(3, ((heros.umlDiagrams.head as SequenceUml).umlElements.size))
 		assertEquals("[Successful, ABC, lookup]",
 			((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as Alternative).text.toString())
@@ -176,7 +177,7 @@ class SequenceDiagramTest {
 			(((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as Alternative).elseBlocks.get(0) as Else).text.toString())
 		assertEquals("[Reject, ABC\\nvia, DEV]",
 			((((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as Alternative).elseBlocks.get(0) as Else).umlElements.
-				get(0) as UseRight).text.toString())
+				get(0) as UmlUse).text.toString())
 
 	}
 
@@ -341,14 +342,14 @@ class SequenceDiagramTest {
 			[o<- lol
 			@enduml
 		'''.parse
-		assertEquals("test", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UseRight).userOne.name)
-		assertEquals("test2", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UseRight).userTwo.name)
-		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UseRight).userOne.name)
-		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UseRight).userTwo.name)
-		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UseLeft).userOne.name)
-		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UseLeft).userTwo.name)
-		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UseLeft).userOne.name)
-		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UseLeft).userTwo.name)
+		assertEquals("test", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UmlUse).userOne.name)
+		assertEquals("test2", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UmlUse).userTwo.name)
+		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UmlUse).userOne.name)
+		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UmlUse).userTwo.name)
+		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UmlUse).userOne.name)
+		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UmlUse).userTwo.name)
+		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UmlUse).userOne.name)
+		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UmlUse).userTwo.name)
 	}
 
 	@Test def void testParseUseWithX() {
@@ -365,14 +366,14 @@ class SequenceDiagramTest {
 			[x<- lol
 			@enduml
 		'''.parse
-		assertEquals("test", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UseRight).userOne.name)
-		assertEquals("test2", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UseRight).userTwo.name)
-		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UseRight).userOne.name)
-		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UseRight).userTwo.name)
-		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UseLeft).userOne.name)
-		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UseLeft).userTwo.name)
-		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UseLeft).userOne.name)
-		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UseLeft).userTwo.name)
+		assertEquals("test", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UmlUse).userOne.name)
+		assertEquals("test2", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(2) as UmlUse).userTwo.name)
+		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UmlUse).userOne.name)
+		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as UmlUse).userTwo.name)
+		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UmlUse).userOne.name)
+		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(6) as UmlUse).userTwo.name)
+		assertEquals("foo", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UmlUse).userOne.name)
+		assertEquals("lol", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as UmlUse).userTwo.name)
 	}
 		@Test def void testComponent() {
 		val heros = '''

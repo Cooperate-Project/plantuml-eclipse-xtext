@@ -13,7 +13,6 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	StringBuffer stringBuffer;
 	String buffer;
 	char type;
-	boolean left = false;
 	
 	/**
 	 * Checks for correct association arrows.
@@ -167,18 +166,15 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 			}
 			type = '.';
 		}
-		left = false;
-		if(string.charAt(0) != type){
-			left = true;
-		}
-		// delete all occurences of character
-		buffer = string.replace(type.toString(), "");
+		// search for first occurence of character
+		val firstIndex = string.indexOf(type);
+		// replace this character with special character
+		buffer = string.substring(0,firstIndex) + "$" + string.substring(firstIndex+1);
+		// delete all other occurences of character
+		buffer = buffer.replace(type.toString(), "");
+		// replace special character with style information
+		buffer = buffer.replace("$",type);
 		// insert single character for style information
-		if(left){
-			buffer = buffer + type;
-		}else{
-			buffer = type + buffer;
-		}
 		return buffer;
 	}
 	
@@ -205,6 +201,20 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 			case "*.": 	return AssociationType.COMPOSITIONLEFT
 			case "-*": 	return AssociationType.COMPOSITIONRIGHT
 			case ".*": 	return AssociationType.COMPOSITIONRIGHT
+			
+			// Sequence Diagram Addons
+			case "o<-":  return AssociationType.DIRECTIONALLEFTO
+			case "<-o":  return AssociationType.DIRECTIONALLEFTO
+			case "o<-o": return AssociationType.DIRECTIONALLEFTO
+			case "x<-":  return AssociationType.DIRECTIONALLEFTX
+			case "<-x":  return AssociationType.DIRECTIONALLEFTX
+			case "x<-x": return AssociationType.DIRECTIONALLEFTX
+			case "->o":  return AssociationType.DIRECTIONALRIGHTO
+			case "o->":  return AssociationType.DIRECTIONALRIGHTO
+			case "o->o": return AssociationType.DIRECTIONALRIGHTO
+			case "->x":  return AssociationType.DIRECTIONALRIGHTX
+			case "x->":  return AssociationType.DIRECTIONALRIGHTX
+			case "x->x": return AssociationType.DIRECTIONALRIGHTX
 		}
 		return null;
 	}	

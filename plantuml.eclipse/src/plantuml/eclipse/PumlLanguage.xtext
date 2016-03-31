@@ -127,7 +127,11 @@ enum AssociationType:
 	UNDEFINED
 	| BIDIRECTIONAL
 	| DIRECTIONALLEFT
+	| DIRECTIONALLEFTX
+	| DIRECTIONALLEFTO
 	| DIRECTIONALRIGHT
+	| DIRECTIONALRIGHTX
+	| DIRECTIONALRIGHTO
 	| INHERITANCELEFT
 	| INHERITANCERIGHT
 	| AGGREGATIONLEFT
@@ -327,8 +331,8 @@ Component returns NamedElement:
 // -----------------------------------------------------------------------------------------------
 
 terminal ARROWTYPE returns AssociationType:
-	('<' | '-' | '.' | 'o' | '*')
-	('>' | '-' | '.' | 'o' | '*' | '|' | 'l' | 'r' | 'u' | 'd'
+	('<' | '-' | '.' | 'o' | 'x' | '*')
+	('>' | '-' | '.' | 'o' | 'x' | '*' | '|' | 'l' | 'r' | 'u' | 'd'
 	| '[#' ( 'a'..'z' | 'A'..'Z' | '0'..'9' )+ ']'
 	)*;
 

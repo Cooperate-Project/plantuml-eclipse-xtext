@@ -106,7 +106,28 @@ class PumlQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQ
 		)
 	}
 	
-	
+	@Fix(PumlValidator::WRONG_ASSOCIATION_FOR_DIAGRAMTYPE)
+	def changeArrowType(Issue issue, IssueResolutionAcceptor acceptor){
+		val proposals = #[
+				"implements" -> ("implm_co.png" -> "..|>"),
+				"extends" -> ("over_co.png" -> "--|>"),
+				"aggregates" -> ("aggr_co.png" -> "--o"),
+				"composites" -> ("comp_co.png" -> "--*"),
+				"references" -> ("ref_co.png" -> "-->")
+		]
+		for(proposal : proposals){
+			acceptor.accept(issue,
+				"Change arrow type to \'" + proposal.key + "\'",
+				"Change arrow type to \'" + proposal.key + "\'",
+				proposal.value.key,
+				[
+					context |
+					val xtextDocument = context.xtextDocument
+					xtextDocument.replace(issue.offset, issue.length, proposal.value.value)
+				]
+			)
+		}
+	}
 	
 	
 	
