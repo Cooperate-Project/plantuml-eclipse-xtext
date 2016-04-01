@@ -78,7 +78,8 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 				"extends" -> ("over_co.png" -> "--|>"),
 				"aggregates" -> ("aggr_co.png" -> "--o"),
 				"composites" -> ("comp_co.png" -> "--*"),
-				"references" -> ("ref_co.png" -> "-->")
+				"references" -> ("ref_co.png" -> "-->"),
+				"two-way reference" -> ("ref_co.png" -> "--")
 			]
 			// Add proposals for association arrows
 			for(asDesc : asDescs){

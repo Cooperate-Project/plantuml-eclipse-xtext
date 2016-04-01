@@ -14,6 +14,8 @@ import plantuml.eclipse.puml.ClassUml
 import com.google.inject.Inject
 import org.eclipse.xtext.ui.IImageHelper
 import plantuml.eclipse.puml.Association
+import plantuml.eclipse.puml.PumlFactory
+import plantuml.eclipse.puml.AssociationType
 
 /**
  * Customization of the default outline structure.
@@ -45,6 +47,18 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 				// Loop through Class Elements
 				for(EObject umlClassElement : umlDiagram.umlElements){
 					if(umlClassElement instanceof Class){
+						// Do we have extended Supertypes?
+						if(umlClassElement.superTypes.length() != 0){
+							for(extendedClass : umlClassElement.superTypes){
+								createNode(associationsParent, createAssociation(umlClassElement, extendedClass, AssociationType.INHERITANCERIGHT))
+							}
+						}
+						// Do we have implemented Interfaces?
+						if(umlClassElement.interfaces.length() != 0){
+							for(implementedClass : umlClassElement.interfaces){
+								createNode(associationsParent, createAssociation(umlClassElement, implementedClass, AssociationType.INHERITANCERIGHT))
+							}
+						}
 						if(umlClassElement.interface){
 							createNode(interfacesParent, umlClassElement)
 						}else{
@@ -63,13 +77,11 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 
-	/*
-	override _createNode(IOutlineNode parentNode, EObject modelElement) {
-		super._createNode(parentNode, modelElement);
+	def Association createAssociation(Class classLeft, Class classRight, AssociationType type){
+		var newAssociation = PumlFactory.eINSTANCE.createAssociation()
+		newAssociation.classLeft = classLeft
+		newAssociation.classRight = classRight
+		newAssociation.associationArrow = type
+		return newAssociation
 	}
-
-	def _text(UmlUse element) {
-		return UmlUseCounter.toString() + ": " + element.text;
-	}
-	*/
 }
