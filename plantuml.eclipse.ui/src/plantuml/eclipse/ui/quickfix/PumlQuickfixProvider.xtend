@@ -23,7 +23,6 @@ import org.eclipse.xtext.diagnostics.Diagnostic
 class PumlQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQuickfixProvider {
 
 	/**
-	 * TODO: Remove correctly for several supertypes.
 	 * Remove super type if a cycle is detected.
 	 */
 	 @Fix(PumlValidator::HIERARCHY_CYCLE)
@@ -106,6 +105,9 @@ class PumlQuickfixProvider extends org.eclipse.xtext.ui.editor.quickfix.DefaultQ
 		)
 	}
 	
+	/**
+	 * Suggest quickfixes for allowed associations if an arrow type from a different uml diagram type was detected.
+	 */
 	@Fix(PumlValidator::WRONG_ASSOCIATION_FOR_DIAGRAMTYPE)
 	def changeArrowType(Issue issue, IssueResolutionAcceptor acceptor){
 		val proposals = #[

@@ -8,24 +8,65 @@ import org.eclipse.xtext.conversion.ValueConverterException
 import plantuml.eclipse.puml.AssociationType
 import org.eclipse.xtext.conversion.impl.AbstractNullSafeConverter
 
+/**
+ * This class converts specific inputs from rules to specific data types.
+ */
 class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	
-	StringBuffer stringBuffer;
-	String buffer;
-	char type;
+
+	/** Associations Type Tuples */
+	static final val ASSOCIATION_TYPES = newHashMap(
+		"<|-"	 -> AssociationType.INHERITANCELEFT,
+		"<|." 	-> AssociationType.INHERITANCELEFT,
+		"-|>" 	-> AssociationType.INHERITANCERIGHT,
+		".|>" 	-> AssociationType.INHERITANCERIGHT,
+		"-"		-> AssociationType.BIDIRECTIONAL,
+		"."		-> AssociationType.BIDIRECTIONAL,
+		"<-"	-> AssociationType.DIRECTIONALLEFT,
+		"<."	-> AssociationType.DIRECTIONALLEFT,
+		"->"	-> AssociationType.DIRECTIONALRIGHT,
+		".>" 	-> AssociationType.DIRECTIONALRIGHT,
+		"o-" 	-> AssociationType.AGGREGATIONLEFT,
+		"o." 	-> AssociationType.AGGREGATIONLEFT,
+		"-o" 	-> AssociationType.AGGREGATIONRIGHT,
+		".o" 	-> AssociationType.AGGREGATIONRIGHT,
+		"*-" 	-> AssociationType.COMPOSITIONLEFT,
+		"*." 	-> AssociationType.COMPOSITIONLEFT,
+		"-*" 	-> AssociationType.COMPOSITIONRIGHT,
+		".*"	-> AssociationType.COMPOSITIONRIGHT,
+		// Sequence Diagram Addons
+		"o<-"	-> AssociationType.DIRECTIONALLEFTO,
+		"<-o" 	-> AssociationType.DIRECTIONALLEFTO,
+		"o<-o"	-> AssociationType.DIRECTIONALLEFTO,
+		"x<-" 	-> AssociationType.DIRECTIONALLEFTX,
+		"<-x" 	-> AssociationType.DIRECTIONALLEFTX,
+		"x<-x"	-> AssociationType.DIRECTIONALLEFTX,
+		"->o"	-> AssociationType.DIRECTIONALRIGHTO,
+		"o->"	-> AssociationType.DIRECTIONALRIGHTO,
+		"o->o"	-> AssociationType.DIRECTIONALRIGHTO,
+		"->x" 	-> AssociationType.DIRECTIONALRIGHTX,
+		"x->" 	-> AssociationType.DIRECTIONALRIGHTX,
+		"x->x"	-> AssociationType.DIRECTIONALRIGHTX
+	)
+	
+	// Temporal Variables
+	StringBuffer stringBuffer
+	String buffer
+	char type
 	
 	/**
 	 * Checks for correct association arrows.
+	 * @return An {@link AssociationType} Enum if the arrow type exists, else null.
 	 */
 	@ValueConverter(rule="ARROWTYPE")
 	def IValueConverter<AssociationType> ARROW() {
 		return new AbstractNullSafeConverter<AssociationType>() {
 			override protected internalToString(AssociationType value) {
-				return value.toString()
+				return value.toString
 			}
 			override protected internalToValue(String string, INode node) throws ValueConverterException {
 				if (string == null) {
-					throw new ValueConverterException("The assiciation arrow can't be empty", node, null)
+					throw new ValueConverterException("The assiciation arrow can't be empty.", node, null)
 				}
 				var modifiedString = removeColorTag(string)
 				if(modifiedString == null) {
@@ -39,9 +80,9 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 				if(modifiedString == null){
 					throw new ValueConverterException("You should not mix dashed and continuous linies.", node, null)
 				}
-				val result = checkArrowEnd(modifiedString)
+				val result = ASSOCIATION_TYPES.get(modifiedString)
 				if(result == null){
-					throw new ValueConverterException("\'" + modifiedString + "\' is not a correct association arrow.", node, null)
+					throw new ValueConverterException("\'" + modifiedString + "\' is not a correct association arrow. Look at the PlantUML Documentation for further informations.", node, null)
 				}
 				return result
 			}
@@ -51,6 +92,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	
 	/**
 	 * Allows to create classes with strings containing empty spaces as names.
+	 * @return The Value of the String containing no quotation marks.
 	 */
 	@ValueConverter(rule="STRING")
 	def IValueConverter<String> STRING() {
@@ -78,7 +120,9 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	// -------------------------------------------------------------------------------------------
 	
 	/**
-	 * Checks for color tag in an arrow. Returns color (as hex or word), else null.
+	 * Checks for color tag ([#color|hexcode]) in an arrow
+	 * @param string The string which contains a color tag.
+	 * @return Color as hex or word or null if it contains syntax errors.
 	 */
 	def String checkForColorTag(String string){
 		if(!string.contains("[")){
@@ -96,6 +140,8 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	
 	/**
 	 * Removes color tag from an association.
+	 * @param string The string which contains a color tag.
+	 * @return The given string without color information or null if the string does contain syntax errors.
 	 */
 	def String removeColorTag(String string){
 		stringBuffer = new StringBuffer();
@@ -112,8 +158,9 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	}
 	
 	/**
-	 * Removes the orientation information of an arrow.
-	 * Color information has to be removed before calling this method.
+	 * Removes the orientation information (= u | d | l | r) of an arrow.
+	 * @param string The string which contains orientation information.
+	 * @return The given string without orientation information.
 	 */
 	 def String removeOrientationInformation(String string){
 		val orientations = #["l","r","u","d"]
@@ -138,7 +185,9 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	 /**
 	  * Removes a substring from a string.
 	  * Conditions: only one occurence of substring, first character can't be the end of the string.
-	  * Returns null if conditions are violated.
+	  * @param string The string containing the substring to remove.
+	  * @param sub The substring to remove.
+	  * @return The new string or null if conditions are violated.
 	  */
 	def String removeSubstring(String string, String sub){
 		stringBuffer = new StringBuffer()
@@ -155,6 +204,10 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 		return string
 	}
 	
+	/**
+	 * Edits the length of an association arrow to a standardized length (=1).
+	 * @param string The association arrow as a string.
+	 */
 	def String fixLength(String string){
 		// Check for arrow style
 		type = '-'
@@ -176,46 +229,5 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 		buffer = buffer.replace("$",type);
 		// insert single character for style information
 		return buffer;
-	}
-	
-	/**
-	 * Checks for the type of an association and returns an Association Enum.
-	 */
-	def AssociationType checkArrowEnd(String string){
-		switch (string){
-			case "<|-": return AssociationType.INHERITANCELEFT
-			case "<|.": return AssociationType.INHERITANCELEFT
-			case "-|>": return AssociationType.INHERITANCERIGHT
-			case ".|>": return AssociationType.INHERITANCERIGHT
-			case "-":	return AssociationType.BIDIRECTIONAL
-			case ".":	return AssociationType.BIDIRECTIONAL
-			case "<-": 	return AssociationType.DIRECTIONALLEFT
-			case "<.": 	return AssociationType.DIRECTIONALLEFT
-			case "->": 	return AssociationType.DIRECTIONALRIGHT
-			case ".>": 	return AssociationType.DIRECTIONALRIGHT
-			case "o-": 	return AssociationType.AGGREGATIONLEFT
-			case "o.": 	return AssociationType.AGGREGATIONLEFT
-			case "-o": 	return AssociationType.AGGREGATIONRIGHT
-			case ".o": 	return AssociationType.AGGREGATIONRIGHT
-			case "*-": 	return AssociationType.COMPOSITIONLEFT
-			case "*.": 	return AssociationType.COMPOSITIONLEFT
-			case "-*": 	return AssociationType.COMPOSITIONRIGHT
-			case ".*": 	return AssociationType.COMPOSITIONRIGHT
-			
-			// Sequence Diagram Addons
-			case "o<-":  return AssociationType.DIRECTIONALLEFTO
-			case "<-o":  return AssociationType.DIRECTIONALLEFTO
-			case "o<-o": return AssociationType.DIRECTIONALLEFTO
-			case "x<-":  return AssociationType.DIRECTIONALLEFTX
-			case "<-x":  return AssociationType.DIRECTIONALLEFTX
-			case "x<-x": return AssociationType.DIRECTIONALLEFTX
-			case "->o":  return AssociationType.DIRECTIONALRIGHTO
-			case "o->":  return AssociationType.DIRECTIONALRIGHTO
-			case "o->o": return AssociationType.DIRECTIONALRIGHTO
-			case "->x":  return AssociationType.DIRECTIONALRIGHTX
-			case "x->":  return AssociationType.DIRECTIONALRIGHTX
-			case "x->x": return AssociationType.DIRECTIONALRIGHTX
-		}
-		return null;
 	}	
 }

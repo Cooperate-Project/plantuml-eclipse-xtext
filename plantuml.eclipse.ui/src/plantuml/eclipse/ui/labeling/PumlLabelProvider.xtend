@@ -34,6 +34,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
     
     private StringBuffer label
     
+    /** Association Type Tuples */
 	static final val ASSOCIATION_LABELS = newHashMap(
 		AssociationType.BIDIRECTIONAL -> "--",
 		AssociationType.DIRECTIONALLEFT -> "<--",
@@ -56,21 +57,21 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	// -------------------------------------------------------------------------------------------
 
 	/**
-	 * Returns the label text for the PlantUML-Class-Group
+	 * @return The label text for the PlantUML-Class-Group.
 	 */
 	def text(ClassUml classUml) {
 		"Class Diagram"
 	}
 	
 	/**
-	 * Returns the label text for Enums.
+	 * @return The label text for Enums.
 	 */
 	def text(Enum someEnum){
 		return " " + someEnum.name
 	}
 	
 	/**
-	 * Returns the label text for enum constants.
+	 * @return The label text for enum constants.
 	 */
 	def text(EnumConstant enumConstant){
 		return " " + enumConstant.name
@@ -78,7 +79,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	
 	
 	/**
-	 * Returns the label text for connections.
+	 * @return The label text for connections.
 	 */
 	 def text(Association association){
 		var styledLabel = new StyledString()
@@ -97,7 +98,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	 }
 
 	/**
-	 * Returns the label text for classes.
+	 * @return The label text for classes.
 	 */
 	def text(Class someClass) {
 		var styledLabel = new StyledString()
@@ -109,7 +110,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	}
 		
 	/**
-	 * Returns the label text for attributes.
+	 * @return The label text for attributes.
 	 */
 	def text(Attribute attribute){
 		var styledLabel = new StyledString()
@@ -130,7 +131,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	}
 	
 	/**
-	 * Returns the label text for methods.
+	 * @return The label text for methods.
 	 */
 	def text(Method method){
 		var styledLabel = new StyledString()
@@ -155,14 +156,14 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	// -------------------------------------------------------------------------------------------
 	
 	/**
-	 * Returns the image for the PlantUML-Class-Group.
+	 * @return The image for the PlantUML-Class-Group.
 	 */
 	def image(ClassUml classUml){
 		imageHelper.getImage("java_model_obj.png")
 	}
 	
 	/**
-	 * Returns the images for attributes.
+	 * @return The images for attributes.
 	 */
 	def image(Attribute attribute){
 		if(attribute.visibility == Visibility.PROTECTED){
@@ -177,14 +178,14 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	}
 	
 	/**
-	 * Returns the image für enum constants.
+	 * @return The image für enum constants.
 	 */
 	 def image(EnumConstant enumConstant){
 	 	images.forField(JvmVisibility.PUBLIC, getAdornments(enumConstant))
 	 }
 	
 	/**
-	 * Returns the images for methods.
+	 * @return The images for methods.
 	 */
 	def image(Method method){
 		if(method.visibility == Visibility.PROTECTED){
@@ -199,14 +200,14 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	}
 	
 	/**
-	 * Returns the image for enums.
+	 * @return The image for enums.
 	 */
 	def image(Enum someEnum){
 		images.forEnum(JvmVisibility.PUBLIC, getAdornments(someEnum))
 	}
 	
 	/**
-	 * Returns the images for classes.
+	 * @return The images for classes.
 	 */
 	def image(Class someClass){
 		if(someClass.interface){
@@ -217,7 +218,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	}
 	
 	/** 
-	 * Returns the images for associations
+	 * @return The image for the associations.
 	 */
 	 def image(Association association){
 	 	if(association.associationArrow == AssociationType.BIDIRECTIONAL){
@@ -242,7 +243,8 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	// -------------------------------------------------------------------------------------------
 
 	/**
-	 * Returns adornment for decoraters.
+	 * @param obj The object to check for adorments.
+	 * @return Adornment for decoraters.
 	 */
 	def private int getAdornments(Object obj){
 		var adornment = 0

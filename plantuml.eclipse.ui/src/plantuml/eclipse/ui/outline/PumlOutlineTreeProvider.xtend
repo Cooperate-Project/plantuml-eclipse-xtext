@@ -19,14 +19,13 @@ import plantuml.eclipse.puml.AssociationType
 
 /**
  * Customization of the default outline structure.
- *
- * see http://www.eclipse.org/Xtext/documentation.html#outline
  */
 class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
 	@Inject
     private IImageHelper imageHelper;
 
+	// Parent Nodes
 	AbstractOutlineNode classesParent;
 	AbstractOutlineNode interfacesParent;
 	AbstractOutlineNode enumsParent;
@@ -77,6 +76,9 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 
 
+	/**
+	 * Creates a new Association EObject and returns it.
+	 */
 	def Association createAssociation(Class classLeft, Class classRight, AssociationType type){
 		var newAssociation = PumlFactory.eINSTANCE.createAssociation()
 		newAssociation.classLeft = classLeft

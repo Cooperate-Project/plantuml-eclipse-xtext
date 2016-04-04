@@ -28,16 +28,25 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 
 	// ------------------------ CONFIGURATION PARAMETERS ---------------------------------
 	
-	// Filtered Proposals
+	/** Filtered proposals that does not provide any useful help */
 	static final String[] FILTERED_KEYWORDS = #["{","}","--","==","__","[","#","+","~","-", ".", "-[", "o", "*", "<", "<|" , "UNDEFINED"]
 
-	// Visibilities of Attributes and Methods
+	/** Visibility tuples with (word,sign) */
 	static final val VISIBILITIES = #["public"->"+","private"->"-","protected"->"#","default"->"~"]
+	/** Standard descriptions for method or attribute names added through proposals */
 	static final val DESC = "enterName"
+	/** Standard type for method or attribute types added through proposals*/
 	static final val TYPE = "enterType"
 	
-	// Standard Colors
-	final val COLORS = #["black","blue","green","purple","red","yellow"]
+	/** Standard colors with hex codes because default colors are awful. */
+	static final val COLORS = #[
+		"black"->"000000",
+		"blue"->"49CAF5",
+		"green"->"73E36F",
+		"purple"->"FC68FA",
+		"red"->"FC6868",
+		"yellow"->"FCF768"
+	]
 
 	// -----------------------------------------------------------------------------------
 
@@ -140,7 +149,7 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 	// -------------------------------------------------------------------------------------------
 
 	/**
-	 * Helper for creating proposals with standard colors.
+	 * Helper for creating proposals with defined colors.
 	 */
 	private def addStandardColorsToAcceptor(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor){ 
 		// Create color selection by entering hexcode
@@ -148,26 +157,14 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 		acceptor.accept(createCompletionProposal("#FFFFFF ", "Color... Enter own hexcode" , colorPick, context))
 		// Create color by selecting from standard colors
 		for(color : COLORS){
-			val capColor = capitalizeFirstLetter(color)
-			acceptor.accept(createCompletionProposal("#" + capColor, "Color: " + capColor , imageHelper.getImage("colors/color_" + color + ".png"), context))
+			acceptor.accept(createCompletionProposal(" #" + color.value, "Color: " + color.key , imageHelper.getImage("colors/color_" + color.key + ".png"), context))
 		}
 	}
 	
 	/**
-	 * Helper for capitalizing first letters.
-	 */
-	private def String capitalizeFirstLetter(String original) {
-	    if (original == null || original.length() == 0) {
-	        return original;
-	    }
-	    return original.substring(0, 1).toUpperCase() + original.substring(1);
-	}
-
-	
-	/**
 	 * Helper method. Returns a ConfigurableCompletionProposal to pick a color from a palette.
-	 * Author: Sebastian Zernekow
-	 * Source: http://zarnekow.blogspot.de/2011/06/customizing-content-assist-with-xtext.html
+	 * @author Sebastian Zernekow
+	 * @see <a href="http://zarnekow.blogspot.de/2011/06/customizing-content-assist-with-xtext.html">Customizing Content Assist with Xtext</a> in Sebastian's blog.
 	 */
 	private def ConfigurableCompletionProposal createColorProposal(ContentAssistContext context){
 		var colorPalette = imageHelper.getImage("colors/color_palette.jpg")

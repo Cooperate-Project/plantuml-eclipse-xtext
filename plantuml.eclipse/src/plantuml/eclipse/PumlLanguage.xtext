@@ -41,7 +41,8 @@ ClassElement:
 	Association
 	| Class
 	| NoteClass
-	| Enum;
+	| Enum
+	| TitleClass;
 
 // Class definition
 Class:
@@ -59,6 +60,10 @@ Class:
 ClassWithContent returns Class:
 	name=ClassName ":" classContents+=ClassContent
 ;
+
+TitleClass:
+	{TitleClass}
+	'title' value+=ID;
 
 // Important contents inside a class
 ClassContent:

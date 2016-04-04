@@ -12,6 +12,7 @@ import org.eclipse.xtext.ui.editor.utils.TextStyle;
  */
 public class PumlHighlightingConfiguration implements IHighlightingConfiguration{
 
+	// IDs
 	public static final String KEYWORD_ID = "keyword"
 	public static final String COMMENT_ID = "comment"
 	public static final String TYPE_ID = "type"
@@ -23,8 +24,6 @@ public class PumlHighlightingConfiguration implements IHighlightingConfiguration
 	public static final String NOTE_ID = "note"
 	public static final String DIVIDER_ID = "divider"
 	public static final String ASSOCIATION_ID = "association"
-	
-	TextStyle textStyle = new TextStyle();
 	
 	override configure(IHighlightingConfigurationAcceptor acceptor) {
 		acceptor.acceptDefaultHighlighting(KEYWORD_ID, "Keyword", keywordTextStyle())
@@ -41,70 +40,70 @@ public class PumlHighlightingConfiguration implements IHighlightingConfiguration
 	}
 	
 	def TextStyle keywordTextStyle(){
-		textStyle = new TextStyle()
-		textStyle.setColor(new RGB(0,0,255)) // Default 127,0,85
+		val textStyle = new TextStyle()
+		textStyle.setColor(new RGB(0,0,255))
 		textStyle.setStyle(SWT.BOLD)
 		return textStyle
 	}
 	
 	def TextStyle commentTextStyle() {
-		textStyle = new TextStyle()
+		val textStyle = new TextStyle()
 		textStyle.setColor(new RGB(0,128,0))
 		return textStyle
 	}
 
 	def TextStyle typeTextStyle(){
-		textStyle = new TextStyle()
+		val textStyle = new TextStyle()
 		textStyle.setColor(new RGB(0,0,0))
 		textStyle.setStyle(SWT.ITALIC)
 		return textStyle
 	}
 	
 	def TextStyle classTextStyle(){
-		textStyle = new TextStyle()
+		val textStyle = new TextStyle()
 		textStyle.setColor(new RGB(0,0,128))
 		return textStyle
 	}
 	
 	def TextStyle attributeTextStyle(){
-		textStyle = new TextStyle()
+		val textStyle = new TextStyle()
 		textStyle.setColor(new RGB(128,0,128))
 		return textStyle
 	}
 	
 	def TextStyle methodTextStyle(){
-		textStyle = new TextStyle()
+		val textStyle = new TextStyle()
 		textStyle.setColor(new RGB(255,0,255))
 		return textStyle
 	}
 	
 	def TextStyle constantTextStyle(){
-		textStyle = new TextStyle()
+		val textStyle = new TextStyle()
 		textStyle.setColor(new RGB(128,0,64))
 		textStyle.setStyle(SWT.ITALIC)
 		return textStyle
 	}
 	
 	def TextStyle colorTextStyle(){
-		textStyle = new TextStyle()
+		val textStyle = new TextStyle()
 		textStyle.setColor(new RGB(150,150,150))
 		return textStyle
 	}
 	
 	def TextStyle noteTextStyle(){
-		textStyle = new TextStyle()
+		val textStyle = new TextStyle()
 		textStyle.setColor(new RGB(135,175,135))
 		return textStyle
 	}
 	
 	def TextStyle dividerTextStyle(){
-		textStyle = new TextStyle()
+		val textStyle = new TextStyle()
 		textStyle.setColor(new RGB(200,20,50))
 		return textStyle
 	}
 	
 	def TextStyle associationTextStyle(){
-		textStyle = new TextStyle()
+		val textStyle = new TextStyle()
 		textStyle.setStyle(SWT.BOLD)
 		textStyle.setColor(new RGB(255,110,0))
 		return textStyle
