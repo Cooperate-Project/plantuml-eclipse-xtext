@@ -113,8 +113,7 @@ class SequenceDiagramTest {
 			END
 			@enduml
 		'''.parse
-				System.out.println((heros.umlDiagrams.head as SequenceUml).umlElements);
-		
+		System.out.println((heros.umlDiagrams.head as SequenceUml).umlElements)
 		assertEquals(4, (heros.umlDiagrams.head as SequenceUml).umlElements.size)
 		assertEquals(2, ((heros.umlDiagrams.head as SequenceUml).umlElements.get(3) as Group).umlElements.size)
 	}
@@ -124,13 +123,11 @@ class SequenceDiagramTest {
 			SEQUENCE @startuml
 			PARTICIPANT TEST
 			PARTICIPANT AB
-			TEST -> AB : this as foo
-			AB -> TEST : Give something box or something else
+			TEST -> AB : this is foo
+			AB -> TEST : Give something
 			@enduml
 		'''.parse
 		assertEquals(4, (heros.umlDiagrams.head as SequenceUml).umlElements.size)
-
-	//		assertEquals(2, ((heros.umlDiagrams.head as SequenceUml).umlElements.get(0) as UmlGroup).groupElements.size)
 	}
 
 	@Test def void testParseUseNew() {
@@ -197,21 +194,21 @@ class SequenceDiagramTest {
 	@Test def void testTitle() {
 		val heros = '''
 			SEQUENCE @startuml
-			TITLE test title hallo
+			TITLE test hallo
 			@enduml
 		'''.parse
 		assertEquals(1, ((heros.umlDiagrams.head as SequenceUml).umlElements.size))
-		assertEquals(3, ((heros.umlDiagrams.head as SequenceUml).umlElements.get(0) as Title).value.size)
+		assertEquals(2, ((heros.umlDiagrams.head as SequenceUml).umlElements.get(0) as Title).value.size)
 	}
 
 	@Test def void testNewpage() {
 		val heros = '''
 			SEQUENCE @startuml
-			NEWPAGE test title hallo
+			NEWPAGE test hallo
 			@enduml
 		'''.parse
 		assertEquals(1, ((heros.umlDiagrams.head as SequenceUml).umlElements.size))
-		assertEquals(3, ((heros.umlDiagrams.head as SequenceUml).umlElements.get(0) as Newpage).value.size)
+		assertEquals(2, ((heros.umlDiagrams.head as SequenceUml).umlElements.get(0) as Newpage).value.size)
 	}
 
 	@Test def void testNote() {
@@ -221,9 +218,6 @@ class SequenceDiagramTest {
 				This is **bold**
 				This is //italics//
 				This is ""monospaced""
-				This is --stroked --
-				This is __underlined__
-				This is ~~waved~~
 				END NOTE
 			@enduml
 		'''.parse
@@ -271,16 +265,16 @@ class SequenceDiagramTest {
 			SEQUENCE @startuml
 				PARTICIPANT Alice
 				ACTOR Bob
-				Alice -> Bob: Authentication Request
-				......
-				Bob --> Alice: Authentication Response
-				... 5 minutes latter ...
-				Bob --> Alice: Bye !
+				Alice -> Bob : Authentication Request
+				... ...
+				Bob --> Alice : Authentication Response
+				... five minutes later ...
+				Bob --> Alice: Bye
 			@enduml
 		'''.parse
 		assertEquals(7, ((heros.umlDiagrams.head as SequenceUml).umlElements.size))
 		assertEquals(0, ((heros.umlDiagrams.head as SequenceUml).umlElements.get(3) as Delay).value.size)
-		assertEquals("5", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as Delay).value.get(0))
+		assertEquals("five", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(5) as Delay).value.get(0))
 	}
 
 	@Test def void testSpace() {
@@ -288,18 +282,17 @@ class SequenceDiagramTest {
 			SEQUENCE @startuml
 				PARTICIPANT Alice
 				ACTOR Bob
-				Alice -> Bob: message 1
+				Alice -> Bob: message one
 				Bob --> Alice: ok
 				|||
-				Alice -> Bob: message 2
+				Alice -> Bob: message two
 				Bob --> Alice: ok
-				||45||
-				Alice -> Bob: message 3
+				|||
+				Alice -> Bob: message three
 			@enduml
 		'''.parse
 		assertEquals(9, ((heros.umlDiagrams.head as SequenceUml).umlElements.size))
 		assertEquals(null, ((heros.umlDiagrams.head as SequenceUml).umlElements.get(4) as Space).value)
-		assertEquals("45", ((heros.umlDiagrams.head as SequenceUml).umlElements.get(7) as Space).value)
 	}
 
 	@Test def void testActivate() {
@@ -380,15 +373,15 @@ class SequenceDiagramTest {
 			COMPONENT @startuml
 			[ABC] AS A
 			[DEF] AS B
-			(A KI) AS C			
-			A <-[#blue]- B : abch acd			
-			B -d- A : ?			
-			C -[#blue]r-> A : xyz			
+			(A KI) AS C
+			A <-[#blue]- B : abch acd
+			B -d- A : ?
+			C -[#blue]r-> A : xyz
 			@enduml
 		'''.parse
 		assertEquals("A", ((heros.umlDiagrams.head as ComponentUml).umlElements.get(0) as Component).name)
-		assertEquals("KI)", ((heros.umlDiagrams.head as ComponentUml).umlElements.get(2) as Interface).nameExtension.get(0))
-	
+		assertEquals("KI", ((heros.umlDiagrams.head as ComponentUml).umlElements.get(2) as Interface).nameExtension.get(0))
+		
 		assertEquals("abch", ((heros.umlDiagrams.head as ComponentUml).umlElements.get(3) as Link).text.get(0));
 		assertEquals(2, ((heros.umlDiagrams.head as ComponentUml).umlElements.get(3) as Link).text.length);
 		assertEquals("A", ((heros.umlDiagrams.head as ComponentUml).umlElements.get(3) as Link).linkOne.name);
