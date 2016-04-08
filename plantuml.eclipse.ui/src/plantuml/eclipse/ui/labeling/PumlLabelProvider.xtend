@@ -32,8 +32,6 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	@Inject private IImageHelper imageHelper
 	@Inject private XbaseImages2 images
     
-    private StringBuffer label
-    
     /** Association Type Tuples */
 	static final val ASSOCIATION_LABELS = newHashMap(
 		AssociationType.BIDIRECTIONAL -> "--",
@@ -88,7 +86,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 		styledLabel.append(ASSOCIATION_LABELS.get(association.associationArrow))
 		styledLabel.append(" " + association.classRight.name);
 		if(association.text.length != 0){
-			label = new StringBuffer(" : ");
+			var label = new StringBuffer(" : ");
 			for(String text : association.text){
 				label.append(text + " ")
 			}
@@ -102,9 +100,21 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	 */
 	def text(Class someClass) {
 		var styledLabel = new StyledString()
-		styledLabel.append(" " + someClass.getName())
-		if(someClass.longName != null){
-			styledLabel.append(new StyledString(" as \"" + someClass.longName + "\"" , StyledString::DECORATIONS_STYLER))
+		if(someClass.longName == null){
+			styledLabel.append(" " + someClass.getName())
+		}else{
+			styledLabel.append(" " + someClass.longName)
+			styledLabel.append(new StyledString(" [", StyledString::DECORATIONS_STYLER))
+			styledLabel.append(someClass.name)
+			styledLabel.append(new StyledString("]", StyledString::DECORATIONS_STYLER))
+		}
+		if(someClass.superTypes != null && someClass.superTypes.length != 0){
+			var buffer = new StringBuffer();
+			buffer.append(" extends " + someClass.superTypes.get(0).name);
+			for(var i = 1; i < someClass.superTypes.length;i++){
+				buffer.append(", " + someClass.superTypes.get(i).name)
+			}
+			styledLabel.append(new StyledString(buffer.toString(), StyledString::DECORATIONS_STYLER))
 		}
 		return styledLabel
 	}
@@ -115,7 +125,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	def text(Attribute attribute){
 		var styledLabel = new StyledString()
 		styledLabel.append(" " + attribute.getName())
-		label = new StringBuffer();
+		var label = new StringBuffer();
 		if(attribute.type != null){
 			label.append(" : " + attribute.type)
 			if(attribute.array){
@@ -136,7 +146,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	def text(Method method){
 		var styledLabel = new StyledString()
 		styledLabel.append(" " + method.getName())
-		label = new StringBuffer()
+		var label = new StringBuffer()
 		if(method.type != null){
 			label.append(" : " + method.type)
 			if(method.array){
@@ -255,6 +265,9 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 			if(obj.abstract){
 				adornment += JavaElementImageDescriptor.ABSTRACT
 			}
+			if(obj.name.matches("([A-Z]|_)*")){
+				adornment += JavaElementImageDescriptor.FINAL
+			}
 		}
 		if(obj instanceof Method){
 			if(obj.static){
@@ -278,19 +291,5 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 			adornment += JavaElementImageDescriptor.STATIC
 		}
 		return adornment
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
+	}	
 }

@@ -49,17 +49,15 @@ Class:
 	{Class}
 	(((abstract?='abstract')? 'class') | interface?='interface') (name=ID | name=STRING | longName=STRING 'as' name=ID)
 	(color=ColorTag)?
-	(('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])*)
-	| ('implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])?)
-	| ('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])* 'implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])*))?
+	('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])*)?
+	('implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])*)?
 	('{' (classContents+=ClassContent | divider+=DividerClass | advancedBody+=STRING)* '}')?;
 
 
 // Other possibility to create classes
 // TODO: Interferences with other rules
 ClassWithContent returns Class:
-	name=ClassName ":" classContents+=ClassContent
-;
+	name=ClassName ":" classContents+=ClassContent;
 
 TitleClass:
 	{TitleClass}

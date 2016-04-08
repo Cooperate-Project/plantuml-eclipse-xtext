@@ -18,15 +18,10 @@ class PumlValidator extends AbstractPumlValidator {
 	public static val HIERARCHY_CYCLE = "plantuml.eclipse.puml.HierarchyCycle"
 	public static val INVALID_ENUM_CONSTANT_NAME = "plantuml.eclipse.puml.InvalidEmunConstantName";
 	public static val INVALID_CLASS_NAME = "plantuml.eclipse.puml.InvalidClassName"
-	public static val INCOMPLETE_INTERFACE_IMPLEMENTATION = "plantuml.eclipse.IncompleteInterfaceImplementation"
 	public static val OVERLOAD_METHOD_RETURN_TYPE = "plantuml.eclipse.OverloadMethodReturnType"
 	public static val WRONG_ASSOCIATION_FOR_DIAGRAMTYPE = "plantuml.eclipse.WrongAssociationForDiagramType"
 
-	// Helper
-	private HashMap<String,String> interfaceMethods;
-
 	/**
-	 * TODO: Mark correctly for several super types.
 	 * Checks for cycles in super type hierarchy.
 	 * Example for Error:
 	 * class A extends B
@@ -35,7 +30,7 @@ class PumlValidator extends AbstractPumlValidator {
 	 */
 	@Check
 	def checkNoCycleClassHierarchy(Class someClass) {
-		if(someClass.superTypes == null && someClass.superTypes.length == 0){
+		if(someClass.superTypes == null || someClass.superTypes.length == 0){
 			return
 		}
 		val visitedClasses = <Class>newHashSet()
@@ -106,7 +101,7 @@ class PumlValidator extends AbstractPumlValidator {
 			|| association.associationArrow == AssociationType.DIRECTIONALLEFTX
 			|| association.associationArrow == AssociationType.DIRECTIONALLEFTO
 		){
-			error("This arrow is not allowed for class diagrams.", 
+			error("This association is not allowed for class diagrams.", 
 				PumlPackage::eINSTANCE.association_AssociationArrow, 
 				WRONG_ASSOCIATION_FOR_DIAGRAMTYPE, 
 				null
@@ -119,7 +114,7 @@ class PumlValidator extends AbstractPumlValidator {
 	 */ 
 	@Check
 	def checkImplements(Class someClass) {
-		interfaceMethods = new HashMap<String,String>();
+		var interfaceMethods = new HashMap<String,String>();
 		// Loop through interfaces
 		for(interface : someClass.interfaces){
 			for(classContent : interface.classContents){

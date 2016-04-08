@@ -23,20 +23,17 @@ import org.eclipse.swt.graphics.RGB
  */
 class PumlProposalProvider extends AbstractPumlProposalProvider {
 
-	@Inject
-    private IImageHelper imageHelper
-
 	// ------------------------ CONFIGURATION PARAMETERS ---------------------------------
 	
 	/** Filtered proposals that does not provide any useful help */
 	static final String[] FILTERED_KEYWORDS = #["{","}","--","==","__","[","#","+","~","-", ".", "-[", "o", "*", "<", "<|" , "UNDEFINED"]
 
 	/** Visibility tuples with (word,sign) */
-	static final val VISIBILITIES = #["public"->"+","private"->"-","protected"->"#","default"->"~"]
-	/** Standard descriptions for method or attribute names added through proposals */
-	static final val DESC = "enterName"
-	/** Standard type for method or attribute types added through proposals*/
-	static final val TYPE = "enterType"
+	static val VISIBILITIES = #["public"->"+","private"->"-","protected"->"#","default"->"~"]
+	/** Standard placeholder descriptions for method or attribute names added through proposals */
+	static val PLACEHOLDER_DESC = "enterName"
+	/** Standard placeholder type for method or attribute types added through proposals*/
+	static val PLACEHOLDER_TYPE = "enterType"
 	
 	/** Standard colors with hex codes because default colors are awful. */
 	static final val COLORS = #[
@@ -49,6 +46,9 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 	]
 
 	// -----------------------------------------------------------------------------------
+
+	@Inject
+    private IImageHelper imageHelper
 
 	@Inject
 	private PumlGrammarAccess ga;
@@ -105,14 +105,14 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 			for(var i = 0; i < VISIBILITIES.length ; i++){
 				// Add method proposal
 				acceptor.accept(createCompletionProposal(
-					VISIBILITIES.get(i).value + DESC + "() : " + TYPE,
+					VISIBILITIES.get(i).value + plantuml.eclipse.ui.contentassist.PumlProposalProvider.PLACEHOLDER_DESC + "() : " + plantuml.eclipse.ui.contentassist.PumlProposalProvider.PLACEHOLDER_TYPE,
 					"Method (" + VISIBILITIES.get(i).key + ")",
 					imageHelper.getImage("visibilities/meth_" + VISIBILITIES.get(i).key + "_obj.png"),
 					context
 				));
 				// Add attribute proposal
 				acceptor.accept(createCompletionProposal(
-					VISIBILITIES.get(i).value + DESC + " : " + TYPE,
+					VISIBILITIES.get(i).value + plantuml.eclipse.ui.contentassist.PumlProposalProvider.PLACEHOLDER_DESC + " : " + plantuml.eclipse.ui.contentassist.PumlProposalProvider.PLACEHOLDER_TYPE,
 					"Attribute (" + VISIBILITIES.get(i).key + ")",
 					imageHelper.getImage("visibilities/field_" + VISIBILITIES.get(i).key + "_obj.png"),
 					context

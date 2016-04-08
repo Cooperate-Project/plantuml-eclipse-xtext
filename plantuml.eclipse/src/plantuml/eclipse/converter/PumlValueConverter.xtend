@@ -13,10 +13,9 @@ import org.eclipse.xtext.conversion.impl.AbstractNullSafeConverter
  */
 class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	
-
 	/** Associations Type Tuples */
 	static final val ASSOCIATION_TYPES = newHashMap(
-		"<|-"	 -> AssociationType.INHERITANCELEFT,
+		"<|-"	-> AssociationType.INHERITANCELEFT,
 		"<|." 	-> AssociationType.INHERITANCELEFT,
 		"-|>" 	-> AssociationType.INHERITANCERIGHT,
 		".|>" 	-> AssociationType.INHERITANCERIGHT,
@@ -49,12 +48,8 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 		"x->x"	-> AssociationType.DIRECTIONALRIGHTX
 	)
 	
-	// Temporal Variables
-	StringBuffer stringBuffer
-	String buffer
-	char type
-	
 	/**
+	 * TODO: umbennennen
 	 * Checks for correct association arrows.
 	 * @return An {@link AssociationType} Enum if the arrow type exists, else null.
 	 */
@@ -65,24 +60,21 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 				return value.toString
 			}
 			override protected internalToValue(String string, INode node) throws ValueConverterException {
-				if (string == null) {
-					throw new ValueConverterException("The assiciation arrow can't be empty.", node, null)
-				}
 				var modifiedString = removeColorTag(string)
 				if(modifiedString == null) {
 					throw new ValueConverterException("Incorrect Color Tag! Reminder: Syntax is \'#[<Hexcode|Color>]\'.", node, null)
 				}
 				modifiedString = removeOrientationInformation(modifiedString)
 				if(modifiedString == null) {
-					throw new ValueConverterException("More than one orientation information or on the wrong position!", node, null)
+					throw new ValueConverterException("More than one orientation information!", node, null)
 				}
 				modifiedString = fixLength(modifiedString)
 				if(modifiedString == null){
-					throw new ValueConverterException("You should not mix dashed and continuous linies.", node, null)
+					throw new ValueConverterException("You should not mix dashed and continuous lines.", node, null)
 				}
 				val result = ASSOCIATION_TYPES.get(modifiedString)
 				if(result == null){
-					throw new ValueConverterException("\'" + modifiedString + "\' is not a correct association arrow. Look at the PlantUML Documentation for further informations.", node, null)
+					throw new ValueConverterException("\'" + modifiedString + "\' is not a correct association arrow. Look at the PlantUML documentation for further informations.", node, null)
 				}
 				return result
 			}
@@ -130,7 +122,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 		}
 		// contains color tag
 		
-		buffer = string.split("\\[").get(0);
+		var buffer = string.split("\\[").get(0);
 		if(buffer.contains("]")){
 			return buffer = buffer.split("\\]").get(0);
 		}
@@ -144,7 +136,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	 * @return The given string without color information or null if the string does contain syntax errors.
 	 */
 	def String removeColorTag(String string){
-		stringBuffer = new StringBuffer();
+		var stringBuffer = new StringBuffer();
 		if(!string.contains("[")){
 			return string;
 		}
@@ -164,10 +156,10 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	 */
 	 def String removeOrientationInformation(String string){
 		val orientations = #["l","r","u","d"]
-		buffer = null;
+		var buffer = "";
 		for(String orientation : orientations){
 			if(string.contains(orientation)){
-				if (buffer == null){
+				if (buffer.matches("")){
 					buffer = orientation
 				}else{
 					// More than one orientation information
@@ -176,7 +168,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 			}
 		}
 		// Nothing to do
-		if(buffer == null){
+		if(buffer.matches("")){
 			return string
 		}
 		return removeSubstring(string, buffer)
@@ -190,7 +182,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	  * @return The new string or null if conditions are violated.
 	  */
 	def String removeSubstring(String string, String sub){
-		stringBuffer = new StringBuffer()
+		var stringBuffer = new StringBuffer()
 		if(string.contains(sub)){
 			if(string.indexOf(sub) != string.length()-1){
 				stringBuffer.append(string.replaceFirst(sub,""))
@@ -210,7 +202,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	 */
 	def String fixLength(String string){
 		// Check for arrow style
-		type = '-'
+		var type = '-'
 		if(string.contains(".")){
 			if(string.contains("-")) {
 				// We don't allow mixed styles
@@ -222,7 +214,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 		// search for first occurence of character
 		val firstIndex = string.indexOf(type);
 		// replace this character with special character
-		buffer = string.substring(0,firstIndex) + "$" + string.substring(firstIndex+1);
+		var buffer = string.substring(0,firstIndex) + "$" + string.substring(firstIndex+1);
 		// delete all other occurences of character
 		buffer = buffer.replace(type.toString(), "");
 		// replace special character with style information

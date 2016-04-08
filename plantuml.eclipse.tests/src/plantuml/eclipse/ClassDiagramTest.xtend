@@ -22,6 +22,8 @@ import plantuml.eclipse.validation.PumlValidator
 import plantuml.eclipse.puml.PumlPackage
 import plantuml.eclipse.puml.NoteClass
 import plantuml.eclipse.puml.AssociationType
+import java.util.ArrayList
+import plantuml.eclipse.puml.TitleClass
 
 @RunWith(XtextRunner)
 @InjectWith(PumlInjectorProvider)
@@ -306,29 +308,59 @@ class ClassDiagramTest {
 	}
 	
 	@Test
+	def void title(){
+		val heros = '''
+			CLASS
+			@startuml
+			title Das ist der Titel des Diagrams
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val title = classUml.umlElements.get(0) as TitleClass
+		val titleExpected = #["Das","ist","der","Titel","des","Diagrams"]
+		for(var i = 0; i < title.value.size(); i++){
+			Assert::assertEquals(titleExpected.get(i), title.value.get(i));
+		}
+	}
+	
+	@Test
 	def void associationDirectional(){
 		val heros = '''
 			CLASS
 			@startuml
 			class Alice
 			class Bob
-			Alice -[#FF0022]-> Bob
-			Alice .[#AA1289].> Bob
-			Alice <-[#Orange]- Bob
-			Alice <.[#Blue]. Bob
+			Alice -> Bob
+			Alice .> Bob
+			Alice --> Bob
+			Alice ..> Bob
+			Alice ----> Bob
+			Alice ....> Bob
+			Alice -[#Green]-> Bob
+			Alice .[#00FF00].> Bob
+			Alice --[#SkyBlue]--> Bob
+			Alice ..[#Orange]..> Bob
+			Alice <- Bob
+			Alice <. Bob
+			Alice <-- Bob
+			Alice <.. Bob
+			Alice <---- Bob
+			Alice <.... Bob
+			Alice <-[#Green]- Bob
+			Alice <.[#00FF00]. Bob
+			Alice <--[#SkyBlue]-- Bob
+			Alice <..[#Orange].. Bob
 			@enduml
 		'''.parse
 		val classUml = heros.umlDiagrams.head as ClassUml
 		val classAlice = classUml.umlElements.get(0) as Class
 		val classBob = classUml.umlElements.get(1) as Class
-		val associationsRight = #[
-			classUml.umlElements.get(2) as Association,
-			classUml.umlElements.get(3) as Association
-			]
-		val associationsLeft = #[
-			classUml.umlElements.get(4) as Association,
-			classUml.umlElements.get(5) as Association
-			]
+		val associationsRight = new ArrayList<Association>()
+		val associationsLeft = new ArrayList<Association>()
+		for(var i = 2; i < 12; i+=2){
+			associationsRight.add(classUml.umlElements.get(i) as Association)
+			associationsLeft.add(classUml.umlElements.get(i+10) as Association)
+		}
 		Assert::assertEquals("Alice", classAlice.name);
 		Assert::assertEquals("Bob", classBob.name);
 		for(Association association : associationsRight){
@@ -683,9 +715,45 @@ class ClassDiagramTest {
 		)
 	}
 	
+	@Test
+	def void invalidInterfaceImplementation(){
+		val heros = '''
+			CLASS
+			@startuml
+			interface AnInterface {
+				+doSomething() : Something
+			}
+			class Bob implements AnInterface {
+				+doSomething() : AnotherSomething
+			}
+			@enduml
+		'''.parse
+		val classUml = heros.umlDiagrams.head as ClassUml
+		val bob = classUml.umlElements.get(1) as Class
+		val methodOfBob = bob.classContents.get(0) as Method
+		heros.assertWarning(PumlPackage::eINSTANCE.getClass_(),
+			PumlValidator::OVERLOAD_METHOD_RETURN_TYPE,
+			"Overload for return type of method '" + methodOfBob.name + "'"
+		)
+	}
 	
-	
-	
+	@Test
+	def void invalidAssociationForDiagramType(){
+		val heros = '''
+			CLASS
+			@startuml
+			class Alice
+			class Bob
+			Alice --> Bob
+			Alice o-->o Bob
+			Alice ..> Bob
+			@enduml
+		'''.parse
+		heros.assertError(PumlPackage::eINSTANCE.getAssociation(),
+			PumlValidator::WRONG_ASSOCIATION_FOR_DIAGRAMTYPE,
+			"This association is not allowed for class diagrams."
+		)
+	}
 	
 	
 	

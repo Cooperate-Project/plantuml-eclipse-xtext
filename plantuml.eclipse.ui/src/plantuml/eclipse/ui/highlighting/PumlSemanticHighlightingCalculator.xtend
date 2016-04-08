@@ -6,7 +6,6 @@ import org.eclipse.xtext.resource.XtextResource
 import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
 import org.eclipse.emf.ecore.EStructuralFeature
-import java.util.Iterator
 import org.eclipse.emf.ecore.EObject
 import plantuml.eclipse.puml.PumlPackage
 import plantuml.eclipse.puml.Class
@@ -24,18 +23,15 @@ import plantuml.eclipse.puml.DividerClass
  */
 class PumlSemanticHighlightingCalculator implements ISemanticHighlightingCalculator {
 	
-	Iterator<EObject> contents;
-	EObject element;
-	
 	override provideHighlightingFor(XtextResource resource, IHighlightedPositionAcceptor acceptor, CancelIndicator cancelor) {
 		if(resource == null || resource.getParseResult() == null){
 			return;
 		}
 		
 		// Loop through contents
-		for(contents = resource.getAllContents(); contents.hasNext(); ) 
+		for(var contents = resource.getAllContents(); contents.hasNext(); ) 
         {
-            element = contents.next();
+            var element = contents.next();
             if (element instanceof Class){
             	highlightNode(element, PumlPackage.Literals.CLASS__NAME, PumlHighlightingConfiguration.CLASS_ID, acceptor)
             	highlightNode(element, PumlPackage.Literals.CLASS__COLOR, PumlHighlightingConfiguration.COLOR_ID, acceptor)
