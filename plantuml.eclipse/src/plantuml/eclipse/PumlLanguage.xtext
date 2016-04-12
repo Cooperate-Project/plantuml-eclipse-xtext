@@ -101,7 +101,9 @@ Method:
 Association:
 	{Association}
 	(classLeft=[Class|ClassName]
+	infoLeft=STRING?
 	=>associationArrow=ARROWTYPE
+	infoRight=STRING?
 	classRight=[Class|ClassName])
 	(':' text+=(ID)*)?;
 
