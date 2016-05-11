@@ -1,7 +1,7 @@
 package plantuml.eclipse.validation
 
 import org.eclipse.xtext.validation.Check
-import plantuml.eclipse.puml.Class
+import plantuml.eclipse.puml.Classifier
 import plantuml.eclipse.puml.EnumConstant
 import plantuml.eclipse.puml.PumlPackage
 import java.util.HashSet
@@ -9,6 +9,8 @@ import plantuml.eclipse.puml.Method
 import java.util.HashMap
 import plantuml.eclipse.puml.Association
 import plantuml.eclipse.puml.AssociationType
+import plantuml.eclipse.puml.ClassDef
+import plantuml.eclipse.puml.InterfaceDef
 
 /**
  * This class provides custom rules that will be validated.
@@ -29,22 +31,22 @@ class PumlValidator extends AbstractPumlValidator {
 	 * class C extends A
 	 */
 	@Check
-	def checkNoCycleClassHierarchy(Class someClass) {
-		if(someClass.superTypes == null || someClass.superTypes.length == 0){
+	def checkNoCycleClassHierarchy(Classifier someClass) {
+		if(someClass.inheritance.superTypes == null || someClass.inheritance.superTypes.length == 0){
 			return
 		}
-		val visitedClasses = <Class>newHashSet()
+		val visitedClasses = <Classifier>newHashSet()
 		checkSuperTypesForCycle(visitedClasses, someClass);		
 	}
 	
 	/**
 	 * Helper method for {@link #checkNoCycleClassHierarchy checkNoCycleClassHierarchy} method.
 	 */
-	def boolean checkSuperTypesForCycle(HashSet<Class> visited, Class someClass) {
-		for(Class current : someClass.superTypes){
+	def boolean checkSuperTypesForCycle(HashSet<Classifier> visited, Classifier someClass) {
+		for(Classifier current : someClass.inheritance.superTypes){
 	 		if(visited.contains(current)){
 	 			warning("Cycle in hierarchy of class '" + someClass.name + "'", 
-	 				PumlPackage::eINSTANCE.class_SuperTypes, 
+	 				PumlPackage::eINSTANCE.classifier_Inheritance, 
 	 				HIERARCHY_CYCLE, 
 	 				someClass.name
 	 			)
@@ -63,12 +65,12 @@ class PumlValidator extends AbstractPumlValidator {
 	 * Displays a warning if first character is not lower case.
 	 */
 	@Check
-	def checkForFirstLetterCapitalClassName(Class someClass) {
-		if(!Character.isUpperCase(someClass.name.charAt(0)) && someClass.name.matches("[^\"]*")){
+	def checkForFirstLetterCapitalClassName(Classifier someClass) {
+		if(!Character.isUpperCase(someClass.name.toString.charAt(0)) && someClass.name.toString.matches("[^\"]*")){
 			warning("First capitals of classes should be capital letters", 
-				PumlPackage::eINSTANCE.class_Name, 
+				PumlPackage::eINSTANCE.classifier_Name, 
 				INVALID_CLASS_NAME, 
-				someClass.name
+				someClass.name.toString
 			)
 		}
 	}
@@ -113,18 +115,19 @@ class PumlValidator extends AbstractPumlValidator {
 	 * Checks for overloads of return types of implemented interface methods.
 	 */ 
 	@Check
-	def checkImplements(Class someClass) {
+	def checkImplements(Classifier someClass) {
 		var interfaceMethods = new HashMap<String,String>();
 		// Loop through interfaces
-		for(interface : someClass.interfaces){
-			for(classContent : interface.classContents){
+		for(interface : someClass.inheritance.implementedInterfaces) {
+			var content = getClassContent(interface)
+			for(classContent : content){
 				if(classContent instanceof Method){
 					// Put in HashMap
 					// Example: Key("eineMethode()","String")
 					val output = interfaceMethods.put(classContent.name, classContent.type)
 					if(output != null && output != classContent.type){
 						warning("Overload for return type of method '" + classContent.name  +"' through implemented interface '" + interface.name + "'", 
-							PumlPackage::eINSTANCE.class_Name, 
+							PumlPackage::eINSTANCE.classifier_Name, 
 							OVERLOAD_METHOD_RETURN_TYPE, 
 							someClass.name
 						)
@@ -133,17 +136,25 @@ class PumlValidator extends AbstractPumlValidator {
 			}
 		}
 		// Loop trough class methods
-		for(classContent : someClass.classContents){
+		for(classContent : getClassContent(someClass)){
 			if(classContent instanceof Method){
 				val output = interfaceMethods.remove(classContent.name)
 				if(output != null && output != classContent.type){
 						warning("Overload for return type of method '" + classContent.name +"'", 
-							PumlPackage::eINSTANCE.class_Name, 
+							PumlPackage::eINSTANCE.classifier_Name, 
 							OVERLOAD_METHOD_RETURN_TYPE, 
 							someClass.name
 						)
 				}
 			}
+		}		
+	}
+	
+	private def getClassContent(Classifier someClass) {
+		if (someClass instanceof ClassDef) {
+			return someClass.classContents
+		} else if (someClass instanceof InterfaceDef) {
+			return someClass.interfaceContents
 		}
 	}
 }

@@ -1,4 +1,4 @@
-grammar plantuml.eclipse.Puml hidden(WS, NEWLINE, SL_COMMENT, ML_COMMENT)
+grammar plantuml.eclipse.Puml /*with org.eclipse.xtext.common.Terminals*/ hidden(WS, NEWLINE, SL_COMMENT, ML_COMMENT)
 
 import "http://www.eclipse.org/emf/2002/Ecore" as ecore
 generate puml "http://www.eclipse.plantuml/Puml"
@@ -24,7 +24,7 @@ ClassUml:
 // Sequence diagram
 SequenceUml:
 	{SequenceUml}
-	'@startuml' umlElements+=(UmlElement)* '@enduml';
+	'@startuml' umlElements+=(SequenceElement)* '@enduml';
 
 // Component diagram
 ComponentUml:
@@ -39,98 +39,148 @@ ComponentUml:
 // Elements of the class diagram
 ClassElement:
 	Association
-	| Class
+	| Classifier
 	| NoteClass
 	| Enum
-	| TitleClass;
+	| UmlClassTitle;
 
+Classifier:
+	ClassDef | InterfaceDef;
+	
 // Class definition
-Class:
-	{Class}
-	(((abstract?='abstract')? 'class') | interface?='interface') (name=ID | name=STRING | longName=STRING 'as' name=ID)
+ClassDef:
+	{ClassDef}
+	(abstract?='abstract')? 'class' (name=PUMLID | name=STRING | longName=STRING 'as' name=PUMLID)
 	(color=ColorTag)?
-	('extends' superTypes+=[Class|ClassName] (',' superTypes+=[Class|ClassName])*)?
-	('implements' interfaces+=[Class|ClassName] (',' interfaces+=[Class|ClassName])*)?
+	(inheritance = Inheritance)?
 	('{' (classContents+=ClassContent | divider+=DividerClass | advancedBody+=STRING)* '}')?;
+	
+InterfaceDef:
+	{InterfaceDef}
+	(abstract?='abstract')? 'interface' (name=PUMLID | name=STRING | longName=STRING 'as' name=PUMLID)
+	(color=ColorTag)?
+	(inheritance = Inheritance)?
+	('{' (interfaceContents+=ClassContent | divider+=DividerClass | advancedBody+=STRING)* '}')?;
 
+Inheritance:
+	{Inheritance}
+	('extends' superTypes+=[Classifier|ClassName] (',' superTypes+=[Classifier|ClassName])*)?
+	('implements' implementedInterfaces+=[Classifier|ClassName] (',' implementedInterfaces+=[Classifier|ClassName])*)?;
+
+//Value converter
+/*Name: 
+	(name=PUMLID | name=STRING | longName=STRING 'as' name=PUMLID);*/
 
 // Other possibility to create classes
 // TODO: Interferences with other rules
-ClassWithContent returns Class:
-	name=ClassName ":" classContents+=ClassContent;
+/*ClassWithContent returns Class:
+	name = Name ":" classContents+=ClassContent;*/
 
-TitleClass:
-	{TitleClass}
-	'title' value+=ID;
+UmlClassTitle:
+	{UmlClassTitle}
+	'title' name = (PUMLID | STRING);
 
-// Important contents inside a class
+// Important contents insPUMLIDe a class
 ClassContent:
 	Method
-	| Attribute;
+	| Attribute
+	| DividerClass;
 
 // Class names
 ClassName:
-	(ID | STRING);
+	(PUMLID | STRING);
 
 // Enums
 Enum:
 	{Enum}
-	'enum' name=ID (color=ColorTag)?
+	'enum' name=PUMLID (color=ColorTag)?
 	('{' enumConstants+=EnumConstant (',' enumConstants+=EnumConstant)* '}')?;
 
 // Constants in Enums
 EnumConstant:
 	{EnumConstant}
-	name=ID;
+	name=PUMLID;
 
 // Attributes in classes
 Attribute:
 	{Attribute}
 	(static?='{static}')? (abstract?='{abstract}')?
-	((type=ID (array?='[' (length=Int)? ']')? name=ID)
-	|((visibility=Visibility)? name=ID (":" type=ID (array?='[' (length=Int)? ']')?)));
+	(visibility=Visibility)?
+	((type=PUMLID ('[' (length=INT)? ']')? name=PUMLID)
+	|(name=PUMLID (":" type=PUMLID ('[' (length=INT)? ']')?)));
 
 // Methods in classes
 Method:
 	{Method}
 	(static?='{static}')? (abstract?='{abstract}')?
-	((type=ID (array?='[' (length=Int)? ']')? name=METHID)
-	|((visibility=Visibility)? name=METHID (":" type=ID (array?='[' (length=Int)? ']')?)));
+	(visibility=Visibility)?
+	(((type=PUMLID)? ('[' (length=INT)? ']')? name=(PUMLID) '(' (parameters+=Attribute (',' paramters+=Attribute)*)? ')')
+	|(name=(PUMLID) '(' (parameters+=Attribute)? ')' (":" type=PUMLID ('[' (length=INT)? ']')?)));
 
 // Associations between classes
 Association:
 	{Association}
-	(classLeft=[Class|ClassName]
+	(classLeft=[Classifier|ClassName]
 	infoLeft=STRING?
-	=>associationArrow=ARROWTYPE
+	=>associationArrow=ARROW
 	infoRight=STRING?
-	classRight=[Class|ClassName])
-	(':' text+=(ID)*)?;
+	classRight=[Classifier|ClassName])
+	(':' label=PUMLID)?;
+
 
 // Notes for classes
 NoteClass:
 	{NoteClass}
-	'note' ('left' | 'right' | 'top') ('of' noteOf=[Class|ClassName])?
-	value+=(ID)*
+	'note' direction=NotePosition ('of' noteOf=[Classifier|ClassName])?
+	note+=PUMLIDText
 	'end note';
+
+// whitspace between words are possible and are showing correctly in the model
+PUMLIDText:
+	PUMLID+
+;
 
 // Color definitions
 ColorTag:
 	COLOR | HEXCODE;
 
-// Divider to separate parts of a class
-// Problem: ambiguity with association arrow
+// DivPUMLIDer to separate parts of a class
+// TODO: Problem: ambiguity with association arrow
 DividerClass:
-	{DividerClass}
-	((value+='==' (value+=(ID)* value+='==')?)
-	//| (value+='--' (value+=(ID)* value+='--')?)
-	| (value+='__' (value+=(ID)* value+='__')?))
+	EQUALDIVIDER
+	//| DASHEDDIVIDER
+	| UNDERLINEDIVIDER
+	//| DOTEDDIVIDER
+;
+EQUALDIVIDER returns DividerClass:
+	{EQUALDIVIDER}
+	'==' (dividerText+=PUMLIDText '==')?
 ;
 
+DASHEDDIVIDER returns DividerClass:
+	{DASHEDDIVIDER}
+	'--' (dividerText+=PUMLIDText '--')?
+;
+
+UNDERLINEDIVIDER returns DividerClass:
+	{UNDERLINEDIVIDER}
+	'__' (dividerText+=PUMLIDText '__')?
+;
+
+DOTEDDIVIDER returns DividerClass:
+	{DOTEDDIVIDER}
+	'..' (dividerText+=PUMLIDText '..')?
+;
+
+
+enum NotePosition:
+	LEFT = 'left'
+	| RIGHT = 'right'
+	| TOP = 'top'
+;
 // Left types of an association
 enum AssociationType:
-	UNDEFINED
-	| BIDIRECTIONAL
+	BIDIRECTIONAL
 	| DIRECTIONALLEFT
 	| DIRECTIONALLEFTX
 	| DIRECTIONALLEFTO
@@ -144,7 +194,11 @@ enum AssociationType:
 	| COMPOSITIONLEFT
 	| COMPOSITIONRIGHT;
 
-
+terminal ARROW returns AssociationType:
+	('<' | '-' | '.' | 'o' | 'x' | '*')
+	('<' | '>' | '-' | '.' | 'o' | 'x' | '*' | '|' | 'l' | 'r' | 'u' | 'd'
+	| '[#' ( 'a'..'z' | 'A'..'Z' | '0'..'9' )+ ']'
+	)*;
 // Visibility for attributes and methods
 enum Visibility: 
 	PROTECTED='#'
@@ -157,7 +211,7 @@ enum Visibility:
 // ----------------------------------- Sequence Diagramm -----------------------------------------
 // -----------------------------------------------------------------------------------------------
 
-UmlElement:
+SequenceElement:
 	Participant
 	| UseLeft
 	| UseRight
@@ -181,91 +235,91 @@ UmlElement:
 
 Participant:
 	{Participant}
-	// TODO das Problem liegt am Konflikt in den Namen --> Daher hat xtext auch bei der ID den ^ als Konfliktvermeider
+	// TODO das Problem liegt am Konflikt in den Namen --> Daher hat xtext auch bei der PUMLID den ^ als KonfliktvermePUMLIDer
 	// google: xtext keyword contextual
-	// https://kthoms.wordpress.com/2012/03/15/xtext-content-assist-escape-identifiers-conflicting-with-keywords/#comments
+	// https://kthoms.wordpress.com/2012/03/15/xtext-content-assist-escape-PUMLIDentifiers-conflicting-with-keywords/#comments
 	//	'participant ' (name=TEXT | longname=(STRING | TEXT) ' as ' name=TEXT) NEWLINE
 	//	'participant ' {UmlParticipant} name=(TEXT|STRING) ('as ' name=TEXT)? NEWLINE
-	('PARTICIPANT' | 'ACTOR' | 'BOUNDARY' | 'CONTROL' | 'ENTITY' | 'DATABASE') (name=ID | longname=(STRING | ID) 'AS'
-	name=ID);
+	('PARTICIPANT' | 'ACTOR' | 'BOUNDARY' | 'CONTROL' | 'ENTITY' | 'DATABASE') (name=PUMLID | longname=(STRING | PUMLID) 'AS'
+	name=PUMLID);
 
 QualifiedName:
 	{QualifiedName}
-	ID;
+	PUMLID;
 
 	
 Space:
 	{Space}
-	('||' value=ID '||' | '|||');
+	('||' value=PUMLID '||' | '|||');
 
 Delay:
 	{Delay}
-	'...' value+=(ID)* '...';
+	'...' value+=(PUMLID)* '...';
 
 Reference:
 	{Reference}
-	'REF OVER' ref+=[Participant|ID] (',' ref+=[Participant|ID])*
-	(':' value+=(ID)* | value+=(ID)* 'END REF');
+	'REF OVER' ref+=[Participant|PUMLID] (',' ref+=[Participant|PUMLID])*
+	(':' value+=(PUMLID)* | value+=(PUMLID)* 'END REF');
 
 Divider:
 	{Divider}
-	'==' name=ID value+=(ID)* '==';
+	'==' name=PUMLID value+=(PUMLID)* '==';
 
 Note:
 	{Note}
-	'NOTE' ('LEFT' | 'RIGHT' | 'OVER') ('OF' noteOf=[Participant|ID])?
-	value+=(ID)*
+	'NOTE' ('LEFT' | 'RIGHT' | 'OVER') ('OF' noteOf=[Participant|PUMLID])?
+	value+=(PUMLID)*
 	'END NOTE';
 
 Newpage:
 	{Newpage}
-	'NEWPAGE' value+=(ID | STRING)*;
+	'NEWPAGE' value+=(PUMLID | STRING)*;
 
 Title:
 	{Title}
-	'TITLE' value+=(ID | STRING | WS)*;
+	'TITLE' value+=(PUMLID | STRING | WS)*;
 
 Legend:
 	{Legend}
 	'LEGEND'
-	legendEntries+=(STRING | ID | '=' | ':')*
+	legendEntries+=(STRING | PUMLID | '=' | ':')*
 	'ENDLEGEND';
 
 LegendEntries:
-	name=ID '=' value+=(ID | STRING)*;
+	name=PUMLID '=' value+=(PUMLID | STRING)*;
 
 Autonumber:
 	{Autonumber}
-	'AUTONUMBER' (value=(ID | STRING))?;
+	'AUTONUMBER' (value=(PUMLID | STRING))?;
 
 Activate returns UmlElementsContainer:
 	{Activate}
-	'ACTIVATE' activate=[Participant]
-	umlElements+=(UmlElement)*
-	('DEACTIVATE' | 'DESTROY') deactivate=[Participant];
+	'ACTIVATE' activate=Participant
+	umlElements+=(SequenceElement)*
+	('DEACTIVATE' | 'DESTROY') deactivate=Participant;
 
 Alternative returns UmlElementsContainer:
 	{Alternative}
-	'ALT' text+=(ID)*
-	umlElements+=(UmlElement)*
+	'ALT' text+=(PUMLID)*
+	umlElements+=(SequenceElement)*
 	elseBlocks+=(Else)*
 	=> 'END';
 
 Else returns UmlElementsContainer:
 	{Else}
-	'ELSE' text+=(ID)*
-	umlElements+=(UmlElement)*;
+	'ELSE' text+=(PUMLID)*
+	umlElements+=(SequenceElement)*;
 
 Group returns UmlElementsContainer:
 	{Group}
-	('GROUP' | 'OPT' | 'LOOP' | 'PAR' | 'BREAK' | 'CRITICAL') test+=(ID)*
-	umlElements+=(UmlElement)*
+	('GROUP' | 'OPT' | 'LOOP' | 'PAR' | 'BREAK' | 'CRITICAL') test+=(PUMLID)*
+	umlElements+=(SequenceElement)*
 	=> 'END';
 
 Box returns UmlElementsContainer:
 	{Box}
 	'BOX' name=STRING (color=HEXCODE)?
-	umlElements+=(UmlElement)*
+	umlElements+=(SequenceElement)*
 	=> 'END BOX';
 
 Skinparam:
@@ -275,29 +329,29 @@ Skinparam:
 	'}';
 
 SkinElement:
-	name=ID value=(ID | HEXCODE);
+	name=PUMLID value=(PUMLID | HEXCODE);
 
 UseLeft returns UmlUse:
 	{UseLeft}
-	(userOne=[Participant|ID] | '[')
-	associationArrow=ARROWTYPE
+	(userOne=[Participant|PUMLID] | '[')
+	associationArrow=ARROW
 	// ('o<-' | '<-o' | 'o<-o' | '<-' | 'o<--' | '<--o' | 'o<--o' | '<--' | 'x<-' | '<-x' | 'x<-x' | 'x<--' | '<--x' | 'x<--x')
-	userTwo=[Participant|ID] (':' text+=(ID)*)?;
+	userTwo=[Participant|PUMLID] (':' text+=(PUMLID)*)?;
 
 UseRight returns UmlUse:
 	{UseRight}
-	(userOne=[Participant|ID])
-	associationArrow=ARROWTYPE
+	(userOne=[Participant|PUMLID])
+	associationArrow=ARROW
 	//('o->' | '->o' | 'o->o' | '->' | 'o-->' | '-->o' | 'o-->o' | '-->' | 'x->' | '->x' | 'x->x' | 'x-->' | '-->x' | 'x-->x')
-	(userTwo=[Participant|ID] | ']') (':' text+=(ID)*)?;
+	(userTwo=[Participant|PUMLID] | ']') (':' text+=(PUMLID)*)?;
 
 UmlElementsContainer:
 	{UmlElementsContainer}
-	umlElements+=(UmlElement)*;
+	umlElements+=(SequenceElement)*;
 
 NamedElement:
 	{NamedElement}
-	name=ID;
+	name=PUMLID;
 
 UmlUse:
 	{UmlUse};
@@ -313,37 +367,27 @@ ComponentElement:
 	| Title;
 	
 Link:
-	linkOne=[NamedElement|ID] 
+	linkOne=[NamedElement|PUMLID] 
 	/**
 	 * Long list of possible clauses due to misunderstanding within the parser.
 	 * If you would split the detection into multiple ones this is not be detected in the right way.
 	 * Example: 
 	 * 		('<-' | '-') (d)? ('-' | '->')
-	 * does not work because if the parser is already in ID detection due to previous (':' text+=(ID)*)?
+	 * does not work because if the parser is already in PUMLID detection due to previous (':' text+=(PUMLID)*)?
 	 * it is not possible to detect the upper clause for sure.
 	 */
-	associationArrow=ARROWTYPE
-	linkTwo=[NamedElement|ID] (':' text+=(ID)*)?;
+	associationArrow=ARROW
+	linkTwo=[NamedElement|PUMLID] (':' text+=(PUMLID)*)?;
 
 Interface returns NamedElement:
-	{Interface} ('(' name=ID nameExtension+=(ID)* ')' | 'INTERFACE' description=STRING) ('AS' name=ID)? (color=ColorTag)?;
+	{Interface} ('(' name=PUMLID nameExtension+=(PUMLID)* ')' | 'INTERFACE' description=STRING) ('AS' name=PUMLID)? (color=ColorTag)?;
 
 Component returns NamedElement:
-	{Component} ('[' name=ID nameExtension+=(ID | WS)* ']' | 'COMPONENT' description=STRING) ('AS' name=ID)? (color=ColorTag)?;
+	{Component} ('[' name=PUMLID nameExtension+=(PUMLID | WS)* ']' | 'COMPONENT' description=STRING) ('AS' name=PUMLID)? (color=ColorTag)?;
 
 // -----------------------------------------------------------------------------------------------
 // ------------------------------- Shared Rules and Terminals ------------------------------------
 // -----------------------------------------------------------------------------------------------
-
-terminal ARROWTYPE returns AssociationType:
-	('<' | '-' | '.' | 'o' | 'x' | '*')
-	('<' | '>' | '-' | '.' | 'o' | 'x' | '*' | '|' | 'l' | 'r' | 'u' | 'd'
-	| '[#' ( 'a'..'z' | 'A'..'Z' | '0'..'9' )+ ']'
-	)*;
-
-
-// Colors as words for PlantUML
-// Source: https://github.com/EricssonPlant/plantuml-xtext-light/
 terminal COLOR:
 	"#" ('AliceBlue'|'AntiqueWhite'|'Aqua'|'Aquamarine'|'Azure'|'Beige'|'Bisque'|'Black'|'BlanchedAlmond'
 	|'Blue'|'BlueViolet'|'Brown'|'BurlyWood'|'CadetBlue'|'Chartreuse'|'Chocolate'|'Coral'
@@ -374,27 +418,23 @@ terminal HEXCODE:
 	('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9')('A' .. 'F'|'0' .. '9');
 
 // Terminal to detect methods
-terminal METHID:
+/*terminal METHID:
 	('a'..'z' | 'A'..'Z' | '_' | '0'..'9') 
 	('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*
 	"("
 	('a'..'z' | 'A'..'Z' | '_' | '0'..'9')*
 	")";
-
+*/
 // Integer
-Int returns ecore::EInt:
-	NUMBER;
-
-// Number
-terminal NUMBER:
+terminal INT returns ecore::EInt:
 	'0'..'9'+;
 
 // String
 terminal STRING:
 	'"' ('\\' . | !('\\' | '"'))* '"';
 	
-Arrow:
-	type=ARROWTYPE;
+/*Arrow:
+	type=ARROWTYPE;*/
 
 // Tab
 terminal WS:
@@ -405,11 +445,11 @@ terminal NEWLINE:
 	'\r'? '\n';
 
 // ID
-terminal ID:
+terminal PUMLID:
 	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '//' | '\\' | '*' | '?')
 	('a'..'z' | 'A'..'Z' | '_' | '0'..'9' | '\"\"' | '//' | '\\' | ':' | '*' | '?')*;
-
 // Single line comment
+
 terminal SL_COMMENT:
 	"'" !('\n' | '\r')* ('\r'? '\n')?;
 

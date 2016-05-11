@@ -53,7 +53,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	 * Checks for correct association arrows.
 	 * @return An {@link AssociationType} Enum if the arrow type exists, else null.
 	 */
-	@ValueConverter(rule="ARROWTYPE")
+	@ValueConverter(rule="ARROW")
 	def IValueConverter<AssociationType> ARROW() {
 		return new AbstractNullSafeConverter<AssociationType>() {
 			override protected internalToString(AssociationType value) {
