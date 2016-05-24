@@ -50,7 +50,7 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	
 	/**
 	 * TODO: umbennennen
-	 * Checks for correct association arrows.
+	 * Checks for correct association arrows and returns new arrow object for the model.
 	 * @return An {@link AssociationType} Enum if the arrow type exists, else null.
 	 */
 	@ValueConverter(rule="ARROW")

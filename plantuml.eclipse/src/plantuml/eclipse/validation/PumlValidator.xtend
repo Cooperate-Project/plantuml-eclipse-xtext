@@ -115,7 +115,7 @@ class PumlValidator extends AbstractPumlValidator {
 	 * Checks for overloads of return types of implemented interface methods.
 	 */ 
 	@Check
-	def checkImplements(Classifier someClass) {
+	def checkReturnTypes(Classifier someClass) {
 		var interfaceMethods = new HashMap<String,String>();
 		// Loop through interfaces
 		for(interface : someClass.inheritance.implementedInterfaces) {
