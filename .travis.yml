@@ -2,28 +2,15 @@ language: java
 sudo: false
 jdk:
   - oraclejdk8
-before_script:
- - chmod +x deploy.sh
+before_install:
+- git clone --depth 1 https://github.com/Cooperate-Project/BuildUtils.git /tmp/BuildUtils
+- . /tmp/BuildUtils/travisci/setup.sh
+install: true
 script:
-- cd plantuml.eclipse.releng/
-- mvn clean install
-- cd ..
-- ./deploy.sh
+- mavenBuild.sh
 cache:
-  bundler: true
   directories:
-  - plantuml.eclipse.updatesite/target
-  - "$HOME/.m2"
-deploy:
-  provider: releases
-  api_key:
-    secure: rjhdO9XkqYIu0TUkWjJVSNF9D82+y8j7EJ2knCX4ZHL4cuZeSJnxJEdpAxIFw+oGrUU/F66CuZJcI2Xj/9dEZWgZG7NJ6N40zODL3Rkt/TiIiyHCpbB+se23E7jKOviUvvsJopelJdFJf4h66RWWe3sS/dck9Dw3ZxTrcr8Udw0Pfhcxa5/y9MfvR+cNx536PSr2E9AzkpBQIABlcHUTI0xlWGXaVsFYfhqP5u5wgK0j+O3ifj/rnn0vyE/BofVOZli18C1r/qLi3gSnxp1eIDAAi5XZTCvusbATwHhwc99gGx3tKW0VoFHpiMHTT6neOfKSfntMyHOcxh496VQq+LjAGDDUhVA7fmfXp0NOVOeWPRSbGjY/1hTsp9T81VuYpqgzjDHjZK/i4072eNe813YYqVWR9yVzQGekS46Qb2S0LEKuqWKd436iXa1ysrJzEFF8f6nxhEN3zQiNX6uhx8BNY/pmBzZn/C1JRViYLNdB9KO6emoaGWfevMiOpwKi0+lEluDFIZu1JMb7f/qjDp4fWd8dAOG8ckiczUb4BlbuBHx2XHt9gFFpy8HQ/cW8lUsf+XJeBELLjIf/yFpO1FcVpwIO7JngMqxXon0C1hbXMOLFS6Ml7DUtyANqs+J7QtrhSb/5opJNa/gkg/GBXIuptWi4kqMjz1lVcg0IcTY=
-  file_glob: true
-  file: plantuml.eclipse.updatesite/target/plantuml.eclipse.updatesite-*-SNAPSHOT.zip
-  on:
-    repo: Hellmy/plantuml-eclipse-xtext
-    tags: true
+  - "$HOME/.m2/repository"
 env:
   global:
-    - GH_REF: github.com/Hellmy/plantuml-eclipse-xtext_update.git
-    - secure: "nlubQDIj4rHsk3AbQNSZavmn3PsNGIW3ACaYzsFY545DpuyvP+lnwIDF2ZqeOy3YxVlC9w0FK503w/k9/VQ9bKsgXRfnRk0F5f/rQ7yQ4wcY/iHiUWnetStcq9hNvS3M3yxMfzNRlR2ZdMjiQBoKaKiMdlnmZRS3KRnUCcReQeRZS2wDqN7WF1/8C52sonS+hlfLSKUURABnh4UAiLQTbHeXowghjj8YSRBWSd0bwilgVjRK3RNc0KF4ZFcBg1naiqFJmqHcORHmzyHERBH1WEPrzvWsdljgBRM6g4P8ZPtaXb+0g2OlknEEcKAcY01cNjCeoZ3gutLwjD7fUSoa29Bs0PyyVrWQkD4OoSFtuP4DdTAT0RFgqOigcg1/TCintEwc7tmtV32tIE6ElCds32S7xmXvLpRIg4hWVsEyYDEKkqxbM4sjwR2zm5+606I4Vp4croaNPpd96t3WmgrtB1lkFSBJ7YrXmreDOjVocc8mZE1J/V+lnfJEiJOhWJ4K8qv8fXDnWWjzX5TX+ohrwLi3vb7QVDixDD9KE4txsovBZRXtwDF6XwAhQWJqQfrcTIH574nEg3Y2yDEviCcDmdE63EC7sg03rRHaq8ffkdKq8TECsq6LuuW+70YNalgzzZMnEi1oUf81CiifWy6qC4frY3VdbOo8bF17M0Qk4RM="
+  - secure: "Yaxx8R3VHSSmhmGRBH4AK+G4RtHqpKjKspvOmzyLNLxt56aP0op/0Wyw770/sxzmPIAEk+tdGe4+8p/bl188RrAWxllk2m27nVMcoIGf5S67jJlTaiBz6tdveTo7jwDAsdeYYlcKqrw2WfMiUPudoYnSSvDhpNu6qLGdv/vR07g2M6Bnpur0FlblFjMTFfwu3Mc6OMJzFjEZh70VAG5kNCYRyR8WiUhSSI95c8Xrm++ogZEBJkXmZKVVoOzOXkAHo2K3hIYSfJHch30UeChiGjkNxVtHb9utlTaZBh1nKyZqtzHbZ/WffMnktunOgJv/aKoGFp6NxMmRgPJNzA1mMUzVEuQRXFcQx57T6aT6JiSMT9BB4VVfDQhs2/WQo6bN0lv7/FqkfqueaLNCJ98FXSLuWcmuWJynCQs6rC5pWtC/oTGxW3lHRenktzOC+tKTMp2nms2w6V355JYar9xuf/KDhGnGq2ZYSB30hit1Tr+WC4wTo8abWQHGXG//GfpvzJ0zjxKbWp7JagBE+vmJEFuvZtr3clzzdREGojj1QV8qPrirZY/9sb8YMtiXPAlwXBvTe0T1WWOKlxIdwjpOToK1go1YkdHP0tBoZUUprDVsFcIt9PoouRtGvGw3GLg+sGGMl3+SuMHvZjqjZDMcIAT+SLfneUzPKUHYU9HabqQ="
