@@ -72,7 +72,7 @@ class AbstractDiagramTest {
 		}
 	}
 	
-	def printDiff(EList<Diff> diff) {
+	private def printDiff(EList<Diff> diff) {
 		for(d : diff) {
 			println(d)
 		}

@@ -16,6 +16,10 @@ import plantuml.eclipse.puml.Association
 import plantuml.eclipse.puml.NoteClass
 //import plantuml.eclipse.puml.DividerClass
 import plantuml.eclipse.puml.Classifier
+import plantuml.eclipse.puml.DividerClass
+import plantuml.eclipse.puml.UmlDiagram
+import plantuml.eclipse.puml.ClassUml
+import plantuml.eclipse.puml.Inheritance
 
 /**
  * Uses the IDs from the HighlightingConfigurator and colors the regions of code.
@@ -44,6 +48,10 @@ class PumlSemanticHighlightingCalculator implements ISemanticHighlightingCalcula
 		highlightNode(element, PumlPackage.Literals.CLASSIFIER__COLOR, PumlHighlightingConfiguration.COLOR_ID, acceptor)
 		highlightNode(element, PumlPackage.Literals.CLASSIFIER__ADVANCED_BODY, PumlHighlightingConfiguration.NOTE_ID,
 			acceptor)
+	}
+	
+	private def dispatch highlight(DividerClass element, IHighlightedPositionAcceptor acceptor) {
+		highlightNode(element, PumlPackage.Literals.DIVIDER__VALUE, PumlHighlightingConfiguration.DIVIDER_ID, acceptor)
 	}
 
 	private def dispatch highlight(Enum element, IHighlightedPositionAcceptor acceptor) {
@@ -84,6 +92,19 @@ class PumlSemanticHighlightingCalculator implements ISemanticHighlightingCalcula
 		highlightNode(element, PumlPackage.Literals.NOTE_CLASS__NOTE_OF, PumlHighlightingConfiguration.CLASS_ID,
 			acceptor)
 		highlightNode(element, PumlPackage.Literals.NOTE_CLASS__NOTE, PumlHighlightingConfiguration.NOTE_ID, acceptor)
+	}
+	
+	
+	private def dispatch highlight(UmlDiagram umlDiagram, IHighlightedPositionAcceptor acceptor) {
+		
+	}
+	
+	private def dispatch highlight(ClassUml umlDiagram, IHighlightedPositionAcceptor acceptor) {
+		
+	}
+	
+	private def dispatch highlight(Inheritance element, IHighlightedPositionAcceptor acceptor) {
+		
 	}
 
 	private def highlightNode(EObject element, EStructuralFeature feature, String id, IHighlightedPositionAcceptor acceptor) {
