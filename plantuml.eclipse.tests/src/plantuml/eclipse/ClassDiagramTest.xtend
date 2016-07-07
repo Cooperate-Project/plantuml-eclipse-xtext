@@ -4,62 +4,54 @@ import com.google.inject.Inject
 import org.eclipse.xtext.junit4.InjectWith
 import org.eclipse.xtext.junit4.XtextRunner
 import org.eclipse.xtext.junit4.util.ParseHelper
-import org.junit.Assert
 import org.junit.Test
 import org.junit.runner.RunWith
 
 import plantuml.eclipse.puml.ClassUml
 import plantuml.eclipse.puml.UmlDiagram
-import plantuml.eclipse.puml.Class
-import plantuml.eclipse.puml.Enum
-import plantuml.eclipse.puml.Attribute
-import plantuml.eclipse.puml.Visibility
 import plantuml.eclipse.puml.Method
-import plantuml.eclipse.puml.Association
-import plantuml.eclipse.puml.EnumConstant
 import org.eclipse.xtext.junit4.validation.ValidationTestHelper
 import plantuml.eclipse.validation.PumlValidator
 import plantuml.eclipse.puml.PumlPackage
-import plantuml.eclipse.puml.NoteClass
-import plantuml.eclipse.puml.AssociationType
-import java.util.ArrayList
-import plantuml.eclipse.puml.TitleClass
+import plantuml.eclipse.puml.ClassDef
 
 @RunWith(XtextRunner)
 @InjectWith(PumlInjectorProvider)
-class ClassDiagramTest {
+class ClassDiagramTest extends AbstractDiagramTest {
 
 	@Inject extension ParseHelper<UmlDiagram>
 	@Inject extension ValidationTestHelper
 	
+	private static val TEST_FOLDER = "testmodels/"
+		
 	@Test
 	def void classWithoutContents() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "classWithoutContents.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice
 			@enduml
 		'''.parse
-		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
-		Assert::assertEquals("Alice", classAlice.name)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void interfaceWithoutContents() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "interfaceWithoutContents.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			interface Alice
 			@enduml
 		'''.parse
-		val interfaceAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
-		Assert::assertEquals("Alice", interfaceAlice.name)
-		Assert::assertTrue(interfaceAlice.interface)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void enumWithConstants() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "enumWithConstants.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			enum weekend {
@@ -68,31 +60,25 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val enumWeekend = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Enum)
-		val firstConstant = (enumWeekend.enumConstants.get(0) as EnumConstant)
-		val secondConstant = (enumWeekend.enumConstants.get(1) as EnumConstant)
-		Assert::assertEquals("weekend", enumWeekend.name)
-		Assert::assertEquals(2, enumWeekend.enumConstants.length)
-		Assert::assertEquals("SATURDAY", firstConstant.name)
-		Assert::assertEquals("SUNDAY", secondConstant.name)	
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void abstractClassWithoutContents() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "abstractClassWithoutContents.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			abstract class Alice
 			@enduml
 		'''.parse
-		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
-		Assert::assertEquals("Alice", classAlice.name)
-		Assert::assertTrue(classAlice.abstract)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void classWithAttributes() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "classWithAttributes.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice {
@@ -102,26 +88,13 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
-		val firstAttrAlice = (classAlice.classContents.get(0) as Attribute)
-		val secondAttrAlice = (classAlice.classContents.get(1) as Attribute)
-		val thirdAttrAlice = (classAlice.classContents.get(2) as Attribute)
-		Assert::assertEquals("Alice",classAlice.name)
-		Assert::assertEquals(3,classAlice.classContents.length)
-		Assert::assertEquals("firstName", firstAttrAlice.name)
-		Assert::assertEquals("String", firstAttrAlice.type)
-		Assert::assertEquals(Visibility.PUBLIC, firstAttrAlice.visibility)
-		Assert::assertEquals("lastName", secondAttrAlice.name)
-		Assert::assertEquals("String", firstAttrAlice.type)
-		Assert::assertEquals(Visibility.PUBLIC, firstAttrAlice.visibility)
-		Assert::assertEquals("age", thirdAttrAlice.name)
-		Assert::assertEquals("int", thirdAttrAlice.type)
-		Assert::assertEquals(Visibility.PRIVATE, thirdAttrAlice.visibility)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void classWithMethods() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "classWithMethods.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice {
@@ -129,17 +102,13 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
-		val methAlice = (classAlice.classContents.get(0) as Method)
-		Assert::assertEquals("Alice", classAlice.name)
-		Assert::assertEquals("getAge()", methAlice.name)
-		Assert::assertEquals("int", methAlice.type)
-		Assert::assertEquals(Visibility.PUBLIC, methAlice.visibility)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void visibilities() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "visibilities.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice {
@@ -150,31 +119,13 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
-		val aliceAttr = #[
-			classAlice.classContents.get(0) as Attribute,
-			classAlice.classContents.get(1) as Attribute,
-			classAlice.classContents.get(2) as Attribute,
-			classAlice.classContents.get(3) as Attribute
-		]
-		Assert::assertEquals("Alice", classAlice.name)
-		Assert::assertEquals("firstName", aliceAttr.get(0).name)
-		Assert::assertEquals("String", aliceAttr.get(0).type)
-		Assert::assertEquals(Visibility.PRIVATE, aliceAttr.get(0).visibility)
-		Assert::assertEquals("lastName", aliceAttr.get(1).name)
-		Assert::assertEquals("String", aliceAttr.get(1).type)
-		Assert::assertEquals(Visibility.PUBLIC, aliceAttr.get(1).visibility)
-		Assert::assertEquals("age", aliceAttr.get(2).name)
-		Assert::assertEquals("int", aliceAttr.get(2).type)
-		Assert::assertEquals(Visibility.DEFAULT, aliceAttr.get(2).visibility)
-		Assert::assertEquals("height", aliceAttr.get(3).name)
-		Assert::assertEquals("int", aliceAttr.get(3).type)
-		Assert::assertEquals(Visibility.PROTECTED, aliceAttr.get(3).visibility)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void classWithMethodsAndAttributes() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "classWithMethodsAndAttributes.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice {
@@ -183,21 +134,13 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
-		val attrAlice = (classAlice.classContents.get(0) as Attribute)
-		val methAlice = (classAlice.classContents.get(1) as Method)
-		Assert::assertEquals("Alice", classAlice.name)
-		Assert::assertEquals("age", attrAlice.name)
-		Assert::assertEquals("int", attrAlice.type)
-		Assert::assertEquals(Visibility.PRIVATE, attrAlice.visibility)
-		Assert::assertEquals("getAge()", methAlice.name)
-		Assert::assertEquals("int", methAlice.type)
-		Assert::assertEquals(Visibility.PUBLIC, methAlice.visibility)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void abstractAndStaticMethods() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "abstractAndStaticMethods.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice {
@@ -206,22 +149,13 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
-		val firstMethdAlice = (classAlice.classContents.get(0) as Method)
-		val secondMethAlice = (classAlice.classContents.get(1) as Method)
-		Assert::assertEquals("Alice", classAlice.name)
-		Assert::assertEquals("buildHouse()", firstMethdAlice.name)
-		Assert::assertEquals("House", firstMethdAlice.type)
-		Assert::assertEquals(Visibility.PRIVATE, firstMethdAlice.visibility)
-		Assert::assertTrue(firstMethdAlice.abstract)
-		Assert::assertEquals("getDate()", secondMethAlice.name)
-		Assert::assertEquals("Date", secondMethAlice.type)
-		Assert::assertTrue(secondMethAlice.static)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void staticAttributes() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "staticAttributes.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice {
@@ -230,23 +164,13 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
-		val firstAttrAlice = (classAlice.classContents.get(0) as Attribute)
-		val secondAttrAlice = (classAlice.classContents.get(1) as Attribute)
-		Assert::assertEquals("Alice", classAlice.name)
-		Assert::assertEquals("pi", firstAttrAlice.name)
-		Assert::assertEquals("float", firstAttrAlice.type)
-		Assert::assertEquals(Visibility.PRIVATE, firstAttrAlice.visibility)
-		Assert::assertTrue(firstAttrAlice.static)
-		Assert::assertEquals("g", secondAttrAlice.name)
-		Assert::assertEquals("float", secondAttrAlice.type)
-		Assert::assertEquals(Visibility.PUBLIC, secondAttrAlice.visibility)
-		Assert::assertTrue(secondAttrAlice.static)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void abstractAndStaticAttributes() {
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "abstractAndStaticAttributes.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice {
@@ -256,29 +180,13 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val classAlice = ((heros.umlDiagrams.head as ClassUml).umlElements.get(0) as Class)
-		val firstAttrAlice = (classAlice.classContents.get(0) as Attribute)
-		val secondAttrAlice = (classAlice.classContents.get(1) as Attribute)
-		val thirdAttrAlice = (classAlice.classContents.get(2) as Attribute)
-		Assert::assertEquals("Alice", classAlice.name)
-		Assert::assertEquals("pi", firstAttrAlice.name)
-		Assert::assertEquals("float", firstAttrAlice.type)
-		Assert::assertEquals(Visibility.PRIVATE, firstAttrAlice.visibility)
-		Assert::assertTrue(firstAttrAlice.abstract)
-		Assert::assertTrue(firstAttrAlice.static)
-		Assert::assertEquals("g", secondAttrAlice.name)
-		Assert::assertEquals("float", secondAttrAlice.type)
-		Assert::assertEquals(Visibility.PUBLIC, secondAttrAlice.visibility)
-		Assert::assertTrue(secondAttrAlice.abstract)
-		Assert::assertEquals("h", thirdAttrAlice.name)
-		Assert::assertEquals("float", thirdAttrAlice.type)
-		Assert::assertEquals(Visibility.PRIVATE, thirdAttrAlice.visibility)
-		Assert::assertTrue(thirdAttrAlice.static)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void associationBidirectional(){
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "associationBidirectional.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice
@@ -290,42 +198,25 @@ class ClassDiagramTest {
 			Alice ..[#FF00FF].... Bob
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val classAlice = classUml.umlElements.get(0) as Class
-		val classBob = classUml.umlElements.get(1) as Class
-		val associations = #[
-			classUml.umlElements.get(2) as Association,
-			classUml.umlElements.get(3) as Association,
-			classUml.umlElements.get(4) as Association,
-			classUml.umlElements.get(5) as Association,
-			classUml.umlElements.get(6) as Association
-		]
-		Assert::assertEquals("Alice", classAlice.name);
-		Assert::assertEquals("Bob", classBob.name);
-		for(Association association : associations){
-			Assert::assertEquals(AssociationType.BIDIRECTIONAL, association.associationArrow)
-		}
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void title(){
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "title.xmi")
+		val model = '''
 			CLASS
 			@startuml
-			title Das ist der Titel des Diagrams
+			title "title of the diagram"
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val title = classUml.umlElements.get(0) as TitleClass
-		val titleExpected = #["Das","ist","der","Titel","des","Diagrams"]
-		for(var i = 0; i < title.value.size(); i++){
-			Assert::assertEquals(titleExpected.get(i), title.value.get(i));
-		}
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void associationDirectional(){
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "associationDirectional.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice
@@ -352,28 +243,13 @@ class ClassDiagramTest {
 			Alice <..[#Orange].. Bob
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val classAlice = classUml.umlElements.get(0) as Class
-		val classBob = classUml.umlElements.get(1) as Class
-		val associationsRight = new ArrayList<Association>()
-		val associationsLeft = new ArrayList<Association>()
-		for(var i = 2; i < 12; i+=2){
-			associationsRight.add(classUml.umlElements.get(i) as Association)
-			associationsLeft.add(classUml.umlElements.get(i+10) as Association)
-		}
-		Assert::assertEquals("Alice", classAlice.name);
-		Assert::assertEquals("Bob", classBob.name);
-		for(Association association : associationsRight){
-			Assert::assertEquals(AssociationType.DIRECTIONALRIGHT, association.associationArrow)
-		}
-		for(Association association : associationsLeft){
-			Assert::assertEquals(AssociationType.DIRECTIONALLEFT, association.associationArrow)
-		}
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void associationInheritance(){
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "associationInheritance.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice
@@ -386,32 +262,13 @@ class ClassDiagramTest {
 			Alice <|-[#Orange]- Bob
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val classAlice = classUml.umlElements.get(0) as Class
-		val classBob = classUml.umlElements.get(1) as Class
-		val associationsRight = #[
-			classUml.umlElements.get(2) as Association,
-			classUml.umlElements.get(3) as Association,
-			classUml.umlElements.get(4) as Association
-			]
-		val associationsLeft = #[
-			classUml.umlElements.get(5) as Association,
-			classUml.umlElements.get(6) as Association,
-			classUml.umlElements.get(7) as Association
-			]
-		Assert::assertEquals("Alice", classAlice.name);
-		Assert::assertEquals("Bob", classBob.name);
-		for(Association association : associationsRight){
-			Assert::assertEquals(AssociationType.INHERITANCERIGHT, association.associationArrow)
-		}
-		for(Association association : associationsLeft){
-			Assert::assertEquals(AssociationType.INHERITANCELEFT, association.associationArrow)
-		}
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void associationComposition(){
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "associationComposition.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice
@@ -424,32 +281,13 @@ class ClassDiagramTest {
 			Alice *-[#Red]- Bob
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val classAlice = classUml.umlElements.get(0) as Class
-		val classBob = classUml.umlElements.get(1) as Class
-		val associationsRight = #[
-			classUml.umlElements.get(2) as Association,
-			classUml.umlElements.get(3) as Association,
-			classUml.umlElements.get(4) as Association
-			]
-		val associationsLeft = #[
-			classUml.umlElements.get(5) as Association,
-			classUml.umlElements.get(6) as Association,
-			classUml.umlElements.get(7) as Association
-			]
-		Assert::assertEquals("Alice", classAlice.name);
-		Assert::assertEquals("Bob", classBob.name);
-		for(Association association : associationsRight){
-			Assert::assertEquals(AssociationType.COMPOSITIONRIGHT, association.associationArrow)
-		}
-		for(Association association : associationsLeft){
-			Assert::assertEquals(AssociationType.COMPOSITIONLEFT, association.associationArrow)
-		}
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void associationAggregation(){
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "associationAggregation.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice
@@ -462,32 +300,13 @@ class ClassDiagramTest {
 			Alice o-[#Red]- Bob
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val classAlice = classUml.umlElements.get(0) as Class
-		val classBob = classUml.umlElements.get(1) as Class
-		val associationsRight = #[
-			classUml.umlElements.get(2) as Association,
-			classUml.umlElements.get(3) as Association,
-			classUml.umlElements.get(4) as Association
-			]
-		val associationsLeft = #[
-			classUml.umlElements.get(5) as Association,
-			classUml.umlElements.get(6) as Association,
-			classUml.umlElements.get(7) as Association
-			]
-		Assert::assertEquals("Alice", classAlice.name);
-		Assert::assertEquals("Bob", classBob.name);
-		for(Association association : associationsRight){
-			Assert::assertEquals(AssociationType.AGGREGATIONRIGHT, association.associationArrow)
-		}
-		for(Association association : associationsLeft){
-			Assert::assertEquals(AssociationType.AGGREGATIONLEFT, association.associationArrow)
-		}
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void classesExtendsAndImplements(){
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "classesExtendsAndImplements.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class A
@@ -500,26 +319,13 @@ class ClassDiagramTest {
 			class F extends A implements I , J
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val classB = classUml.umlElements.get(3) as Class
-		val classC = classUml.umlElements.get(4) as Class
-		val classD = classUml.umlElements.get(5) as Class
-		val classE = classUml.umlElements.get(6) as Class
-		val classF = classUml.umlElements.get(7) as Class
-		Assert::assertEquals("A", classB.superTypes.get(0).name)
-		Assert::assertEquals("A", classC.superTypes.get(0).name)
-		Assert::assertEquals("B", classC.superTypes.get(1).name)
-		Assert::assertEquals("I", classD.interfaces.get(0).name)
-		Assert::assertEquals("I", classE.interfaces.get(0).name)
-		Assert::assertEquals("J", classE.interfaces.get(1).name)
-		Assert::assertEquals("A", classF.superTypes.get(0).name)
-		Assert::assertEquals("I", classF.interfaces.get(0).name)
-		Assert::assertEquals("J", classF.interfaces.get(1).name)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void coloredClassesAndEnums(){
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "coloredClassesAndEnums.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice #RosyBrown
@@ -533,34 +339,13 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val classAlice = classUml.umlElements.get(0) as Class
-		val classBob = classUml.umlElements.get(1) as Class
-		val classMallory = classUml.umlElements.get(2) as Class
-		val malloryAttr = classMallory.classContents.get(0) as Attribute
-		val enumWeekend = classUml.umlElements.get(3) as Enum
-		val weekendFirstAttr = enumWeekend.enumConstants.get(0) as EnumConstant
-		val weekendSecondAttr = enumWeekend.enumConstants.get(1) as EnumConstant
-		Assert::assertEquals("Alice", classAlice.name)
-		Assert::assertEquals("#RosyBrown", classAlice.color)
-		Assert::assertEquals("Bob", classBob.name)
-		Assert::assertTrue(classBob.interface)
-		Assert::assertEquals("#FF0028", classBob.color)
-		Assert::assertEquals("Mallory", classMallory.name)
-		Assert::assertEquals("#22AB99", classMallory.color)
-		Assert::assertTrue(classMallory.abstract)
-		Assert::assertEquals("age", malloryAttr.name)
-		Assert::assertEquals("int", malloryAttr.type)
-		Assert::assertEquals(Visibility.PRIVATE, malloryAttr.visibility)
-		Assert::assertEquals("weekend", enumWeekend.name)
-		Assert::assertEquals("#PapayaWhip", enumWeekend.color)
-		Assert::assertEquals("SATURDAY", weekendFirstAttr.name)
-		Assert::assertEquals("SUNDAY", weekendSecondAttr.name)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void attributesAndMethodsWithTypesArray(){
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "attributesAndMethodsWithTypesArray.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice {
@@ -569,30 +354,19 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val classAlice = classUml.umlElements.get(0) as Class
-		val aliceAttr = classAlice.classContents.get(0) as Attribute
-		val aliceMeth = classAlice.classContents.get(1) as Method
-		Assert::assertEquals("Alice", classAlice.name)
-		Assert::assertEquals("friendNames", aliceAttr.name)
-		Assert::assertEquals("String", aliceAttr.type)
-		Assert::assertTrue(aliceAttr.array)
-		Assert::assertEquals(20, aliceAttr.length)
-		Assert::assertEquals("getFriendNames()", aliceMeth.name)
-		Assert::assertEquals("String", aliceMeth.type)
-		Assert::assertTrue(aliceMeth.array)
-		Assert::assertEquals(0, aliceMeth.length)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
 	@Test
 	def void notesOnClasses(){
-		val heros = '''
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "notesOnClasses.xmi")
+		val model = '''
 			CLASS
 			@startuml
 			class Alice
 			class Bob
 			class Mallory
-			note left of Alice
+			note top of Alice
 				This is a comment for Alice
 			end note
 			note left of Bob
@@ -604,24 +378,12 @@ class ClassDiagramTest {
 			end note
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val aliceNote = classUml.umlElements.get(3) as NoteClass
-		val aliceNoteValue = #["This","is","a","comment","for","Alice"]
-		val bobNote = classUml.umlElements.get(4) as NoteClass
-		val bobNoteValue = #["This","is","a","multiline","comment","for","Bob"]
-		val malloryNote = classUml.umlElements.get(5) as NoteClass
-		val malloryNoteValue = #["Something","important","for","Mallory"]
-		Assert::assertEquals("Alice", aliceNote.noteOf.name)
-		Assert::assertEquals(aliceNoteValue, aliceNote.value)
-		Assert::assertEquals("Bob", bobNote.noteOf.name)
-		Assert::assertEquals(bobNoteValue, bobNote.value)
-		Assert::assertEquals("Mallory", malloryNote.noteOf.name)
-		Assert::assertEquals(malloryNoteValue, malloryNote.value)
+		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
 	}
 	
-	@Test
+	/*/@Test
 	def void dividerInClass(){
-		val heros = '''
+		val model = '''
 			CLASS
 			@startuml
 			class Alice {
@@ -636,8 +398,8 @@ class ClassDiagramTest {
 			end note
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val classAlice = classUml.umlElements.get(0) as Class
+		val classUml = model.umlDiagrams.head as ClassUml
+		val classAlice = classUml.umlElements.get(0) as ClassDef
 		val aliceContents = #[
 			classAlice.classContents.get(0) as Attribute,
 			classAlice.classContents.get(1) as Attribute,
@@ -653,7 +415,7 @@ class ClassDiagramTest {
 		Assert::assertEquals("getUserName()", aliceContents.get(2).name)
 		Assert::assertEquals("String", aliceContents.get(2).type)
 		Assert::assertEquals(Visibility.PUBLIC, aliceContents.get(2).visibility)
-	}
+	}*/
 	
 	// ==================================================================================
 	// =========================== VALIDATOR TESTS ======================================
@@ -661,7 +423,7 @@ class ClassDiagramTest {
 	
 	@Test
 	def void cycleInSuperTypeHierarchy(){
-		val heros = '''
+		val model = '''
 			CLASS
 			@startuml
 			class A extends B
@@ -670,15 +432,15 @@ class ClassDiagramTest {
 			@enduml
 		'''.parse
 		
-		heros.assertWarning(PumlPackage::eINSTANCE.getClass_(),
+		model.assertWarning(PumlPackage::eINSTANCE.classDef,
 			PumlValidator::HIERARCHY_CYCLE,
 			"Cycle in hierarchy of class 'A'"
 		)
-		heros.assertWarning(PumlPackage::eINSTANCE.getClass_(),
+		model.assertWarning(PumlPackage::eINSTANCE.classDef,
 			PumlValidator::HIERARCHY_CYCLE,
 			"Cycle in hierarchy of class 'B'"
 		)
-		heros.assertWarning(PumlPackage::eINSTANCE.getClass_(),
+		model.assertWarning(PumlPackage::eINSTANCE.classDef,
 			PumlValidator::HIERARCHY_CYCLE,
 			"Cycle in hierarchy of class 'C'"
 		)
@@ -686,7 +448,7 @@ class ClassDiagramTest {
 	
 	@Test
 	def void invalidEnumConstantName(){
-		val heros = '''
+		val model = '''
 			CLASS
 			@startuml
 			enum weekend {
@@ -695,7 +457,7 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		heros.assertWarning(PumlPackage::eINSTANCE.enumConstant,
+		model.assertWarning(PumlPackage::eINSTANCE.enumConstant,
 			PumlValidator::INVALID_ENUM_CONSTANT_NAME,
 			"Enum constants should be upper case"
 		)
@@ -703,13 +465,13 @@ class ClassDiagramTest {
 	
 	@Test
 	def void invalidClassName(){
-		val heros = '''
+		val model = '''
 			CLASS
 			@startuml
 			class alice
 			@enduml
 		'''.parse
-		heros.assertWarning(PumlPackage::eINSTANCE.getClass_(),
+		model.assertWarning(PumlPackage::eINSTANCE.classDef,
 			PumlValidator::INVALID_CLASS_NAME,
 			"First capitals of classes should be capital letters"
 		)
@@ -717,7 +479,7 @@ class ClassDiagramTest {
 	
 	@Test
 	def void invalidInterfaceImplementation(){
-		val heros = '''
+		val model = '''
 			CLASS
 			@startuml
 			interface AnInterface {
@@ -728,10 +490,10 @@ class ClassDiagramTest {
 			}
 			@enduml
 		'''.parse
-		val classUml = heros.umlDiagrams.head as ClassUml
-		val bob = classUml.umlElements.get(1) as Class
+		val classUml = model.umlDiagrams.head as ClassUml
+		val bob = classUml.umlElements.get(1) as ClassDef
 		val methodOfBob = bob.classContents.get(0) as Method
-		heros.assertWarning(PumlPackage::eINSTANCE.getClass_(),
+		model.assertWarning(PumlPackage::eINSTANCE.classDef,
 			PumlValidator::OVERLOAD_METHOD_RETURN_TYPE,
 			"Overload for return type of method '" + methodOfBob.name + "'"
 		)
@@ -739,7 +501,7 @@ class ClassDiagramTest {
 	
 	@Test
 	def void invalidAssociationForDiagramType(){
-		val heros = '''
+		val model = '''
 			CLASS
 			@startuml
 			class Alice
@@ -749,7 +511,7 @@ class ClassDiagramTest {
 			Alice ..> Bob
 			@enduml
 		'''.parse
-		heros.assertError(PumlPackage::eINSTANCE.getAssociation(),
+		model.assertError(PumlPackage::eINSTANCE.getAssociation(),
 			PumlValidator::WRONG_ASSOCIATION_FOR_DIAGRAMTYPE,
 			"This association is not allowed for class diagrams."
 		)

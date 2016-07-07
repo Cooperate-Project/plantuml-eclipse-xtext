@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<puml:UmlDiagram
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:puml="http://www.eclipse.plantuml/Puml"
+    xsi:schemaLocation="http://www.eclipse.plantuml/Puml ../../plantuml.eclipse/model/generated/Puml.ecore">
+  <umlDiagrams
+      xsi:type="puml:ClassUml">
+    <umlElements
+        xsi:type="puml:ClassDef"
+        name="A">
+      <inheritance/>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:InterfaceDef"
+        name="I">
+      <inheritance/>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:InterfaceDef"
+        name="J">
+      <inheritance/>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:ClassDef"
+        name="B">
+      <inheritance
+          superTypes="//@umlDiagrams.0/@umlElements.0"/>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:ClassDef"
+        name="C">
+      <inheritance
+          superTypes="//@umlDiagrams.0/@umlElements.0 //@umlDiagrams.0/@umlElements.3"/>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:ClassDef"
+        name="D">
+      <inheritance
+          implementedInterfaces="//@umlDiagrams.0/@umlElements.1"/>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:ClassDef"
+        name="E">
+      <inheritance
+          implementedInterfaces="//@umlDiagrams.0/@umlElements.1 //@umlDiagrams.0/@umlElements.2"/>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:ClassDef"
+        name="F">
+      <inheritance
+          superTypes="//@umlDiagrams.0/@umlElements.0"
+          implementedInterfaces="//@umlDiagrams.0/@umlElements.1 //@umlDiagrams.0/@umlElements.2"/>
+    </umlElements>
+  </umlDiagrams>
+</puml:UmlDiagram>

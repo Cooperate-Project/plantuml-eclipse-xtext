@@ -1,6 +1,12 @@
-For installation instructions, see install.md
+# PlantUML Eclipse Editor
 
+[![Travis CI](https://img.shields.io/travis/Cooperate-Project/plantuml-eclipse-xtext.svg)](https://travis-ci.org/Cooperate-Project/plantuml-eclipse-xtext)
+[![Codecov Code Coverage](https://img.shields.io/sonar/https/mammutbaum36.fzi.de/sonar/plantuml.eclipse:plantuml.eclipse.main/coverage.svg)](https://mammutbaum36.fzi.de/drilldown/measures?id=plantuml.eclipse%3Aplantuml.eclipse.main&metric=uncovered_lines&highlight=coverage)
+[![Codecov Code Coverage](https://img.shields.io/sonar/https/mammutbaum36.fzi.de/sonar/plantuml.eclipse:plantuml.eclipse.main/tech_debt.svg)](https://mammutbaum36.fzi.de/overview/debt?id=plantuml.eclipse%3Aplantuml.eclipse.main)
+[![Issues](https://img.shields.io/github/issues/Cooperate-Project/plantuml-eclipse-xtext.svg)](https://github.com/Cooperate-Project/plantuml-eclipse-xtext/issues)
+[![License](https://img.shields.io/github/license/Cooperate-Project/plantuml-eclipse-xtext.svg)](https://raw.githubusercontent.com/Cooperate-Project/plantuml-eclipse-xtext/master/LICENSE)
 
+For installation, use our latest update site from within Eclipse: (https://cooperate-project.github.io/plantuml-eclipse-xtext/latest/)
 
 Basic Tool:
 PlantUml (http://plantuml.sourceforge.net/) is an UML-Tool which enables a description of UML diagrams via text.

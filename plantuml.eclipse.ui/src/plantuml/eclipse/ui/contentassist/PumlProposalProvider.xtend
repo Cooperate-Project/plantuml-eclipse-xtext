@@ -10,13 +10,11 @@ import org.eclipse.xtext.Keyword
 import org.eclipse.xtext.ui.IImageHelper
 
 import plantuml.eclipse.puml.Association
-import plantuml.eclipse.puml.Class
 import plantuml.eclipse.puml.Enum
 import org.eclipse.xtext.ui.editor.contentassist.ConfigurableCompletionProposal
 import org.eclipse.xtext.ui.editor.contentassist.ReplacementTextApplier
-import org.eclipse.swt.widgets.Display
 import org.eclipse.swt.widgets.ColorDialog
-import org.eclipse.swt.graphics.RGB
+import plantuml.eclipse.puml.ClassDef
 
 /**
  * This class provides content assist in our editor. It offeres suggestions for code completion.
@@ -100,8 +98,8 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 	/**
 	 * Content assist for creating class contents like attributes, methods or dividers.
 	 */
-	override completeClass_ClassContents(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		if(element instanceof Class){
+	override completeClassDef_ClassContents(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		if(element instanceof ClassDef){
 			for(var i = 0; i < VISIBILITIES.length ; i++){
 				// Add method proposal
 				acceptor.accept(createCompletionProposal(
@@ -127,8 +125,8 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 	/**
 	 * Content assist for creating colors for classes.
 	 */
-	override completeClass_Color(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
-		if(element instanceof Class){
+	override completeClassDef_Color(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+		if(element instanceof ClassDef){
 			addStandardColorsToAcceptor(element, assignment, context, acceptor)
 			acceptor.accept(createColorProposal(context))
 		}	

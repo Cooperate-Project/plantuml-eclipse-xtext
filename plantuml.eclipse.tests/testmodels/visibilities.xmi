@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<puml:UmlDiagram
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:puml="http://www.eclipse.plantuml/Puml"
+    xsi:schemaLocation="http://www.eclipse.plantuml/Puml ../../plantuml.eclipse/model/generated/Puml.ecore">
+  <umlDiagrams
+      xsi:type="puml:ClassUml">
+    <umlElements
+        xsi:type="puml:ClassDef"
+        name="Alice">
+      <inheritance/>
+      <classContents
+          xsi:type="puml:Attribute"
+          visibility="-"
+          type="String"
+          name="firstName"/>
+      <classContents
+          xsi:type="puml:Attribute"
+          visibility="+"
+          type="String"
+          name="lastName"/>
+      <classContents
+          xsi:type="puml:Attribute"
+          visibility="~"
+          type="int"
+          name="age"/>
+      <classContents
+          xsi:type="puml:Attribute"
+          type="int"
+          name="height"/>
+    </umlElements>
+  </umlDiagrams>
+</puml:UmlDiagram>

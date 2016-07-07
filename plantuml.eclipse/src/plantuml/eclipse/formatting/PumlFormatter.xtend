@@ -14,6 +14,9 @@ class PumlFormatter extends AbstractDeclarativeFormatter {
 	@Inject extension PumlGrammarAccess g
 	
 	override protected void configureFormatting(FormattingConfig c) {
+		
+		//TODO: Linebreak for notes
+		
 		/**
 		for (pair : g.findKeywordPairs("{", "}")) {
 		    c.setIndentation(pair.getFirst(), pair.getSecond()); // indent between ( )

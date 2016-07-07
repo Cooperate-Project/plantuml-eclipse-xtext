@@ -15,13 +15,14 @@ import org.eclipse.jdt.ui.JavaElementImageDescriptor;
 
 import plantuml.eclipse.puml.Association
 import plantuml.eclipse.puml.Attribute
-import plantuml.eclipse.puml.Class
+import plantuml.eclipse.puml.Classifier
 import plantuml.eclipse.puml.ClassUml
 import plantuml.eclipse.puml.Enum
 import plantuml.eclipse.puml.EnumConstant
 import plantuml.eclipse.puml.Method
 import plantuml.eclipse.puml.Visibility
 import plantuml.eclipse.puml.AssociationType
+import plantuml.eclipse.puml.InterfaceDef
 
 /**
  * Provides labels for a EObjects.
@@ -85,11 +86,11 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 		// Which association do we have?
 		styledLabel.append(ASSOCIATION_LABELS.get(association.associationArrow))
 		styledLabel.append(" " + association.classRight.name);
-		if(association.text.length != 0){
+		if(association.label.length != 0){
 			var label = new StringBuffer(" : ");
-			for(String text : association.text){
+			/*for(String text : association.label){
 				label.append(text + " ")
-			}
+			}*/
 			styledLabel.append(new StyledString(label.toString(), StyledString::DECORATIONS_STYLER))
 		}
 		return styledLabel
@@ -98,7 +99,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	/**
 	 * @return The label text for classes.
 	 */
-	def text(Class someClass) {
+	def text(Classifier someClass) {
 		var styledLabel = new StyledString()
 		if(someClass.longName == null){
 			styledLabel.append(" " + someClass.getName())
@@ -108,11 +109,11 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 			styledLabel.append(someClass.name)
 			styledLabel.append(new StyledString("]", StyledString::DECORATIONS_STYLER))
 		}
-		if(someClass.superTypes != null && someClass.superTypes.length != 0){
+		if(someClass.inheritance.superTypes != null && someClass.inheritance.superTypes.length != 0){
 			var buffer = new StringBuffer();
-			buffer.append(" extends " + someClass.superTypes.get(0).name);
-			for(var i = 1; i < someClass.superTypes.length;i++){
-				buffer.append(", " + someClass.superTypes.get(i).name)
+			buffer.append(" extends " + someClass.inheritance.superTypes.get(0).name);
+			for(var i = 1; i < someClass.inheritance.superTypes.length;i++){
+				buffer.append(", " + someClass.inheritance.superTypes.get(i).name)
 			}
 			styledLabel.append(new StyledString(buffer.toString(), StyledString::DECORATIONS_STYLER))
 		}
@@ -128,13 +129,19 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 		var label = new StringBuffer();
 		if(attribute.type != null){
 			label.append(" : " + attribute.type)
-			if(attribute.array){
+			/*if(attribute.array){
 				label.append("[")
 				if(attribute.length > 0){
 					label.append(attribute.length)
 				}
 				label.append("]")
+			}*/
+			if(attribute.length >= 0){
+				label.append("[")
+				label.append(attribute.length)
+				label.append("]")
 			}
+				
 		}
 		styledLabel.append(new StyledString(label.toString(), StyledString::DECORATIONS_STYLER))
 		return styledLabel
@@ -149,11 +156,16 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 		var label = new StringBuffer()
 		if(method.type != null){
 			label.append(" : " + method.type)
-			if(method.array){
+			/*if(method.array){
 				label.append("[")
 				if(method.length >= 0){
 					label.append(method.length)
 				}
+				label.append("]")
+			}*/
+			if(method.length >= 0){
+				label.append("[")
+				label.append(method.length)
 				label.append("]")
 			}
 		}
@@ -219,8 +231,8 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	/**
 	 * @return The images for classes.
 	 */
-	def image(Class someClass){
-		if(someClass.interface){
+	def image(Classifier someClass){
+		if(someClass instanceof InterfaceDef){
 			images.forInterface(JvmVisibility.PUBLIC, getAdornments(someClass))
 		}else{
 			images.forClass(JvmVisibility.PUBLIC, getAdornments(someClass))
@@ -256,40 +268,45 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 	 * @param obj The object to check for adorments.
 	 * @return Adornment for decoraters.
 	 */
-	def private int getAdornments(Object obj){
+	def private dispatch getAdornments(Enum obj){
 		var adornment = 0
-		if(obj instanceof Attribute){
-			if(obj.static){
-				adornment += JavaElementImageDescriptor.STATIC
-			}
-			if(obj.abstract){
-				adornment += JavaElementImageDescriptor.ABSTRACT
-			}
-			if(obj.name.matches("([A-Z]|_)*")){
-				adornment += JavaElementImageDescriptor.FINAL
-			}
-		}
-		if(obj instanceof Method){
-			if(obj.static){
-				adornment += JavaElementImageDescriptor.STATIC
-			}
-			if(obj.abstract){
-				adornment += JavaElementImageDescriptor.ABSTRACT
-			}
-		}
-		if(obj instanceof Class){
-			if(obj.abstract){
-				adornment += JavaElementImageDescriptor.ABSTRACT
-			}
-		}
-		if(obj instanceof EnumConstant){
-			adornment += JavaElementImageDescriptor.FINAL
-			adornment += JavaElementImageDescriptor.STATIC
-		}
-		if(obj instanceof Enum){
-			adornment += JavaElementImageDescriptor.FINAL
-			adornment += JavaElementImageDescriptor.STATIC
-		}
-		return adornment
+		adornment += JavaElementImageDescriptor.FINAL
+		adornment += JavaElementImageDescriptor.STATIC
 	}	
+	
+	def private dispatch getAdornments(Attribute obj){
+		var adornment = 0
+		if(obj.static){
+			adornment += JavaElementImageDescriptor.STATIC
+		}
+		if(obj.abstract){
+			adornment += JavaElementImageDescriptor.ABSTRACT
+		}
+		if(obj.name.matches("([A-Z]|_)*")){
+			adornment += JavaElementImageDescriptor.FINAL
+		}		
+	}
+	
+	def private dispatch getAdornments(Method obj){
+		var adornment = 0
+		if(obj.static){
+			adornment += JavaElementImageDescriptor.STATIC
+		}
+		if(obj.abstract){
+			adornment += JavaElementImageDescriptor.ABSTRACT
+		}
+	}
+	
+	def private dispatch getAdornments(Classifier obj){
+		var adornment = 0
+		if(obj.abstract){
+			adornment += JavaElementImageDescriptor.ABSTRACT
+		}
+	}
+	
+	def private dispatch getAdornments(EnumConstant obj){
+		var adornment = 0
+		adornment += JavaElementImageDescriptor.FINAL
+		adornment += JavaElementImageDescriptor.STATIC
+	}
 }

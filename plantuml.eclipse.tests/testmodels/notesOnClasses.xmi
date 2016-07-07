@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<puml:UmlDiagram
+    xmi:version="2.0"
+    xmlns:xmi="http://www.omg.org/XMI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:puml="http://www.eclipse.plantuml/Puml"
+    xsi:schemaLocation="http://www.eclipse.plantuml/Puml ../../plantuml.eclipse/model/generated/Puml.ecore">
+  <umlDiagrams
+      xsi:type="puml:ClassUml">
+    <umlElements
+        xsi:type="puml:ClassDef"
+        name="Alice">
+      <inheritance/>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:ClassDef"
+        name="Bob">
+      <inheritance/>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:ClassDef"
+        name="Mallory">
+      <inheritance/>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:NoteClass"
+        direction="top"
+        noteOf="//@umlDiagrams.0/@umlElements.0">
+      <note>This is a comment for Alice</note>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:NoteClass"
+        noteOf="//@umlDiagrams.0/@umlElements.1">
+      <note>This is a multiline comment for Bob</note>
+    </umlElements>
+    <umlElements
+        xsi:type="puml:NoteClass"
+        direction="right"
+        noteOf="//@umlDiagrams.0/@umlElements.2">
+      <note>Something important for Mallory</note>
+    </umlElements>
+  </umlDiagrams>
+</puml:UmlDiagram>
