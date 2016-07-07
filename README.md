@@ -29,10 +29,17 @@ plantuml-eclipse features:
 * Component Diagram:
   - Basic syntax highlighting
   - Content assistance (plantuml keywords, connection between named elements)
+* Class Diagram:
+  - Basic syntax highlighting
+  - Content assistance (plantuml keywords, connection between named elements)
+  - Outline support (eclipse view "outline" or shortcut "ctrl-o")
+  - Validators (various model consistency checks)
+  - Quick fixes (mostly for errors issues by validators)
 
 
 plantuml-eclipse limitations:
 * Some possible plantuml commands are missing --> Errors in Eclipse but no limitation during usage
+* Good support for class diagrams (Feedback welcome!)
 * Currently more support for sequence diagrams (Feedback welcome!)
 * Partial support for component diagrams (Feedback welcome!)
 * Plantuml keywords must be typed in UPPERCASES! (e. g. PARTICIPANT....)
@@ -55,8 +62,8 @@ plantuml-eclipse usage:
 * Installation instructions described in the install.md (you should run the maven build for instance)
 * It is also possible to install the plugin in eclipse after a successful build  
   - "Help->Install New Software..." 
-  - Enter URL/Path to the updatesite (<plantuml-eclipse>/plantuml.eclipse.updatesite/target/repository/)
-  - Select all packages and proceed.
+  - Enter URL/Path to the updatesite (https://cooperate-project.github.io/updatesite/snapshot/)
+  - Select `Puml SDK Feature` in the `Plantuml Eclipse Language category`.
 * Restart eclipse after successful installation
 * Create an empty project
 * Create file "<filename>.puml"
@@ -70,6 +77,12 @@ plantuml-eclipse usage:
     "
   - Start description of component diagram:
     "COMPONENT
+     @startuml
+     <plantuml code>
+     @enduml
+    "
+  - Start description of component diagram:
+    "CLASS
      @startuml
      <plantuml code>
      @enduml
