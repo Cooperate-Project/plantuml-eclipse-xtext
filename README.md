@@ -6,8 +6,6 @@
 [![Issues](https://img.shields.io/github/issues/Cooperate-Project/plantuml-eclipse-xtext.svg)](https://github.com/Cooperate-Project/plantuml-eclipse-xtext/issues)
 [![License](https://img.shields.io/github/license/Cooperate-Project/plantuml-eclipse-xtext.svg)](https://raw.githubusercontent.com/Cooperate-Project/plantuml-eclipse-xtext/master/LICENSE)
 
-For installation, use our latest update site from within Eclipse: (https://cooperate-project.github.io/plantuml-eclipse-xtext/latest/)
-
 Basic Tool:
 PlantUml (http://plantuml.sourceforge.net/) is an UML-Tool which enables a description of UML diagrams via text.
 PlantUml itself is distributed under the GPL license and is also available as eclipse plugin (http://plantuml.sourceforge.net/eclipse.html)
