@@ -1,12 +1,10 @@
 # PlantUML Eclipse Editor
 
 [![Travis CI](https://img.shields.io/travis/Cooperate-Project/plantuml-eclipse-xtext.svg)](https://travis-ci.org/Cooperate-Project/plantuml-eclipse-xtext)
-[![Codecov Code Coverage](https://img.shields.io/sonar/https/mammutbaum36.fzi.de/sonar/plantuml.eclipse:plantuml.eclipse.main/coverage.svg)](https://mammutbaum36.fzi.de/drilldown/measures?id=plantuml.eclipse%3Aplantuml.eclipse.main&metric=uncovered_lines&highlight=coverage)
-[![Codecov Code Coverage](https://img.shields.io/sonar/https/mammutbaum36.fzi.de/sonar/plantuml.eclipse:plantuml.eclipse.main/tech_debt.svg)](https://mammutbaum36.fzi.de/overview/debt?id=plantuml.eclipse%3Aplantuml.eclipse.main)
+[![Sonar Code Coverage](https://img.shields.io/sonar/https/mammutbaum36.fzi.de/sonar/plantuml.eclipse:plantuml.eclipse.main/coverage.svg)](https://mammutbaum36.fzi.de/sonar/drilldown/measures?id=plantuml.eclipse%3Aplantuml.eclipse.main&metric=uncovered_lines&highlight=coverage)
+[![Sonar Technical Dept](https://img.shields.io/sonar/https/mammutbaum36.fzi.de/sonar/plantuml.eclipse:plantuml.eclipse.main/tech_debt.svg)](https://mammutbaum36.fzi.de/sonar/overview/debt?id=plantuml.eclipse%3Aplantuml.eclipse.main)
 [![Issues](https://img.shields.io/github/issues/Cooperate-Project/plantuml-eclipse-xtext.svg)](https://github.com/Cooperate-Project/plantuml-eclipse-xtext/issues)
-[![License](https://img.shields.io/github/license/Cooperate-Project/plantuml-eclipse-xtext.svg)](https://raw.githubusercontent.com/Cooperate-Project/plantuml-eclipse-xtext/master/LICENSE)
-
-For installation, use our latest update site from within Eclipse: (https://cooperate-project.github.io/plantuml-eclipse-xtext/latest/)
+[![License](https://img.shields.io/badge/license-Apache%202-blue.svg)](https://raw.githubusercontent.com/Cooperate-Project/plantuml-eclipse-xtext/master/LICENSE)
 
 Basic Tool:
 PlantUml (http://plantuml.sourceforge.net/) is an UML-Tool which enables a description of UML diagrams via text.
@@ -29,10 +27,17 @@ plantuml-eclipse features:
 * Component Diagram:
   - Basic syntax highlighting
   - Content assistance (plantuml keywords, connection between named elements)
+* Class Diagram:
+  - Basic syntax highlighting
+  - Content assistance (plantuml keywords, connection between named elements)
+  - Outline support (eclipse view "outline" or shortcut "ctrl-o")
+  - Validators (various model consistency checks)
+  - Quick fixes (mostly for errors issues by validators)
 
 
 plantuml-eclipse limitations:
 * Some possible plantuml commands are missing --> Errors in Eclipse but no limitation during usage
+* Good support for class diagrams (Feedback welcome!)
 * Currently more support for sequence diagrams (Feedback welcome!)
 * Partial support for component diagrams (Feedback welcome!)
 * Plantuml keywords must be typed in UPPERCASES! (e. g. PARTICIPANT....)
@@ -55,8 +60,8 @@ plantuml-eclipse usage:
 * Installation instructions described in the install.md (you should run the maven build for instance)
 * It is also possible to install the plugin in eclipse after a successful build  
   - "Help->Install New Software..." 
-  - Enter URL/Path to the updatesite (<plantuml-eclipse>/plantuml.eclipse.updatesite/target/repository/)
-  - Select all packages and proceed.
+  - Enter URL/Path to the updatesite (https://cooperate-project.github.io/updatesite/snapshot/)
+  - Select `Puml SDK Feature` in the `Plantuml Eclipse Language category`.
 * Restart eclipse after successful installation
 * Create an empty project
 * Create file "<filename>.puml"
@@ -70,6 +75,12 @@ plantuml-eclipse usage:
     "
   - Start description of component diagram:
     "COMPONENT
+     @startuml
+     <plantuml code>
+     @enduml
+    "
+  - Start description of component diagram:
+    "CLASS
      @startuml
      <plantuml code>
      @enduml
