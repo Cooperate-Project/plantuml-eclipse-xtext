@@ -46,11 +46,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 			<url>http://download.eclipse.org/releases/mars/201506241002/</url>
 		</repository>
 		<repository>
-			<id>eclipse update</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/eclipse/updates/4.5-M-builds/</url>
-		</repository>
-		<repository>
 			<id>xtext</id>
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.9.1/</url>
