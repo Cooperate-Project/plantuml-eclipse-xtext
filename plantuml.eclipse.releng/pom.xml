@@ -37,6 +37,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<tycho-version>0.24.0</tycho-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<xtext.version>2.9.1</xtext.version>
+		<sonar.jacoco.reportPath>../plantuml.eclipse.tests/target/jacoco.exec</sonar.jacoco.reportPath>
 	</properties>
 
 	<repositories>
@@ -147,7 +148,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 					</environments>
 				</configuration>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-deploy-plugin</artifactId>
@@ -157,6 +157,6 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 				</configuration>
 			</plugin>
 		</plugins>
-
+		
 	</build>
 </project>

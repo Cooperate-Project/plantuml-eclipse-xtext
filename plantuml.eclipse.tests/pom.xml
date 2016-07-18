@@ -14,6 +14,10 @@
 
 	<name>Plantuml Eclipse Language Tests</name>
 
+	<properties>
+		<sonar.jacoco.reportPath>${project.build.directory}/jacoco.exec</sonar.jacoco.reportPath>
+	</properties>
+	
 	<build>
 		<plugins>
 			<plugin>
@@ -31,15 +35,31 @@
 				<artifactId>xtend-maven-plugin</artifactId>
 			</plugin>
 			<plugin>
-				<groupId>org.eclipse.tycho</groupId>
-				<artifactId>tycho-surefire-plugin</artifactId>
-				<version>${tycho-version}</version>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.7.6.201602180812</version>
 				<configuration>
-					<forkMode>always</forkMode>
-					<useUIHarness>false</useUIHarness>
-					<useUIThread>false</useUIThread>
-					<argLine>-Xss288k -Xmx64m -XX:MaxPermSize=64m</argLine>
+					<append>true</append>
+					<destFile>${sonar.jacoco.reportPath}</destFile>
 				</configuration>
+				<executions>
+					<execution>
+						<id>prepare-agent</id>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<version>2.19.1</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-failsafe-plugin</artifactId>
+				<version>2.19.1</version>
 			</plugin>
 		</plugins>
 	</build>
