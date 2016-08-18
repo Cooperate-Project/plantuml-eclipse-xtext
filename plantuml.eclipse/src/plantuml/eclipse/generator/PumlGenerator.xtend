@@ -3,9 +3,11 @@
  */
 package plantuml.eclipse.generator
 
+import java.util.Collection
 import org.eclipse.emf.ecore.resource.Resource
-import org.eclipse.xtext.generator.IGenerator
 import org.eclipse.xtext.generator.IFileSystemAccess
+import org.eclipse.xtext.generator.IGenerator
+import org.eclipse.core.runtime.Platform
 
 /**
  * Generates code from your model files on save.
@@ -13,8 +15,18 @@ import org.eclipse.xtext.generator.IFileSystemAccess
  * see http://www.eclipse.org/Xtext/documentation.html#TutorialCodeGeneration
  */
 class PumlGenerator implements IGenerator {
-	
-	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
 
+	private static val GENERATOR_EXTENSION_POIN_ID = "plantuml.eclipse.generator"
+	private static val Collection<IGenerator> GENERATOR_EXTENSIONS = findGeneratorExtensions()
+
+	def static findGeneratorExtensions() {
+		val reg = Platform.getExtensionRegistry();
+		val elements = reg.getConfigurationElementsFor(GENERATOR_EXTENSION_POIN_ID);
+		return elements.map[c|c.createExecutableExtension("generator")].filter(IGenerator).toSet
 	}
+
+	override void doGenerate(Resource resource, IFileSystemAccess fsa) {
+		GENERATOR_EXTENSIONS.forEach[doGenerate(resource, fsa)]
+	}
+
 }

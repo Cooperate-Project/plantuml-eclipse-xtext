@@ -2,6 +2,7 @@
 <?eclipse version="3.0"?>
 
 <plugin>
+   <extension-point id="generator" name="Generator" schema="schema/plantuml.eclipse.generator.exsd"/>
 
   <extension point="org.eclipse.emf.ecore.generated_package">
     <package 
