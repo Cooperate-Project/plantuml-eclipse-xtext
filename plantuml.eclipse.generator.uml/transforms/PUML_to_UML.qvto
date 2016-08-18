@@ -1,0 +1,8 @@
+transformation PUML_to_UML(in pumlModel : PUML, out umlModel : UML);
+
+modeltype PUML uses puml('http://www.eclipse.plantuml/Puml');
+modeltype UML uses uml('http://www.eclipse.org/uml2/5.0.0/UML');
+
+main() {
+	log("test");
+}

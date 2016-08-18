@@ -3,5 +3,8 @@
    <feature url="features/plantuml.eclipse.sdk_0.0.0.jar" id="plantuml.eclipse.sdk" version="0.0.0">
       <category name="plantuml.eclipse"/>
    </feature>
+   <feature url="features/plantuml.eclipse.generator.uml.feature_1.0.0.qualifier.jar" id="plantuml.eclipse.generator.uml.feature" version="1.0.0.qualifier">
+      <category name="plantuml.eclipse"/>
+   </feature>
    <category-def name="plantuml.eclipse" label="Plantuml Eclipse Language"/>
 </site>

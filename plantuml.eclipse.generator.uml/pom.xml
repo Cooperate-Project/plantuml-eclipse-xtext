@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+	<modelVersion>4.0.0</modelVersion>
+
+	<parent>
+		<relativePath>../plantuml.eclipse.releng/pom.xml</relativePath>
+		<groupId>plantuml.eclipse</groupId>
+		<artifactId>parent</artifactId>
+		<version>1.0.0-SNAPSHOT</version>
+	</parent>
+
+	<artifactId>plantuml.eclipse.generator.uml</artifactId>
+	<packaging>eclipse-plugin</packaging>
+
+	<name>Plantuml Eclipse UML Generator</name>
+
+</project>

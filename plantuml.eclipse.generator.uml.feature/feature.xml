@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="plantuml.eclipse.generator.uml.feature"
+      label="UML Generator"
+      version="1.0.0.qualifier">
+
+   <plugin
+         id="plantuml.eclipse.generator.uml"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

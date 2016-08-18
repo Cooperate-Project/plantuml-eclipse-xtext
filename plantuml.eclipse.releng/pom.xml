@@ -8,6 +8,8 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 	<packaging>pom</packaging>
 	<modules>
 		<module>../plantuml.eclipse</module>
+		<module>../plantuml.eclipse.generator.uml</module>
+		<module>../plantuml.eclipse.generator.uml.feature</module>
 		<module>../plantuml.eclipse.ui</module>
 		<module>../plantuml.eclipse.tests</module>
 		<module>../plantuml.eclipse.sdk</module>
@@ -44,17 +46,7 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<repository>
 			<id>eclipse</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/mars/201506241002/</url>
-		</repository>
-		<repository>
-			<id>xtext</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.9.1/</url>
-		</repository>
-		<repository>
-			<id>mwe2</id>
-			<layout>p2</layout>
-			<url>http://download.eclipse.org/modeling/emft/mwe/updates/releases/2.8.3/</url>
+			<url>http://download.eclipse.org/releases/mars/</url>
 		</repository>
 	</repositories>
 
