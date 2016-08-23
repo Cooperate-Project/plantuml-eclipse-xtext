@@ -11,17 +11,17 @@
         xsi:type="puml:ClassDef"
         name="Alice">
       <inheritance/>
-      <classContents
+      <contents
           xsi:type="puml:Attribute"
           visibility="+"
           type="String"
           name="firstName"/>
-      <classContents
+      <contents
           xsi:type="puml:Attribute"
           visibility="+"
           type="String"
           name="lastName"/>
-      <classContents
+      <contents
           xsi:type="puml:Attribute"
           visibility="-"
           type="int"

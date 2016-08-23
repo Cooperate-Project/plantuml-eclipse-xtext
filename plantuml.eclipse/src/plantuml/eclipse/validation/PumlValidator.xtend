@@ -151,10 +151,6 @@ class PumlValidator extends AbstractPumlValidator {
 	}
 	
 	private def getClassContent(Classifier someClass) {
-		if (someClass instanceof ClassDef) {
-			return someClass.classContents
-		} else if (someClass instanceof InterfaceDef) {
-			return someClass.interfaceContents
-		}
+		return someClass.contents
 	}
 }

@@ -25,7 +25,7 @@
         name="Mallory"
         color="#22AB99">
       <inheritance/>
-      <classContents
+      <contents
           xsi:type="puml:Attribute"
           visibility="-"
           type="int"

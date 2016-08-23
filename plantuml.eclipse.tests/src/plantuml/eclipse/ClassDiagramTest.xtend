@@ -492,7 +492,7 @@ class ClassDiagramTest extends AbstractDiagramTest {
 		'''.parse
 		val classUml = model.umlDiagrams.head as ClassUml
 		val bob = classUml.umlElements.get(1) as ClassDef
-		val methodOfBob = bob.classContents.get(0) as Method
+		val methodOfBob = bob.contents.get(0) as Method
 		model.assertWarning(PumlPackage::eINSTANCE.classDef,
 			PumlValidator::OVERLOAD_METHOD_RETURN_TYPE,
 			"Overload for return type of method '" + methodOfBob.name + "'"

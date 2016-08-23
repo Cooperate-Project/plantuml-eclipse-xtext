@@ -53,14 +53,14 @@ ClassDef:
 	(abstract?='abstract')? 'class' (name=PUMLID | name=STRING | longName=STRING 'as' name=PUMLID)
 	(color=ColorTag)?
 	(inheritance = Inheritance)?
-	('{' (classContents+=ClassContent | divider+=DividerClass | advancedBody+=STRING)* '}')?;
+	('{' (contents+=ClassContent | divider+=DividerClass | advancedBody+=STRING)* '}')?;
 	
 InterfaceDef:
 	{InterfaceDef}
 	(abstract?='abstract')? 'interface' (name=PUMLID | name=STRING | longName=STRING 'as' name=PUMLID)
 	(color=ColorTag)?
 	(inheritance = Inheritance)?
-	('{' (interfaceContents+=ClassContent | divider+=DividerClass | advancedBody+=STRING)* '}')?;
+	('{' (contents+=ClassContent | divider+=DividerClass | advancedBody+=STRING)* '}')?;
 
 Inheritance:
 	{Inheritance}
@@ -114,8 +114,20 @@ Method:
 	{Method}
 	(static?='{static}')? (abstract?='{abstract}')?
 	(visibility=Visibility)?
-	(((type=PUMLID)? ('[' (length=INT)? ']')? name=(PUMLID) '(' (parameters+=Attribute (',' parameters+=Attribute)*)? ')')
-	|(name=(PUMLID) '(' (parameters+=Attribute)? ')' (":" type=PUMLID ('[' (length=INT)? ']')?)));
+	(
+		(
+			(type=PUMLID)?
+			('[' (length=INT)? ']')?
+			name=(PUMLID)
+			'(' (parameters+=Attribute (',' parameters+=Attribute)*)? ')'
+		)
+		|
+		(
+			name=(PUMLID)
+			'(' (parameters+=Attribute (',' parameters+=Attribute)*)? ')'
+			(":" type=PUMLID ('[' (length=INT)? ']')?)
+		)
+	);
 
 // Associations between classes
 Association:

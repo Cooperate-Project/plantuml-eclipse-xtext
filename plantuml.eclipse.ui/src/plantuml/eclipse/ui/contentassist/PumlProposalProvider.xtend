@@ -98,7 +98,7 @@ class PumlProposalProvider extends AbstractPumlProposalProvider {
 	/**
 	 * Content assist for creating class contents like attributes, methods or dividers.
 	 */
-	override completeClassDef_ClassContents(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
+	override completeClassDef_Contents(EObject element, Assignment assignment, ContentAssistContext context, ICompletionProposalAcceptor acceptor) {
 		if(element instanceof ClassDef){
 			for(var i = 0; i < VISIBILITIES.length ; i++){
 				// Add method proposal

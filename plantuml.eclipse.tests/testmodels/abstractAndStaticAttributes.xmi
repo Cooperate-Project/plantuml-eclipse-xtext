@@ -11,20 +11,20 @@
         xsi:type="puml:ClassDef"
         name="Alice">
       <inheritance/>
-      <classContents
+      <contents
           xsi:type="puml:Attribute"
           static="true"
           abstract="true"
           visibility="-"
           type="float"
           name="pi"/>
-      <classContents
+      <contents
           xsi:type="puml:Attribute"
           abstract="true"
           visibility="+"
           type="float"
           name="g"/>
-      <classContents
+      <contents
           xsi:type="puml:Attribute"
           static="true"
           visibility="-"

@@ -11,7 +11,7 @@
         xsi:type="puml:ClassDef"
         name="Alice">
       <inheritance/>
-      <classContents
+      <contents
           xsi:type="puml:Method"
           visibility="+"
           type="int"
