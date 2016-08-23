@@ -1,8 +1,93 @@
-transformation PUML_to_UML(in pumlModel : PUML, out umlModel : UML);
+transformation PUML_to_UML(in pumlModel : PUML, out umlModel : UML, in ecorePrimitiveTypes : UML);
 
 modeltype PUML uses puml('http://www.eclipse.plantuml/Puml');
 modeltype UML uses uml('http://www.eclipse.org/uml2/5.0.0/UML');
 
 main() {
-	log("test");
+	var diagrams := pumlModel.rootObjects()[puml::UmlDiagram];
+	var classDiagrams := diagrams.umlDiagrams->selectByType(puml::ClassUml);
+	
+	classDiagrams->map diagramToDiagram();
+}
+
+mapping puml::ClassUml::diagramToDiagram() : uml::Model {
+	var title := self.umlElements->any(oclIsTypeOf(puml::UmlClassTitle)).oclAsType(puml::UmlClassTitle);
+	if (title <> null) {
+		name := title.name;
+	} else {
+		name := "model";
+	};
+	
+	packagedElement += self.umlElements->selectByKind(puml::Classifier)->map classifierToClassifier();
+}
+
+mapping puml::Classifier::classifierToClassifier() : uml::Classifier
+disjuncts puml::ClassDef::classToClass, puml::InterfaceDef::interfaceToInterface {
+}
+
+mapping puml::ClassDef::classToClass() : uml::Class{
+	name := self.name;
+	ownedAttribute += self.contents->selectByType(puml::Attribute)->map attributeToAttribute();
+	ownedOperation += self.contents->selectByType(puml::Method)->map methodToOperation();
+//	generalization := self.inheritance->map inheritanceToGeneralizations()
+}
+
+mapping puml::InterfaceDef::interfaceToInterface() : uml::Interface {
+	name := self.name;
+	ownedAttribute += self.contents->selectByType(puml::Attribute)->map attributeToAttribute();
+	ownedOperation += self.contents->selectByType(puml::Method)->map methodToOperation();
+}
+
+mapping puml::Attribute::attributeToAttribute() : uml::Property {
+	name := self.name;
+	type := self.type.convertPrimitiveType();
+	isStatic := self._static;
+	visibility := self.visibility.convertVisibility();
+}
+
+mapping puml::Method::methodToOperation() : uml::Operation {
+	name := self.name;
+	if (self.type <> "") {
+		ownedParameter += self.map returnTypeToReturnParam();
+	};
+	ownedParameter += self.parameters.map attributeToParameter();
+	isStatic := self._static;
+	isAbstract := self._abstract;
+	visibility := self.visibility.convertVisibility();
+}
+
+
+mapping puml::Method::returnTypeToReturnParam() : uml::Parameter {
+	direction := uml::ParameterDirectionKind::_return;
+	type := self.type.convertPrimitiveType();
+}
+
+mapping puml::Attribute::attributeToParameter() : uml::Parameter {
+	direction := uml::ParameterDirectionKind::_in;
+	name := self.name;
+	type := self.type.convertPrimitiveType();
+}
+
+//query puml::Inheritance::inheritanceToGeneralizations() : Set(uml::Generalization) {
+//
+//	result.general := self.late resolveone(uml::Classifier)
+//}
+
+query puml::Visibility::convertVisibility() : uml::VisibilityKind {
+	switch {
+		case (self = puml::Visibility::PROTECTED) {return uml::VisibilityKind::protected}
+		case (self = puml::Visibility::PRIVATE) {return uml::VisibilityKind::private}
+		case (self = puml::Visibility::DEFAULT) {return uml::VisibilityKind::package}
+		case (self = puml::Visibility::PUBLIC) {return uml::VisibilityKind::public}
+	};
+	assert error (false) with log('Could not convert visibility type.', self);
+	return null;
+}
+
+query String::convertPrimitiveType() : uml::PrimitiveType {
+	var searchString = "E".concat(self).toLower();
+	var model := ecorePrimitiveTypes.rootObjects()[uml::Model]->any(true);
+	var types := model.ownedElement->selectByType(uml::PrimitiveType);
+	var type := types->any(searchString = name.toString().toLower());
+	return type;
 }
