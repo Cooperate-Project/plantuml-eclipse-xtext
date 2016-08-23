@@ -114,7 +114,7 @@ Method:
 	{Method}
 	(static?='{static}')? (abstract?='{abstract}')?
 	(visibility=Visibility)?
-	(((type=PUMLID)? ('[' (length=INT)? ']')? name=(PUMLID) '(' (parameters+=Attribute (',' paramters+=Attribute)*)? ')')
+	(((type=PUMLID)? ('[' (length=INT)? ']')? name=(PUMLID) '(' (parameters+=Attribute (',' parameters+=Attribute)*)? ')')
 	|(name=(PUMLID) '(' (parameters+=Attribute)? ')' (":" type=PUMLID ('[' (length=INT)? ']')?)));
 
 // Associations between classes
