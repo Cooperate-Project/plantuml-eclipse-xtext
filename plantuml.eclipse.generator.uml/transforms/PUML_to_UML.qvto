@@ -3,6 +3,10 @@ transformation PUML_to_UML(in pumlModel : PUML, out umlModel : UML, in ecorePrim
 modeltype PUML uses puml('http://www.eclipse.plantuml/Puml');
 modeltype UML uses uml('http://www.eclipse.org/uml2/5.0.0/UML');
 
+property existingClasses : Set(String);
+property existingTypes : Set(String);
+	
+
 main() {
 	var diagrams := pumlModel.rootObjects()[puml::UmlDiagram];
 	var classDiagrams := diagrams.umlDiagrams->selectByType(puml::ClassUml);
@@ -19,32 +23,51 @@ mapping puml::ClassUml::diagramToDiagram() : uml::Model {
 	};
 	
 	packagedElement += self.umlElements->selectByKind(puml::Classifier)->map classifierToClassifier();
+	packagedElement += self.umlElements->selectByKind(puml::Enum)->map enumToEnum();
+	
+	var typesToGenerate : Set(String);
+	existingTypes->forEach(i | existingClasses->excludes(i)) {
+		typesToGenerate += i;
+	};
+	packagedElement += typesToGenerate.map stringToClassifier();
 }
 
+//Classifier
 mapping puml::Classifier::classifierToClassifier() : uml::Classifier
 disjuncts puml::ClassDef::classToClass, puml::InterfaceDef::interfaceToInterface {
 }
 
 mapping puml::ClassDef::classToClass() : uml::Class{
 	name := self.name;
+	existingClasses += self.name;
 	ownedAttribute += self.contents->selectByType(puml::Attribute)->map attributeToAttribute();
 	ownedOperation += self.contents->selectByType(puml::Method)->map methodToOperation();
-//	generalization := self.inheritance->map inheritanceToGeneralizations()
+	generalization := self.inheritance.map inheritanceToGeneralizations()
 }
 
 mapping puml::InterfaceDef::interfaceToInterface() : uml::Interface {
 	name := self.name;
+	existingClasses += self.name;
 	ownedAttribute += self.contents->selectByType(puml::Attribute)->map attributeToAttribute();
 	ownedOperation += self.contents->selectByType(puml::Method)->map methodToOperation();
+	generalization := self.inheritance.map inheritanceToGeneralizations();
 }
 
+
+// Attribute
 mapping puml::Attribute::attributeToAttribute() : uml::Property {
 	name := self.name;
-	type := self.type.convertPrimitiveType();
 	isStatic := self._static;
 	visibility := self.visibility.convertVisibility();
+	//typeBlock
+	type := self.type.getPrimitiveType();
+	if (type = null and (self.type <> "" and self.type <> null)) {
+		existingTypes += self.type;
+		type := late resolveone(c : uml::Classifier | c.name = self.type)
+	};
 }
 
+//Method
 mapping puml::Method::methodToOperation() : uml::Operation {
 	name := self.name;
 	if (self.type <> "") {
@@ -56,23 +79,60 @@ mapping puml::Method::methodToOperation() : uml::Operation {
 	visibility := self.visibility.convertVisibility();
 }
 
-
 mapping puml::Method::returnTypeToReturnParam() : uml::Parameter {
 	direction := uml::ParameterDirectionKind::_return;
-	type := self.type.convertPrimitiveType();
+	//typeBlock
+	type := self.type.getPrimitiveType();
+	if (type = null and (self.type <> "" and self.type <> null)) {
+		existingTypes += self.type;
+		type := late resolveone(c : uml::Classifier | c.name = self.type)
+	}
 }
 
 mapping puml::Attribute::attributeToParameter() : uml::Parameter {
 	direction := uml::ParameterDirectionKind::_in;
 	name := self.name;
-	type := self.type.convertPrimitiveType();
+	//typeBlock
+	type := self.type.getPrimitiveType();
+	if (type = null and (self.type <> "" and self.type <> null)) {
+		existingTypes += self.type;
+		type := late resolveone(c : uml::Classifier | c.name = self.type)
+	}
 }
 
-//query puml::Inheritance::inheritanceToGeneralizations() : Set(uml::Generalization) {
-//
-//	result.general := self.late resolveone(uml::Classifier)
-//}
+//Creates Types derived from Attributes, Methods or Parameters
+mapping String::stringToClassifier() : uml::Class {
+	name := self;
+	var model := resolveone(uml::Model);
+	model.packagedElement += result;
+}
 
+//Generalizations
+mapping puml::Inheritance::inheritanceToGeneralizations() : Sequence(uml::Generalization) {
+	init {
+		result := self.superTypes->classifierToGeneralization()
+	}
+}
+
+helper puml::Classifier::classifierToGeneralization() : uml::Generalization {
+	var generalization := object uml::Generalization {
+		general := self.late resolveone(uml::Classifier)
+	};
+	return generalization;
+}
+
+//Enum
+mapping puml::Enum::enumToEnum() : uml::Enumeration {
+	name := self.name;
+	ownedLiteral += self.enumConstants->map enumConstantToEnumLiteral();
+}
+
+mapping puml::EnumConstant::enumConstantToEnumLiteral() : uml::EnumerationLiteral {
+	name := self.name;
+}
+
+
+//Helper
 query puml::Visibility::convertVisibility() : uml::VisibilityKind {
 	switch {
 		case (self = puml::Visibility::PROTECTED) {return uml::VisibilityKind::protected}
@@ -84,7 +144,8 @@ query puml::Visibility::convertVisibility() : uml::VisibilityKind {
 	return null;
 }
 
-query String::convertPrimitiveType() : uml::PrimitiveType {
+
+query String::getPrimitiveType() : uml::PrimitiveType {
 	var searchString = "E".concat(self).toLower();
 	var model := ecorePrimitiveTypes.rootObjects()[uml::Model]->any(true);
 	var types := model.ownedElement->selectByType(uml::PrimitiveType);
