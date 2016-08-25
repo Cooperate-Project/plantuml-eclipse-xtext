@@ -25,6 +25,11 @@ mapping puml::ClassUml::diagramToDiagram() : uml::Model {
 	packagedElement += self.umlElements->selectByKind(puml::Classifier)->map classifierToClassifier();
 	packagedElement += self.umlElements->selectByKind(puml::Enum)->map enumToEnum();
 	
+	resolve(Sequence(uml::Realization))->forEach(i) {
+		i->forEach(j) {
+			packagedElement += j;
+		};
+	};	
 	var typesToGenerate : Set(String);
 	existingTypes->forEach(i | existingClasses->excludes(i)) {
 		typesToGenerate += i;
@@ -42,7 +47,8 @@ mapping puml::ClassDef::classToClass() : uml::Class{
 	existingClasses += self.name;
 	ownedAttribute += self.contents->selectByType(puml::Attribute)->map attributeToAttribute();
 	ownedOperation += self.contents->selectByType(puml::Method)->map methodToOperation();
-	generalization := self.inheritance.map inheritanceToGeneralizations()
+	generalization := self.inheritance.map inheritanceToGeneralizations();
+	self.inheritance.map inheritanceToRealizations(result);
 }
 
 mapping puml::InterfaceDef::interfaceToInterface() : uml::Interface {
@@ -51,6 +57,7 @@ mapping puml::InterfaceDef::interfaceToInterface() : uml::Interface {
 	ownedAttribute += self.contents->selectByType(puml::Attribute)->map attributeToAttribute();
 	ownedOperation += self.contents->selectByType(puml::Method)->map methodToOperation();
 	generalization := self.inheritance.map inheritanceToGeneralizations();
+	self.inheritance.map inheritanceToRealizations(result);
 }
 
 
@@ -121,6 +128,21 @@ helper puml::Classifier::classifierToGeneralization() : uml::Generalization {
 	return generalization;
 }
 
+//Realizations
+mapping puml::Inheritance::inheritanceToRealizations(classifier : uml::Classifier) : Sequence(uml::Realization) {
+	init {
+		result := self.implementedInterfaces->classifierToRealization(classifier)
+	}
+}
+
+helper puml::Classifier::classifierToRealization(classifier : uml::Classifier) : uml::Realization {
+	var realization := object uml::Realization {
+		client := classifier;
+		supplier := self.late resolveone(uml::Classifier);
+	};
+	return realization;
+}
+
 //Enum
 mapping puml::Enum::enumToEnum() : uml::Enumeration {
 	name := self.name;
@@ -130,6 +152,10 @@ mapping puml::Enum::enumToEnum() : uml::Enumeration {
 mapping puml::EnumConstant::enumConstantToEnumLiteral() : uml::EnumerationLiteral {
 	name := self.name;
 }
+
+//Association
+//mapping puml::Association::associationToAssociation : uml::Association {
+//}
 
 
 //Helper
