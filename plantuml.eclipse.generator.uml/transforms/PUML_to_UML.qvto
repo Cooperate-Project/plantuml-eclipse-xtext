@@ -5,9 +5,21 @@ modeltype UML uses uml('http://www.eclipse.org/uml2/5.0.0/UML');
 
 property existingClasses : Set(String);
 property existingTypes : Set(String);
-	
+property leftDirection : Set(puml::AssociationType);
+property rightDirection : Set(puml::AssociationType);
+property associationProperties : Set(Tuple (classifier : puml::Classifier, prop : uml::Property));
 
 main() {
+	//filling Enum Sets
+	leftDirection+= puml::AssociationType::BIDIRECTIONAL;
+	leftDirection+= puml::AssociationType::DIRECTIONALLEFT;
+	leftDirection+= puml::AssociationType::AGGREGATIONLEFT;
+	leftDirection+= puml::AssociationType::COMPOSITIONLEFT;
+	rightDirection+= puml::AssociationType::BIDIRECTIONAL;
+	rightDirection+= puml::AssociationType::DIRECTIONALRIGHT;
+	rightDirection+= puml::AssociationType::AGGREGATIONRIGHT;
+	rightDirection+= puml::AssociationType::COMPOSITIONRIGHT;
+	
 	var diagrams := pumlModel.rootObjects()[puml::UmlDiagram];
 	var classDiagrams := diagrams.umlDiagrams->selectByType(puml::ClassUml);
 	
@@ -24,6 +36,17 @@ mapping puml::ClassUml::diagramToDiagram() : uml::Model {
 	
 	packagedElement += self.umlElements->selectByKind(puml::Classifier)->map classifierToClassifier();
 	packagedElement += self.umlElements->selectByKind(puml::Enum)->map enumToEnum();
+	packagedElement += self.umlElements->selectByKind(puml::Association)->map associationToAssociation();
+	
+	associationProperties->forEach(i) {
+		if (i.classifier.oclIsTypeOf(puml::ClassDef)) {
+			i.classifier.resolveone(uml::Class).ownedAttribute += i.prop;
+		} else {
+			i.classifier.resolveone(uml::Interface).ownedAttribute += i.prop;
+		}
+		
+	};
+		
 	
 	resolve(Sequence(uml::Realization))->forEach(i) {
 		i->forEach(j) {
@@ -154,8 +177,40 @@ mapping puml::EnumConstant::enumConstantToEnumLiteral() : uml::EnumerationLitera
 }
 
 //Association
-//mapping puml::Association::associationToAssociation : uml::Association {
-//}
+mapping puml::Association::associationToAssociation() : uml::Association {
+	name := self.label;
+	var leftProp := self.map associationToLeftProperty(result, self.associationArrow.isLeftDirected(), self.associationArrow.isLeftSharedOrComposite());
+	var rightProp := self.map associationToRightProperty(result, self.associationArrow.isRightDirected(), self.associationArrow.isRightSharedOrComposite());
+	memberEnd += leftProp;
+	memberEnd += rightProp;
+	//negierungsoperator nicht gefunden
+	if (self.associationArrow.isLeftDirected() <> true) {
+		result.ownedEnd += leftProp;
+	};
+	if (self.associationArrow.isRightDirected() <> true) {
+		result.ownedEnd += rightProp;
+	}
+}
+
+mapping puml::Association::associationToLeftProperty(association : uml::Association, directed : Boolean, aggregationKind : uml::AggregationKind) : uml::Property {
+	type := self.classLeft.late resolveone(uml::Classifier);
+	if (directed) {
+		associationProperties += Tuple {classifier = self.classRight, prop = result};
+	};
+	
+	result.association := association;
+	aggregation := aggregationKind;
+}
+
+mapping puml::Association::associationToRightProperty(association : uml::Association, directed : Boolean, aggregationKind : uml::AggregationKind) : uml::Property {
+	type := self.classRight.late resolveone(uml::Classifier);
+	if (directed) {
+		associationProperties += Tuple {classifier = self.classLeft, prop = result};
+	};
+	
+	result.association := association;
+	aggregation := aggregationKind;
+}
 
 
 //Helper
@@ -168,6 +223,32 @@ query puml::Visibility::convertVisibility() : uml::VisibilityKind {
 	};
 	assert error (false) with log('Could not convert visibility type.', self);
 	return null;
+}
+
+query puml::AssociationType::isLeftDirected() : Boolean {
+	return (leftDirection->includes(self))
+}
+
+query puml::AssociationType::isRightDirected() : Boolean {
+	return (rightDirection->includes(self))
+}
+
+query puml::AssociationType::isRightSharedOrComposite() : uml::AggregationKind {
+	if (self = puml::AssociationType::AGGREGATIONLEFT) {
+		return uml::AggregationKind::shared
+	} else if (self = puml::AssociationType::COMPOSITIONLEFT) {
+		return uml::AggregationKind::composite
+	};
+	return uml::AggregationKind::none
+}
+
+query puml::AssociationType::isLeftSharedOrComposite() : uml::AggregationKind {
+	if (self = puml::AssociationType::AGGREGATIONRIGHT) {
+		return uml::AggregationKind::shared
+	} else if (self = puml::AssociationType::COMPOSITIONRIGHT) {
+		return uml::AggregationKind::composite
+	};
+	return uml::AggregationKind::none
 }
 
 
