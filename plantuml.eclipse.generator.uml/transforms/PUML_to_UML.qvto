@@ -24,12 +24,12 @@ mapping puml::ClassUml::diagramToDiagram() : uml::Model {
 	packagedElement += self.umlElements->selectByKind(puml::Classifier)->map classifierToClassifier();
 	packagedElement += self.umlElements->selectByKind(puml::Enum)->map enumToEnum();
 	packagedElement += self.umlElements->selectByKind(puml::Association)->map associationToAssociation();
-			
-	resolve(Sequence(uml::Realization))->forEach(i) {
-		i->forEach(j) {
-			packagedElement += j;
-		};
-	};	
+	self.umlElements->selectByKind(puml::Classifier)->forEach(classifier) {
+		classifier.inheritance.map inheritanceToRealizations(classifier.resolveone(uml::Classifier))->forEach(realization) {
+			packagedElement += realization;			
+		}
+	};
+
 	var typesToGenerate : Set(String);
 	existingTypes->forEach(i | existingClasses->excludes(i)) {
 		typesToGenerate += i;
@@ -48,7 +48,6 @@ mapping puml::ClassDef::classToClass() : uml::Class{
 	ownedAttribute += self.contents->selectByType(puml::Attribute)->map attributeToAttribute();
 	ownedOperation += self.contents->selectByType(puml::Method)->map methodToOperation();
 	generalization := self.inheritance.map inheritanceToGeneralizations();
-	self.inheritance.map inheritanceToRealizations(result);
 }
 
 mapping puml::InterfaceDef::interfaceToInterface() : uml::Interface {
@@ -57,7 +56,6 @@ mapping puml::InterfaceDef::interfaceToInterface() : uml::Interface {
 	ownedAttribute += self.contents->selectByType(puml::Attribute)->map attributeToAttribute();
 	ownedOperation += self.contents->selectByType(puml::Method)->map methodToOperation();
 	generalization := self.inheritance.map inheritanceToGeneralizations();
-	self.inheritance.map inheritanceToRealizations(result);
 }
 
 
