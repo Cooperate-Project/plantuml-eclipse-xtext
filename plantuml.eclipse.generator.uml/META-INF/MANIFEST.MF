@@ -7,7 +7,8 @@ Bundle-Vendor:
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.m2m.qvt.oml,
  plantuml.eclipse;bundle-version="1.0.0",
- org.eclipse.xtext.generator;bundle-version="2.3.0"
+ org.eclipse.xtext.generator;bundle-version="2.3.0",
+ org.eclipse.uml2.uml
 Bundle-ActivationPolicy: lazy
 Bundle-Activator: plantuml.eclipse.generator.uml.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
