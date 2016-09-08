@@ -23,7 +23,15 @@ mapping puml::ClassUml::diagramToDiagram() : uml::Model {
 	
 	packagedElement += self.umlElements->selectByKind(puml::Classifier)->map classifierToClassifier();
 	packagedElement += self.umlElements->selectByKind(puml::Enum)->map enumToEnum();
-	packagedElement += self.umlElements->selectByKind(puml::Association)->map associationToAssociation();
+	self.umlElements->selectByKind(puml::Association)->forEach(asso) {
+		if (asso.associationArrow.isInheritanceAssociation()) {
+			var classifier := if asso.associationArrow = puml::AssociationType::INHERITANCELEFT then asso.classRight.resolveone(uml::Classifier) else asso.classLeft.resolveone(uml::Classifier) endif;
+			classifier.generalization += asso.map associationToGeneralization();
+		} else {
+			packagedElement := asso.map associationToAssociation()
+		}
+	};
+	
 	self.umlElements->selectByKind(puml::Classifier)->forEach(classifier) {
 		classifier.inheritance.map inheritanceToRealizations(classifier.resolveone(uml::Classifier))->forEach(realization) {
 			packagedElement += realization;			
@@ -152,6 +160,10 @@ mapping puml::EnumConstant::enumConstantToEnumLiteral() : uml::EnumerationLitera
 }
 
 //Association
+mapping puml::Association::associationToGeneralization() : uml::Generalization {
+	general := if self.associationArrow = puml::AssociationType::INHERITANCELEFT then self.classLeft.resolveone(uml::Classifier) else self.classRight.resolveone(uml::Classifier) endif
+}
+
 mapping puml::Association::associationToAssociation() : uml::Association {
 	name := self.label;
 	var isLeftDirected := self.associationArrow.isLeftDirected();
@@ -198,18 +210,26 @@ query puml::Visibility::convertVisibility() : uml::VisibilityKind {
 	return null;
 }
 
+query puml::AssociationType::isInheritanceAssociation() : Boolean {
+	var inheritanceTypes : Set(puml::AssociationType);
+	inheritanceTypes += puml::AssociationType::INHERITANCELEFT;
+	inheritanceTypes += puml::AssociationType::INHERITANCERIGHT;
+	
+	return (inheritanceTypes->includes(self))
+}
+
 query puml::AssociationType::isLeftDirected() : Boolean {
 	var leftDirection : Set(puml::AssociationType);
-	leftDirection+= puml::AssociationType::BIDIRECTIONAL;
-	leftDirection+= puml::AssociationType::DIRECTIONALLEFT;
+	leftDirection += puml::AssociationType::BIDIRECTIONAL;
+	leftDirection += puml::AssociationType::DIRECTIONALLEFT;
 
 	return (leftDirection->includes(self))
 }
 
 query puml::AssociationType::isRightDirected() : Boolean {
 	var rightDirection : Set(puml::AssociationType);
-	rightDirection+= puml::AssociationType::BIDIRECTIONAL;
-	rightDirection+= puml::AssociationType::DIRECTIONALRIGHT;
+	rightDirection += puml::AssociationType::BIDIRECTIONAL;
+	rightDirection += puml::AssociationType::DIRECTIONALRIGHT;
 
 	return (rightDirection->includes(self))
 }
