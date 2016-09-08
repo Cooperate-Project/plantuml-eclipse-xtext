@@ -86,7 +86,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 		// Which association do we have?
 		styledLabel.append(ASSOCIATION_LABELS.get(association.associationArrow))
 		styledLabel.append(" " + association.classRight.name);
-		if(association.label.length != 0){
+		if(association.label != null && association.label.length != 0){
 			var label = new StringBuffer(" : ");
 			/*for(String text : association.label){
 				label.append(text + " ")
