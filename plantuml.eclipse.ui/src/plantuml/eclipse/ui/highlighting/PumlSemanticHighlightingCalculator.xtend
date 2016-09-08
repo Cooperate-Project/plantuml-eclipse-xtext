@@ -20,6 +20,8 @@ import plantuml.eclipse.puml.DividerClass
 import plantuml.eclipse.puml.UmlDiagram
 import plantuml.eclipse.puml.ClassUml
 import plantuml.eclipse.puml.Inheritance
+import plantuml.eclipse.puml.Realization
+import plantuml.eclipse.puml.Generalization
 
 /**
  * Uses the IDs from the HighlightingConfigurator and colors the regions of code.
@@ -104,6 +106,14 @@ class PumlSemanticHighlightingCalculator implements ISemanticHighlightingCalcula
 	}
 	
 	private def dispatch highlight(Inheritance element, IHighlightedPositionAcceptor acceptor) {
+		
+	}
+	
+	private def dispatch highlight(Realization element, IHighlightedPositionAcceptor acceptor) {
+		
+	}
+	
+	private def dispatch highlight(Generalization element, IHighlightedPositionAcceptor acceptor) {
 		
 	}
 

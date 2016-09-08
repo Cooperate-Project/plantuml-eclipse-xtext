@@ -35,11 +35,14 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
     
     /** Association Type Tuples */
 	static final val ASSOCIATION_LABELS = newHashMap(
-		AssociationType.BIDIRECTIONAL -> "--",
+		AssociationType.NONDIRECTIONAL -> "--",
 		AssociationType.DIRECTIONALLEFT -> "<--",
 		AssociationType.DIRECTIONALRIGHT -> "-->",
+		AssociationType.BIDIRECTIONAL -> "<-->",
 		AssociationType.INHERITANCELEFT -> "<|--",
 		AssociationType.INHERITANCERIGHT -> "--|>",
+		AssociationType.REALIZATIONLEFT -> "<|..",
+		AssociationType.REALIZATIONRIGHT -> "..|>",
 		AssociationType.COMPOSITIONLEFT -> "*--",
 		AssociationType.COMPOSITIONRIGHT -> "--*",
 		AssociationType.AGGREGATIONLEFT -> "o--",
@@ -86,7 +89,7 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 		// Which association do we have?
 		styledLabel.append(ASSOCIATION_LABELS.get(association.associationArrow))
 		styledLabel.append(" " + association.classRight.name);
-		if(association.label.length != 0){
+		if(association.label != null && association.label.length != 0){
 			var label = new StringBuffer(" : ");
 			/*for(String text : association.label){
 				label.append(text + " ")
@@ -109,11 +112,11 @@ class PumlLabelProvider extends DefaultEObjectLabelProvider {
 			styledLabel.append(someClass.name)
 			styledLabel.append(new StyledString("]", StyledString::DECORATIONS_STYLER))
 		}
-		if(someClass.inheritance.superTypes != null && someClass.inheritance.superTypes.length != 0){
+		if(someClass.inheritance.generalizations != null && someClass.inheritance.generalizations.length != 0){
 			var buffer = new StringBuffer();
-			buffer.append(" extends " + someClass.inheritance.superTypes.get(0).name);
-			for(var i = 1; i < someClass.inheritance.superTypes.length;i++){
-				buffer.append(", " + someClass.inheritance.superTypes.get(i).name)
+			buffer.append(" extends " + someClass.inheritance.generalizations.get(0).superType.name);
+			for(var i = 1; i < someClass.inheritance.generalizations.length;i++){
+				buffer.append(", " + someClass.inheritance.generalizations.get(i).superType.name)
 			}
 			styledLabel.append(new StyledString(buffer.toString(), StyledString::DECORATIONS_STYLER))
 		}

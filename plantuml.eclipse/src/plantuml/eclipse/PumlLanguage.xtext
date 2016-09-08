@@ -64,8 +64,14 @@ InterfaceDef:
 
 Inheritance:
 	{Inheritance}
-	('extends' superTypes+=[Classifier|ClassName] (',' superTypes+=[Classifier|ClassName])*)?
-	('implements' implementedInterfaces+=[Classifier|ClassName] (',' implementedInterfaces+=[Classifier|ClassName])*)?;
+	('extends' generalizations+=Generalization (',' generalizations+=Generalization)*)?
+	('implements' realizations+=Realization (',' realizations+=Realization)*)?;
+	
+Generalization:
+	superType=[Classifier|ClassName];
+	
+Realization:
+	implementedInterface=[Classifier|ClassName];
 
 //Value converter
 /*Name: 
@@ -193,6 +199,7 @@ enum NotePosition:
 // Left types of an association
 enum AssociationType:
 	BIDIRECTIONAL
+	| NONDIRECTIONAL
 	| DIRECTIONALLEFT
 	| DIRECTIONALLEFTX
 	| DIRECTIONALLEFTO
@@ -201,6 +208,8 @@ enum AssociationType:
 	| DIRECTIONALRIGHTO
 	| INHERITANCELEFT
 	| INHERITANCERIGHT
+	| REALIZATIONLEFT
+	| REALIZATIONRIGHT
 	| AGGREGATIONLEFT
 	| AGGREGATIONRIGHT
 	| COMPOSITIONLEFT

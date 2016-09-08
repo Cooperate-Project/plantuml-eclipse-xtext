@@ -22,7 +22,7 @@ import plantuml.eclipse.puml.InterfaceDef
  * Customization of the default outline structure.
  */
 class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
-
+	
 	@Inject
 	private IImageHelper imageHelper;	
 
@@ -36,15 +36,15 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 	
 	def private getClassesParent(DocumentRootNode parentNode) {
-		 new AbstractOutlineNode(parentNode, imageHelper.getImage("class_obj.png"), "Classes", false) {}
+		new AbstractOutlineNode(parentNode, imageHelper.getImage("class_obj.png"), "Classes", false) {}
 	}
 	
 	def private getInterfacesParent(DocumentRootNode parentNode) {
-		 new AbstractOutlineNode(parentNode, imageHelper.getImage("int_obj.png"), "Interfaces", false) {}
+		new AbstractOutlineNode(parentNode, imageHelper.getImage("int_obj.png"), "Interfaces", false) {}
 	}
 	
 	def private getAssociationsParent(DocumentRootNode parentNode) {
-		 new AbstractOutlineNode(parentNode, imageHelper.getImage("reference.png"), "Assocations", false) {}
+		new AbstractOutlineNode(parentNode, imageHelper.getImage("reference.png"), "Associations", false) {}
 	}
 	
 	def private getEnumsParent(DocumentRootNode parentNode) {
@@ -93,15 +93,17 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	 */
 	def private dispatch createChildrenFromDiagramElements(Classifier classifier, DocumentRootNode parentNode) {		
 		// Do we have extended Supertypes?
-		if (classifier.inheritance.superTypes.length() != 0) {
-			for (extendedClass : classifier.inheritance.superTypes) {
+		if (classifier.inheritance.generalizations.length() != 0) {
+			for (generalization : classifier.inheritance.generalizations) {
+				var extendedClass = generalization.superType
 				createNode(getAssociationsParent(parentNode),
 					createAssociation(classifier, extendedClass, AssociationType.INHERITANCERIGHT))
 			}
 		}
 		// Do we have implemented Interfaces?
-		if (classifier.inheritance.implementedInterfaces.length() != 0) {
-			for (implementedClass : classifier.inheritance.implementedInterfaces) {
+		if (classifier.inheritance.realizations.length() != 0) {
+			for (realization : classifier.inheritance.realizations) {
+				var implementedClass = realization.implementedInterface
 				createNode(getAssociationsParent(parentNode),
 					createAssociation(classifier, implementedClass, AssociationType.INHERITANCERIGHT))
 			}

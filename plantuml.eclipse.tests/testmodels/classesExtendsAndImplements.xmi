@@ -25,33 +25,50 @@
     <umlElements
         xsi:type="puml:ClassDef"
         name="B">
-      <inheritance
-          superTypes="//@umlDiagrams.0/@umlElements.0"/>
+      <inheritance>
+        <generalizations
+            superType="//@umlDiagrams.0/@umlElements.0"/>
+      </inheritance>
     </umlElements>
     <umlElements
         xsi:type="puml:ClassDef"
         name="C">
-      <inheritance
-          superTypes="//@umlDiagrams.0/@umlElements.0 //@umlDiagrams.0/@umlElements.3"/>
+      <inheritance>
+        <generalizations
+            superType="//@umlDiagrams.0/@umlElements.0"/>
+        <generalizations
+            superType="//@umlDiagrams.0/@umlElements.3"/>
+      </inheritance>
     </umlElements>
     <umlElements
         xsi:type="puml:ClassDef"
         name="D">
-      <inheritance
-          implementedInterfaces="//@umlDiagrams.0/@umlElements.1"/>
+      <inheritance>
+        <realizations
+            implementedInterface="//@umlDiagrams.0/@umlElements.1"/>
+      </inheritance>
     </umlElements>
     <umlElements
         xsi:type="puml:ClassDef"
         name="E">
-      <inheritance
-          implementedInterfaces="//@umlDiagrams.0/@umlElements.1 //@umlDiagrams.0/@umlElements.2"/>
+      <inheritance>
+        <realizations
+            implementedInterface="//@umlDiagrams.0/@umlElements.1"/>
+        <realizations
+            implementedInterface="//@umlDiagrams.0/@umlElements.2"/>
+      </inheritance>
     </umlElements>
     <umlElements
         xsi:type="puml:ClassDef"
         name="F">
-      <inheritance
-          superTypes="//@umlDiagrams.0/@umlElements.0"
-          implementedInterfaces="//@umlDiagrams.0/@umlElements.1 //@umlDiagrams.0/@umlElements.2"/>
+      <inheritance>
+        <generalizations
+            superType="//@umlDiagrams.0/@umlElements.0"/>
+        <realizations
+            implementedInterface="//@umlDiagrams.0/@umlElements.1"/>
+        <realizations
+            implementedInterface="//@umlDiagrams.0/@umlElements.2"/>
+      </inheritance>
     </umlElements>
   </umlDiagrams>
 </puml:UmlDiagram>

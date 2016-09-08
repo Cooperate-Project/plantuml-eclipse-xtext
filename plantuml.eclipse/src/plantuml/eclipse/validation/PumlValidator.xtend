@@ -11,6 +11,7 @@ import plantuml.eclipse.puml.Association
 import plantuml.eclipse.puml.AssociationType
 import plantuml.eclipse.puml.ClassDef
 import plantuml.eclipse.puml.InterfaceDef
+import plantuml.eclipse.puml.Generalization
 
 /**
  * This class provides custom rules that will be validated.
@@ -32,7 +33,7 @@ class PumlValidator extends AbstractPumlValidator {
 	 */
 	@Check
 	def checkNoCycleClassHierarchy(Classifier someClass) {
-		if(someClass.inheritance.superTypes == null || someClass.inheritance.superTypes.length == 0){
+		if(someClass.inheritance.generalizations == null || someClass.inheritance.generalizations.length == 0){
 			return
 		}
 		val visitedClasses = <Classifier>newHashSet()
@@ -43,8 +44,9 @@ class PumlValidator extends AbstractPumlValidator {
 	 * Helper method for {@link #checkNoCycleClassHierarchy checkNoCycleClassHierarchy} method.
 	 */
 	def boolean checkSuperTypesForCycle(HashSet<Classifier> visited, Classifier someClass) {
-		for(Classifier current : someClass.inheritance.superTypes){
-	 		if(visited.contains(current)){
+		for(Generalization currentGeneralization : someClass.inheritance.generalizations){
+			var currentSuperType = currentGeneralization.superType;
+	 		if(visited.contains(currentSuperType)){
 	 			warning("Cycle in hierarchy of class '" + someClass.name + "'", 
 	 				PumlPackage::eINSTANCE.classifier_Inheritance, 
 	 				HIERARCHY_CYCLE, 
@@ -53,8 +55,8 @@ class PumlValidator extends AbstractPumlValidator {
 	 			return true
 	 		}else{
 	 			val newVisited = visited
-	 			newVisited.add(current)
-	 			checkSuperTypesForCycle(newVisited, current)
+	 			newVisited.add(currentSuperType)
+	 			checkSuperTypesForCycle(newVisited, currentSuperType)
 	 		}
 	 	}
 	 	return false
@@ -118,7 +120,8 @@ class PumlValidator extends AbstractPumlValidator {
 	def checkReturnTypes(Classifier someClass) {
 		var interfaceMethods = new HashMap<String,String>();
 		// Loop through interfaces
-		for(interface : someClass.inheritance.implementedInterfaces) {
+		for(realization : someClass.inheritance.realizations) {
+			var interface = realization.implementedInterface
 			var content = getClassContent(interface)
 			for(classContent : content){
 				if(classContent instanceof Method){

@@ -25,11 +25,8 @@ mapping puml::ClassUml::diagramToDiagram() : uml::Model {
 	packagedElement += self.umlElements->selectByKind(puml::Enum)->map enumToEnum();
 	packagedElement += self.umlElements->selectByKind(puml::Association)->map associationToAssociation();
 	self.umlElements->selectByKind(puml::Classifier)->forEach(classifier) {
-		classifier.inheritance.map inheritanceToRealizations(classifier.resolveone(uml::Classifier))->forEach(realization) {
-			packagedElement += realization;			
-		}
+		packagedElement += classifier.inheritance.realizations->map realizationToRealization(classifier.resolveone(uml::Classifier))
 	};
-
 	var typesToGenerate : Set(String);
 	existingTypes->forEach(i | existingClasses->excludes(i)) {
 		typesToGenerate += i;
@@ -47,7 +44,7 @@ mapping puml::ClassDef::classToClass() : uml::Class{
 	existingClasses += self.name;
 	ownedAttribute += self.contents->selectByType(puml::Attribute)->map attributeToAttribute();
 	ownedOperation += self.contents->selectByType(puml::Method)->map methodToOperation();
-	generalization := self.inheritance.map inheritanceToGeneralizations();
+	generalization += self.inheritance.generalizations.map generalizationToGeneralization();
 }
 
 mapping puml::InterfaceDef::interfaceToInterface() : uml::Interface {
@@ -55,7 +52,7 @@ mapping puml::InterfaceDef::interfaceToInterface() : uml::Interface {
 	existingClasses += self.name;
 	ownedAttribute += self.contents->selectByType(puml::Attribute)->map attributeToAttribute();
 	ownedOperation += self.contents->selectByType(puml::Method)->map methodToOperation();
-	generalization := self.inheritance.map inheritanceToGeneralizations();
+	generalization += self.inheritance.generalizations.map generalizationToGeneralization();
 }
 
 
@@ -113,32 +110,14 @@ mapping String::stringToClassifier() : uml::Class {
 }
 
 //Generalizations
-mapping puml::Inheritance::inheritanceToGeneralizations() : Sequence(uml::Generalization) {
-	init {
-		result := self.superTypes->classifierToGeneralization()
-	}
-}
-
-helper puml::Classifier::classifierToGeneralization() : uml::Generalization {
-	var generalization := object uml::Generalization {
-		general := self.late resolveone(uml::Classifier)
-	};
-	return generalization;
+mapping puml::Generalization::generalizationToGeneralization() : uml::Generalization {
+	general := self.superType.late resolveone(uml::Classifier)
 }
 
 //Realizations
-mapping puml::Inheritance::inheritanceToRealizations(classifier : uml::Classifier) : Sequence(uml::Realization) {
-	init {
-		result := self.implementedInterfaces->classifierToRealization(classifier)
-	}
-}
-
-helper puml::Classifier::classifierToRealization(classifier : uml::Classifier) : uml::Realization {
-	var realization := object uml::Realization {
-		client := classifier;
-		supplier := self.late resolveone(uml::Classifier);
-	};
-	return realization;
+mapping puml::Realization::realizationToRealization(classifier : uml::Classifier) : uml::Realization {
+	client := classifier;
+	supplier := self.implementedInterface.late resolveone(uml::Classifier);
 }
 
 //Enum

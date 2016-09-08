@@ -16,11 +16,13 @@ class PumlValueConverter extends AbstractDeclarativeValueConverterService {
 	/** Associations Type Tuples */
 	static final val ASSOCIATION_TYPES = newHashMap(
 		"<|-"	-> AssociationType.INHERITANCELEFT,
-		"<|." 	-> AssociationType.INHERITANCELEFT,
+		"<|." 	-> AssociationType.REALIZATIONLEFT,
 		"-|>" 	-> AssociationType.INHERITANCERIGHT,
-		".|>" 	-> AssociationType.INHERITANCERIGHT,
-		"-"		-> AssociationType.BIDIRECTIONAL,
-		"."		-> AssociationType.BIDIRECTIONAL,
+		".|>" 	-> AssociationType.REALIZATIONRIGHT,
+		"<.>"	-> AssociationType.BIDIRECTIONAL,
+		"<->"	-> AssociationType.BIDIRECTIONAL,
+		"-"		-> AssociationType.NONDIRECTIONAL,
+		"."		-> AssociationType.NONDIRECTIONAL,
 		"<-"	-> AssociationType.DIRECTIONALLEFT,
 		"<."	-> AssociationType.DIRECTIONALLEFT,
 		"->"	-> AssociationType.DIRECTIONALRIGHT,

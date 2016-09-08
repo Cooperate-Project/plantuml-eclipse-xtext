@@ -184,8 +184,8 @@ class ClassDiagramTest extends AbstractDiagramTest {
 	}
 	
 	@Test
-	def void associationBidirectional(){
-		val xmiModel = getUmlDiagram(TEST_FOLDER + "associationBidirectional.xmi")
+	def void associationNonAndBidirectional(){
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "associationNonAndBidirectional.xmi")
 		val model = '''
 			CLASS
 			@startuml
@@ -196,6 +196,11 @@ class ClassDiagramTest extends AbstractDiagramTest {
 			Alice ------ Bob
 			Alice .[#Red]. Bob
 			Alice ..[#FF00FF].... Bob
+			Alice <..> Bob
+			Alice <--> Bob
+			Alice <------> Bob
+			Alice <.[#Red].> Bob
+			Alice <..[#FF00FF]....> Bob
 			@enduml
 		'''.parse
 		assertEqualsModel(getClassDiagram(model), getClassDiagram(xmiModel))
@@ -247,8 +252,8 @@ class ClassDiagramTest extends AbstractDiagramTest {
 	}
 	
 	@Test
-	def void associationInheritance(){
-		val xmiModel = getUmlDiagram(TEST_FOLDER + "associationInheritance.xmi")
+	def void associationInheritanceAndRealization(){
+		val xmiModel = getUmlDiagram(TEST_FOLDER + "associationInheritanceAndRealization.xmi")
 		val model = '''
 			CLASS
 			@startuml
