@@ -2,6 +2,12 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>de.cooperateproject</groupId>
+		<artifactId>de.cooperateproject.parent.eclipse</artifactId>
+		<version>1.0.2</version>
+		<relativePath></relativePath>
+	</parent>
 	<groupId>plantuml.eclipse</groupId>
 	<artifactId>parent</artifactId>
 	<version>1.0.0-SNAPSHOT</version>
@@ -21,24 +27,13 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xs
 		<developerConnection>scm:git:git@github.com:Cooperate-Project/plantuml-eclipse-xtext.git</developerConnection>
 		<url>http://github.com/Cooperate-Project/plantuml-eclipse-xtext</url>
 	</scm>
-	
-	<distributionManagement>
-		<repository>
-			<id>cooperate-packagedrone</id>
-			<name>Release Repository</name>
-			<url>https://mammutbaum36.fzi.de/maven/cooperate</url>
-		</repository>
-		<snapshotRepository>
-			<id>cooperate-packagedrone</id>
-			<name>Snapshot Repository</name>
-			<url>https://mammutbaum36.fzi.de/maven/cooperate-dev</url>
-		</snapshotRepository>
-	</distributionManagement>
 
 	<properties>
 		<tycho-version>0.24.0</tycho-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<xtext.version>2.9.1</xtext.version>
+		<bintray.deploy.plugin.version>0.1.1</bintray.deploy.plugin.version>
+		<bintray.deploy.repository>PlantUMLXtext</bintray.deploy.repository>
 		<sonar.jacoco.reportPath>../plantuml.eclipse.tests/target/jacoco.exec</sonar.jacoco.reportPath>
 	</properties>
 

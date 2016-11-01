@@ -14,4 +14,27 @@
 
 	<name>Plantuml Eclipse Language Update Site</name>
 
+	<properties>
+		<bintray.deploy.file>${project.build.directory}/repository</bintray.deploy.file>
+	</properties>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>de.cooperateproject.maven</groupId>
+				<artifactId>de.cooperateproject.maven.bintray.deploy</artifactId>
+				<version>${bintray.deploy.plugin.version}</version>
+				<executions>
+					<execution>
+						<id>bintray-deployment</id>
+						<phase>deploy</phase>
+						<goals>
+							<goal>deploy</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+		</plugins>
+	</build>
+
 </project>
