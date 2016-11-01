@@ -36,19 +36,24 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	}
 	
 	def private getClassesParent(DocumentRootNode parentNode) {
-		 new AbstractOutlineNode(parentNode, imageHelper.getImage("class_obj.png"), "Classes", false) {}
+		new AbstractOutlineNode(parentNode, imageHelper.getImage("class_obj.png"), "Classes", false) {}
 	}
 	
 	def private getInterfacesParent(DocumentRootNode parentNode) {
-		 new AbstractOutlineNode(parentNode, imageHelper.getImage("int_obj.png"), "Interfaces", false) {}
+		new AbstractOutlineNode(parentNode, imageHelper.getImage("int_obj.png"), "Interfaces", false) {}
 	}
 	
 	def private getAssociationsParent(DocumentRootNode parentNode) {
-		 new AbstractOutlineNode(parentNode, imageHelper.getImage("reference.png"), "Assocations", false) {}
+		new AbstractOutlineNode(parentNode, imageHelper.getImage("reference.png"), "Assocations", false) {}
 	}
 	
 	def private getEnumsParent(DocumentRootNode parentNode) {
-		 new AbstractOutlineNode(parentNode, imageHelper.getImage("enum_obj.png"), "Enums", false) {}
+		new AbstractOutlineNode(parentNode, imageHelper.getImage("enum_obj.png"), "Enums", false) {}
+	}
+	
+	def private createAbstractOutlineNodeContainer(DocumentRootNode parentNode) {
+		new AbstractOutlineNodeContainer(getClassesParent(parentNode), getInterfacesParent(parentNode), 
+			getAssociationsParent(parentNode), getEnumsParent(parentNode)) {}
 	}
 
 	/**
@@ -57,8 +62,9 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	def private dispatch createChildrenFromDiagram(ClassUml classUml, DocumentRootNode parentNode) {
 		// Create Root Nodes for Elements
 		// Loop through Class Elements
+		var container = createAbstractOutlineNodeContainer(parentNode);
 		for (EObject umlClassElement : classUml.umlElements) {
-			createChildrenFromDiagramElements(umlClassElement, parentNode)
+			createChildrenFromDiagramElements(umlClassElement, container)
 		}
 	}
 
@@ -71,45 +77,45 @@ class PumlOutlineTreeProvider extends DefaultOutlineTreeProvider {
 	/**
 	 * Dummy dispatch method.
 	 */
-	def private dispatch createChildrenFromDiagramElements(EObject classUml, DocumentRootNode parentNode) {
+	def private dispatch createChildrenFromDiagramElements(EObject classUml, AbstractOutlineNodeContainer container) {
 	}
 
 	/**
 	 * creates Association outline elements.
 	 */
-	def private dispatch createChildrenFromDiagramElements(Association association, DocumentRootNode parentNode) {
-		createNode(getAssociationsParent(parentNode), association)
+	def private dispatch createChildrenFromDiagramElements(Association association, AbstractOutlineNodeContainer container) {
+		createNode(container.associationsNode, association)
 	}
 
 	/**
 	 * creates Enum outline elements.
 	 */
-	def private dispatch createChildrenFromDiagramElements(Enum _enum, DocumentRootNode parentNode) {		
-		createNode(getEnumsParent(parentNode), _enum)
+	def private dispatch createChildrenFromDiagramElements(Enum _enum, AbstractOutlineNodeContainer container) {		
+		createNode(container.enumsNode, _enum)
 	}
 
 	/**
 	 * creates Classifier outline elements.
 	 */
-	def private dispatch createChildrenFromDiagramElements(Classifier classifier, DocumentRootNode parentNode) {		
+	def private dispatch createChildrenFromDiagramElements(Classifier classifier, AbstractOutlineNodeContainer container) {		
 		// Do we have extended Supertypes?
 		if (classifier.inheritance.superTypes.length() != 0) {
 			for (extendedClass : classifier.inheritance.superTypes) {
-				createNode(getAssociationsParent(parentNode),
+				createNode(container.associationsNode,
 					createAssociation(classifier, extendedClass, AssociationType.INHERITANCERIGHT))
 			}
 		}
 		// Do we have implemented Interfaces?
 		if (classifier.inheritance.implementedInterfaces.length() != 0) {
 			for (implementedClass : classifier.inheritance.implementedInterfaces) {
-				createNode(getAssociationsParent(parentNode),
+				createNode(container.associationsNode,
 					createAssociation(classifier, implementedClass, AssociationType.INHERITANCERIGHT))
 			}
 		}
 		if (classifier instanceof InterfaceDef) {
-			createNode(getInterfacesParent(parentNode), classifier)
+			createNode(container.interfacesNode, classifier)
 		} else {
-			createNode(getClassesParent(parentNode), classifier)
+			createNode(container.classesNode, classifier)
 		}
 	}
 
